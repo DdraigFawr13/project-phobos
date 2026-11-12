@@ -157,7 +157,7 @@ The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y 
   - Runs on the integer net, with shifts fixed from quantisation. Weights and biases are all perturbed, by ε ~ N(0, 1) from Box-Muller (rng seed 17), as round(64 × ε) LSB, saturated.
   - 50 generations, population 32 (16 antithetic pairs).
   - Fitness is −(training-set total IAE).
-  - Update: θ += round(512 × Σ_k r_k ε_k / 32) LSB, saturated. r_k is the centred rank of member k, in [−0.5, 0.5]. Planning estimate: about 25 LSB per parameter per generation.
+  - Update: θ += round(512 × Σ_k r_k ε_k / 32) LSB, saturated. r_k is the centred rank of member k, in [−0.5, 0.5]. The step size is not measured; S6 measures it.
   - IAE is logged every generation, with a snapshot every 5 generations.
 - These settings are first guesses (not measured). The S5 and S6 re-checks may change them before building, and DECISIONS records any change.
 - **Logs:**
