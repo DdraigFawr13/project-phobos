@@ -4,7 +4,7 @@ Updated: 2026-11-12. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Planning. Concept is settled in `docs/CONCEPT.md`; the planning interview (`planning-interview` skill) decides the "Open for design" list before any code.
+Plan approved 2026-11-12 (D-004 to D-010). Writing the spec for the first usable version (`write-spec`).
 
 ## Plan map
 
@@ -12,9 +12,12 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 - ✔ Brainstorm: `docs/CONCEPT.md`.
 - ✔ Bootstrap AI-Master-Instructions (D-001).
-- ▶ Planning interview: rounds, review, final approval.
-- ○ Spec for phase 1 (core runtime) with `write-spec`.
-- ○ Core runtime, Lab v0, trainer, Vulcan brain, exporters and recipes (CONCEPT build order).
+- ✔ Planning interview, approved (D-003 to D-010).
+- ▶ Spec for the first usable version, then Morgan's approval.
+- ○ M1 Lab v0: tank and fixed-gain PID at several levels.
+- ○ M2 Integer runtime: dense, mask, tables, golden tests.
+- ○ M3 Trained net in Lab with training replay.
+- ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
 
@@ -22,16 +25,14 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan answers the [final page](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ) (collection `final`: Q1 Lab pass mark, Q2 how to watch training, `approval`) and says "final done".
-2. On approval: DECISIONS for the round 2 and final answers (D-004 on), HANDOFF phase = phase 1, then the phase 1 spec with `write-spec` from its step 3.
+1. Write `docs/specs/first-usable.md` with `write-spec` (from step 3), run its three fresh checks, then a spec approval page.
 
-Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH) (all 13 findings agreed; round 2 answered 2026-11-12, collection `review1`), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ).
+Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ) (approved 2026-11-12).
 
 ## Open questions
 
-- Q1: Morgan agreed with finding 6 (Lab pass mark "close to PID") but answered L1 "Net must beat the PID". Recommended: beat a fixed-gain PID across the whole setpoint range, with outflow through a fixed opening.
-- Q2: Morgan wants to watch training (comment on finding 3). Recommended: Lab replays Node training runs; live phone training stays Later.
+- None open from planning.
 
 ## Decisions since the last plan update
 
-- 2026-11-12 D-001 harness layers; D-002 concept settled; D-003 round 1 answers.
+- 2026-11-12 D-001 harness; D-002 concept; D-003 round 1; D-004 plan approved; D-005 platforms; D-006 number spec; D-007 accuracy; D-008 training; D-009 Lab pass mark; D-010 files and licence.
