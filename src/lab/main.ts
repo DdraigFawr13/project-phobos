@@ -1,8 +1,11 @@
-// Lab: the Live tab (S1, the tank under the fixed PI) and the Fixed test tab (S2). Each view reads one model
-// (live.state, fixedTest) and nothing else (SIM-01).
+// Lab: the Live tab (S1, the tank under the fixed PI), the Fixed test tab (S2) and the Tables tab (S3). Each view
+// reads one model (live.state, fixedTest, the committed tables) and nothing else (SIM-01).
 import { createLive, SETPOINT, HISTORY_S, type Sample } from "../sim/live.ts";
 import { SEGMENTS, fixedTestRuns, type FixedTestResult, type Progress } from "../sim/fixed-test.ts";
 import { EXPLAIN, explainHtml } from "./explain.ts";
+import { TANH, EXP } from "../num/tables.gen.ts";
+import { tanhQ, expQ } from "../num/act.ts";
+import { tableErrors, type TableError } from "../num/table-errors.ts";
 
 const SPEED = 10; // simulated seconds per real second (spec "Lab")
 const MAX_SIM_S_PER_FRAME = 30; // cap catch-up after the tab was hidden
@@ -13,7 +16,7 @@ let lastDisturbEnd: number | null = null;
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector(sel) as T;
 
-const TABS = [["live", "Live"], ["fixed", "Fixed test"]] as const;
+const TABS = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"]] as const;
 type Tab = (typeof TABS)[number][0];
 
 // The Fixed test model: idle, running (with progress) or done. The live tank keeps running meanwhile.
@@ -22,7 +25,7 @@ let fixedTest: FixedTest = { phase: "idle" };
 const RUN_BUDGET_MS = 12; // runs per frame stop after this, so the page keeps drawing on a slow phone
 
 function mount() {
-  const ex = explainHtml(EXPLAIN.live), fx = explainHtml(EXPLAIN.fixed);
+  const ex = explainHtml(EXPLAIN.live), fx = explainHtml(EXPLAIN.fixed), tx = explainHtml(EXPLAIN.tables);
   $("#app").innerHTML = `
     <div class="lhead"><h1>Phobos Lab</h1><span class="chip" id="chip"></span></div>
     <div class="tabs" role="tablist" aria-label="Lab tabs">${TABS.map(([id, name], i) =>
@@ -48,6 +51,18 @@ function mount() {
       <div id="ft-out"></div>
       <p class="status" id="ft-status" aria-live="polite"></p>
       ${fx.after}
+    </section>
+    <section class="panel" id="panel-tables" data-panel="tables" role="tabpanel" aria-labelledby="tab-tables" hidden>
+      ${tx.what}
+      <canvas id="tchart" role="img" aria-label="tanh and exp from the integer tables drawn over the exact curves, inputs −8 to 8"></canvas>
+      <div class="key"><span><i class="k-sp"></i>from the table</span><span><i class="k-valve"></i>exact maths (dashed)</span></div>
+      <table id="t-entries"><tr><th>Entry</th><th class="num">tanh</th><th class="num">exp</th></tr>${ENTRY_ROWS.map(i =>
+        `<tr data-i="${i}"><td class="mono">${i}</td><td class="num">${TANH[i]}</td><td class="num">${EXP[i]}</td></tr>`).join("")}</table>
+      <table id="t-gaps"><tr><th>Largest gap, every input</th><th class="num">Steps</th><th class="num">% of height</th><th></th></tr>
+        <tr data-f="tanh"><td>tanh table</td><td class="num"></td><td class="num"></td><td></td></tr>
+        <tr data-f="exp"><td>exp table</td><td class="num"></td><td class="num"></td><td></td></tr></table>
+      <p class="status" id="t-status">Limit: ${GAP_LIMIT} steps. 4,096 steps make 1.0.</p>
+      ${tx.after}
     </section>`;
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
   tabs.forEach((b, i) => {
@@ -72,7 +87,44 @@ function showTab(id: Tab) {
     b.tabIndex = on ? 0 : -1;
     $(`#panel-${t}`).hidden = !on;
   }
+  if (id === "tables") renderTables();
   render();
+}
+
+// The Tables model: the committed tables, plus their largest gaps measured once when the tab first opens.
+const ENTRY_ROWS = [0, 128, 256, 512, 1024];
+const GAP_LIMIT = 2; // LSB, spec S3
+let gaps: { tanh: TableError; exp: TableError } | null = null;
+
+function renderTables() {
+  gaps ??= tableErrors();
+  for (const f of ["tanh", "exp"] as const) {
+    const g = gaps[f], td = document.querySelectorAll(`#t-gaps [data-f="${f}"] td`);
+    td[1].textContent = String(g.lsb);
+    td[2].textContent = `${g.pct.toFixed(3)}%`;
+    td[3].textContent = g.lsb <= GAP_LIMIT ? "pass" : "fail";
+    td[3].className = g.lsb <= GAP_LIMIT ? "pass" : "fail";
+  }
+  const c = $<HTMLCanvasElement>("#tchart"), dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
+  if (!W || !H) return;
+  c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+  const g = c.getContext("2d")!;
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = tok("--panel"); g.fillRect(0, 0, W, H);
+  const mid = H / 2, X = (x: number) => 8 + ((W - 16) * (x + 8)) / 16, Y = (y: number) => mid - (mid - 14) * y;
+  g.strokeStyle = tok("--line"); g.lineWidth = 1;
+  g.beginPath(); g.moveTo(8, mid); g.lineTo(W - 8, mid); g.moveTo(X(0), 8); g.lineTo(X(0), H - 8); g.stroke();
+  const q = (x: number) => Math.max(-32768, Math.min(32767, Math.round(x * 4096)));
+  const curve = (f: (x: number) => number, col: string, w: number, dash: number[] = []) => {
+    g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath();
+    for (let k = 0; k <= 320; k++) { const x = -8 + k * 0.05, y = f(x); k ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); }
+    g.stroke(); g.setLineDash([]);
+  };
+  curve(x => tanhQ(q(x)) / 4096, tok("--ink"), 3); curve(Math.tanh, tok("--valve"), 1.25, [4, 3]);
+  curve(x => expQ(q(x)) / 4096, tok("--ink"), 3); curve(x => Math.exp(Math.min(0, x)), tok("--valve"), 1.25, [4, 3]);
+  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = tok("--muted"); g.textBaseline = "middle";
+  g.textAlign = "left"; g.fillText("tanh", X(3), Y(1) + 14); g.fillText("exp", X(-6), Y(0) - 14); g.fillText("−8", 10, mid + 12);
+  g.textAlign = "right"; g.fillText("+8", W - 10, mid + 12);
 }
 
 function startFixedTest() {
@@ -219,4 +271,4 @@ mount();
 renderFixed();
 render();
 requestAnimationFrame(frame);
-document.fonts?.ready.then(render);
+document.fonts?.ready.then(() => { render(); if (!$("#panel-tables").hidden) renderTables(); });

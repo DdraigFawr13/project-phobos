@@ -33,6 +33,18 @@ export const EXPLAIN: Record<string, Explain> = {
       ["Seed", "the number that fixes a random sequence, so a run can be repeated exactly"],
     ],
   },
+  tables: {
+    what: "A neural net squashes numbers through S-shaped curves called tanh, an S shape from −1 to 1. Phones and plant controllers can compute curves slightly differently, so Phobos stores each curve as a table of 1,025 whole numbers and reads between entries. Every device gets the same answer.",
+    tryit: "Look for daylight between the solid line (table) and the dashed line (exact maths). There isn't any: the largest gap is 1 step, where 4,096 steps make 1.0.",
+    deep: `<p><b>Whole numbers for fractions (Q12).</b> Phobos stores 1.0 as 4096, so 0.5 is 2048 and −0.25 is −1024. Values fit in 16 bits, from −8 up to just under 8. One step, 1/4096 ≈ 0.00024, is called an LSB.</p>
+      <p><b>Reading the table.</b> Entry i holds tanh(i ÷ 128) × 4096, rounded. For an input between two entries, Phobos draws a straight line between them using only adding, multiplying and shifting bits, no decimal maths.</p>
+      <p><b>The check.</b> Every one of the 65,536 possible inputs is compared with the exact curve. The table must be within 2 LSB; it is within 1 LSB for tanh and 1 for exp. As a share of the curve's height that is 0.012% for tanh and 0.024% for exp. The page works these numbers out again when it opens.</p>
+      <p><b>exp</b> is the falling curve from 1 towards 0. It is the second table the runtime needs. Its input is kept at 0 or below, so the table only covers the falling half.</p>`,
+    words: [
+      ["tanh", "hyperbolic tangent, the S-shaped squashing curve"],
+      ["LSB", "least significant bit: the smallest step a whole number can take"],
+    ],
+  },
 };
 
 export function explainHtml(e: Explain): { what: string; after: string } {
