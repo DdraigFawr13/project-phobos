@@ -10,6 +10,7 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 2. `docs/DECISIONS.md`: settled rules. Don't reopen them.
 3. `docs/LESSONS.md`: entries for the area you are about to work in.
 4. `docs/CONCEPT.md`: pitch, kill criteria and the Design brief (Settled / Open for design).
+5. `docs/UI_STYLE.md`: before any Lab screen work.
 
 ## Local checks (run before pushing)
 
