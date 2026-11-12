@@ -79,3 +79,15 @@ Settled rules for this project. Not a changelog: an entry stays while the rule i
 - **Status:** Accepted (2026-11-12)
 - **Decision:** Tank 1 m² × 2 m, draining through a fixed opening (k = 0.05 m^2.5/s); Lab net 4 inputs → 16 tanh → 1 (97 weights), with the error integral kept in float outside the integer runtime; evolution strategies tune the integer net directly; browser tests run locally and in PR screenshots, not in CI. Details: `docs/specs/first-usable.md`.
 - **Why:** the spec had to decide these; Morgan accepted them on the approval page.
+
+## D-014 Lab look: Control room
+
+- **Status:** Accepted (2026-11-12)
+- **Decision:** Lab uses look A "Control room" (grey HMI panel, IBM Plex Sans and Plex Mono, colour only for the level, the net and off-normal states). First width 400 px; minimum text 13 px; minimum tap 44 px; light and dark follow the phone. Tokens and rules: `docs/UI_STYLE.md`.
+- **Why:** Morgan kept A and cut B, C and D on the [taste board](https://claude.ai/artifact/8tCyT6ng1CGE4dkkCo9NCR), and picked the recommended sizes and theme there.
+
+## D-015 Lab teaches a beginner
+
+- **Status:** Accepted (2026-11-12, with the [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF))
+- **Decision:** Every Lab tab has a plain "What you're seeing" note, a "Try this" prompt, and a tap-to-open "How it works" section with the mechanism, equations and a word list. Rules: `docs/UI_STYLE.md` "Teaching layer".
+- **Why:** Morgan asked that Lab be "clearly readable for a beginner like me but still has the necessary depth for me to fully comprehend what is going on and learn about the topic". Plain text always visible and depth on a tap keeps the 400 px screen readable.

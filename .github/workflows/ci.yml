@@ -1,5 +1,6 @@
 # Template from AI-Master-Instructions, adapted with the efficient-github-actions skill.
-# No code yet: the first code slice adds .nvmrc, setup-node, npm ci and npm run check.
+# Tier 1 only: type check, unit and golden tests, test-traps and the master drift check (`npm run check`,
+# about 1.2 s locally on 2026-11-12). Browser tests (e2e/) run locally with a PR screenshot, never in CI (D-013).
 name: CI
 
 on:
@@ -15,7 +16,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # Draft runs (job skipped) get their own group, so a draft push can't cancel the run that
+  # "ready for review" starts in the same second (seen on PR #2, runs 17 and 18).
+  group: ci-${{ github.ref }}${{ github.event.pull_request.draft && '-draft' || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -26,4 +29,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - run: node .claude/master/sync.mjs --check
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: '[ "$(npm -v)" = "10.9.9" ] || npm install -g npm@10.9.9' # WEB-01: packageManager npm@10.9.9
+      - run: npm ci
+      - run: npm run check

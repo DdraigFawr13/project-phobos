@@ -200,7 +200,7 @@ The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y 
   - `tests/sim.test.ts`, `tests/trace.test.ts`, `tests/golden/trace-seed1.json`, `e2e/lab-smoke.mjs`
   - `.github/workflows/ci.yml` (setup-node with `.nvmrc`, `npm ci`, `npm run check`)
   - `AGENTS.md` (local checks with a measured time budget)
-- **Waits on:** `docs/UI_STYLE.md` (the `ui-style` skill) and one `ui-mockups` mock-up of the whole Lab layout, approved by Morgan: Live, Fixed test, Tables, Integer vs float, Net and Replay. Both are done in the build session before code, so later slices fill in panels already approved.
+- **Waits on:** `docs/UI_STYLE.md` (the `ui-style` skill) and one `ui-mockups` mock-up of the whole Lab layout, approved by Morgan: Live, Fixed test, Tables, Integer vs float, Net and Replay. Both are done in the build session before code, so later slices fill in panels already approved. Done 2026-11-12: `docs/UI_STYLE.md` (D-014) and the approved [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF) (`mockups/lab.html`), with the teaching layer (D-015).
 
 ### S2 The gap per level (M1)
 

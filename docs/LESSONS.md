@@ -4,4 +4,4 @@ One line per mistake. Read the entries for an area before working in it. When a 
 
 Format: `- <area> · <mistake> · <root cause> · <rule> · ×<n> (<YYYY-MM-DD>)`
 
-- None yet.
+- ci · pushed and marked the PR ready in the same second; the draft push's skipped run cancelled the ready run, so CI never ran the checks and GitHub showed the PR clean · one concurrency group for draft and ready runs · give draft runs their own group, and read the job conclusion (not the PR's merge state) before merging · ×1 (2026-11-12)

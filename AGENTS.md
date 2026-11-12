@@ -10,14 +10,16 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 2. `docs/DECISIONS.md`: settled rules. Don't reopen them.
 3. `docs/LESSONS.md`: entries for the area you are about to work in.
 4. `docs/CONCEPT.md`: pitch, kill criteria and the Design brief (Settled / Open for design).
+5. `docs/UI_STYLE.md`: before any Lab screen work.
 
 ## Local checks (run before pushing)
 
-- Every push: `node .claude/master/sync.mjs --check`. No code yet; the first code slice adds `npm run check` (with `node .claude/skills/test-design/scripts/test-traps.mjs`) and its time budget in seconds here.
+- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 1.2 to 1.5 s on 2026-11-12 (14 tests); budget 10 s.
+- Lab changes: `npm run test:browser`, about 2.2 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
 
 ## What CI runs
 
-- **CI** (`ci.yml`): the master drift check on non-draft PR updates and `main` pushes. Markdown and `docs/**` changes skip it.
+- **CI** (`ci.yml`): `npm ci` and `npm run check` on non-draft PR updates and `main` pushes. Markdown and `docs/**` changes skip it. Browser tests are local only (D-013).
 - No deploys yet.
 
 ## Project rules
