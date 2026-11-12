@@ -22,14 +22,15 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan fills [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS) (collection `round1`) and says "round 1 done"; read answers and notes, then the review round.
-2. The repo has no `main`: only `ccr-29e6caaf-hdhv3m` (concept commit). PR waits on Morgan's choice of base.
+1. Morgan answers [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH) (collection `review1`: 13 findings + round 2 questions P1, N1, N2, T1-T3, L1, M1, X1, W1, V1) and says "review done". Read answers and notes, then a final page if few questions remain.
+2. After final approval: DECISIONS for each settled choice, then the phase 1 spec with `write-spec`.
+
+Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS) (answered 2026-11-12, collection `round1`), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH).
 
 ## Open questions
 
-- Hard limits (time per week, cloud training money, platforms): still blank; default free CPU training only.
-- Everything under CONCEPT.md "Open for design".
+- Round 2 (on the review page). Biggest: training method (none named in round 1), number spec (int16 sums overflow int32; JS shift floors, ST division truncates), v1 platforms (round 1 said phone only, but Node is needed).
 
 ## Decisions since the last plan update
 
-- 2026-11-12 D-001 harness layers; D-002 concept settled.
+- 2026-11-12 D-001 harness layers; D-002 concept settled; D-003 round 1 answers.
