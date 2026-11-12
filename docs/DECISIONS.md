@@ -88,6 +88,6 @@ Settled rules for this project. Not a changelog: an entry stays while the rule i
 
 ## D-015 Lab teaches a beginner
 
-- **Status:** Proposed (2026-11-12); accepted when Morgan approves the Lab mock-up
+- **Status:** Accepted (2026-11-12, with the [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF))
 - **Decision:** Every Lab tab has a plain "What you're seeing" note, a "Try this" prompt, and a tap-to-open "How it works" section with the mechanism, equations and a word list. Rules: `docs/UI_STYLE.md` "Teaching layer".
 - **Why:** Morgan asked that Lab be "clearly readable for a beginner like me but still has the necessary depth for me to fully comprehend what is going on and learn about the topic". Plain text always visible and depth on a tap keeps the 400 px screen readable.
