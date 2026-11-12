@@ -4,15 +4,15 @@ Updated: 2026-11-12. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 built, in PR #2; next slice S2.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). Next slice: S2.
 
 ## Plan map
 
 Shown at the start of a session and when asking the owner to approve a PR or a merge (WS-08). One line per step, marked done ✔, now ▶ or later ○.
 
 - ✔ Brainstorm, bootstrap, planning interview, spec (PR #1, merged).
-- ▶ S1 Lab v0: tank and PI live (M1). Starts with `ui-style` and a whole-Lab mock-up.
-- ○ S2 gap per level (M1).
+- ✔ S1 Lab v0: tank and PI live (M1), PR #2.
+- ▶ S2 gap per level (M1).
 - ○ S3 numbers and tables, S4 dense, mask and float reference (M2).
 - ○ S5 copy the PI, S6 evolution strategies, replay and verdict (M3).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
@@ -24,11 +24,11 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-12 Whole-Lab mock-up `mockups/lab.html`, published as [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF) (published copy adds 3 screenshots). Fact check (37 facts), lint 0 warnings, one fresh check (12 findings, all fixed).
 - 2026-11-12 Morgan asked for a beginner-readable Lab with full depth: teaching layer added to the mock-up (What you're seeing, Try this, How it works on every tab); rules in UI_STYLE "Teaching layer"; D-015 Proposed until mock-up approval. Second fresh check: 22 findings, 21 fixed. Facts checked now 49.
 - 2026-11-12 Mock-up approved; D-015 Accepted. S1 built: `src/rng.ts`, `src/sim/{plant,pi,live}.ts`, `src/lab/*`, `scripts/build-lab.ts`, tests (11, plus `e2e/lab-smoke.mjs`), golden `tests/golden/trace-seed1.json`, CI runs `npm run check` (1.2 s). Lab published: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb). Fresh code review: 11 findings, 6 acted on (RNG known value, disturbance counted in steps, tighter trace checks, pinned-shut PI and plant clamps tested, npm 10.9.9 in CI); tests now 14. `__lab.setNet`/`setSnapshot` are absent until M3 on purpose.
+- 2026-11-12 Morgan checked Lab on the phone ("it works great") and approved PR #2. Tabs stay hidden until built (UI_STYLE rule kept; Morgan asked how to reach other pages, answered that they arrive with S2 to S6).
 
 ## Next
 
-1. Morgan tries Lab on the phone (J1 device check, VER-07): drag the setpoint, tap Disturbance, open How it works. Then approve PR #2 to merge (GIT-08).
-2. S2: the fixed test, per spec S2 (new branch from `main` after #2 merges). Fixed test tab with the teaching text from the mock-up.
+1. New session, new branch from `main`: build S2 per the spec (fixed test, net inputs, check states, `npm run fixed-test`). Add the Fixed test tab from the approved mock-up with its teaching text (D-015); the tab row appears once there are two tabs. Write the checks first and see them fail (VER-10). Republish `dist/lab.html` to the [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) link.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
