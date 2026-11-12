@@ -25,10 +25,12 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Spec `docs/specs/first-usable.md`: first checks done (paraphrase 12 items, critic 10, zero-decisions 11 groups; fixed in one pass); critic and zero-decisions re-running. Next: sort findings (write-spec step 6), reconcile items, then a spec approval page.
-   Reconcile items to raise: Lab net design (97 params), ES on the integer net, Playwright local only, dev deps typescript 7.0.2 / esbuild 0.28.2 / @types/node, "beats across the range" = total IAE or every segment.
+1. Morgan answers the [spec approval page](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR) (collection `spec1`: `verdict`, `deps`, `adds`, `approval`) and says "spec done".
+2. On approval: spec Status Approved, DECISIONS for the verdict rule, dev dependencies and spec additions, then mark PR #1 ready and merge (GIT-08). Build S1 in a new session (write-spec step 8): `ui-style` doc and a whole-Lab mock-up first.
 
-Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ) (approved 2026-11-12).
+Spec checks run: paraphrase, critic, zero-decisions; critic and zero-decisions re-run; final zero-decisions. All findings fixed or put to Morgan.
+
+Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
 ## Open questions
 
