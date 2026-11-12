@@ -17,7 +17,7 @@ export type LiveState = {
   valve: number; // 0 shut to 1 open
   pTerm: number; // Kp·error, last step (for the teaching layer)
   iTerm: number; // the PI's integral part, last step
-  disturbedUntil: number; // s; disturbed while t < disturbedUntil
+  disturbedUntil: number; // s, for display; the step count below decides
   net: null; // M3
   history: Sample[]; // one sample per second, oldest first, at most HISTORY_S + 1
 };
@@ -30,19 +30,20 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
   const pi = makePI(FIXED_PI.Kp, FIXED_PI.Ti);
   pi.reset(level0, opts.setpoint ?? level0);
   let n = 0; // steps taken; t = n·dt avoids summing dt
+  let disturbEndStep = 0; // disturbed while n < disturbEndStep: exactly DISTURB_S of steps per tap
   const state: LiveState = {
     t: 0, level: level0, measured: level0, setpoint: opts.setpoint ?? level0, valve: steadyValve(level0),
     pTerm: 0, iTerm: steadyValve(level0),
     disturbedUntil: 0, net: null, history: [],
   };
   const record = () => {
-    state.history.push({ t: state.t, level: state.level, setpoint: state.setpoint, valve: state.valve, disturbed: state.t < state.disturbedUntil });
+    state.history.push({ t: state.t, level: state.level, setpoint: state.setpoint, valve: state.valve, disturbed: n < disturbEndStep });
     if (state.history.length > HISTORY_S + 1) state.history.shift();
   };
   record();
 
   function tick() {
-    const disturbed = state.t < state.disturbedUntil;
+    const disturbed = n < disturbEndStep;
     state.measured = plant.measure();
     const iBefore = pi.I;
     state.valve = pi.step(state.measured, state.setpoint);
@@ -66,8 +67,8 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
       state.setpoint = Math.round(s * 100) / 100;
     },
     /** Outflow × 1.2 for the next 60 s; tapping again restarts the 60 s. */
-    disturb() { state.disturbedUntil = state.t + DISTURB_S; },
-    disturbed: () => state.t < state.disturbedUntil,
+    disturb() { disturbEndStep = n + DISTURB_S * STEPS_PER_S; state.disturbedUntil = disturbEndStep * TANK.dt; },
+    disturbed: () => n < disturbEndStep,
   };
 }
 export type Live = ReturnType<typeof createLive>;

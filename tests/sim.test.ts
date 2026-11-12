@@ -57,6 +57,37 @@ test("PI holds its integral while the valve is pinned (conditional integration)"
   for (let i = 0; i < 1000; i++) assert.equal(pi.step(0.0, 1.0), 1); // error 1 m: u > 1, valve pinned at 1
   // I stayed at its preload (0.5), so with zero error the valve is 0.5 again at once
   assert.equal(pi.step(1.0, 1.0), 0.5);
+  // and pinned shut: error −1 m gives u < 0, valve 0, I held
+  for (let i = 0; i < 1000; i++) assert.equal(pi.step(2.0, 1.0), 0);
+  assert.equal(pi.step(1.0, 1.0), 0.5);
+});
+
+test("plant clamps the valve to [0, 1] and the level at 0 m", () => {
+  const a = makePlant({ level: 1.0 }), b = makePlant({ level: 1.0 });
+  for (let n = 0; n < 50; n++) assert.equal(a.step(5, false), b.step(1, false));
+  const c = makePlant({ level: 0.01 }), d = makePlant({ level: 0.01 });
+  for (let n = 0; n < 50; n++) assert.equal(c.step(-3, false), d.step(0, false));
+  const e = makePlant({ level: 0.001 });
+  for (let n = 0; n < 2000; n++) e.step(0, true);
+  assert.equal(e.level, 0);
+});
+
+test("a disturbance lasts exactly 60 s of steps whenever it is tapped", async () => {
+  const { createLive } = await import("../src/sim/live.ts");
+  for (const at of [0, 0.1, 0.3, 7.7, 123.4]) {
+    const live = createLive({ seed: 1 });
+    live.step(at);
+    live.disturb();
+    let steps = 0;
+    while (live.disturbed()) { live.step(0.1); steps++; }
+    assert.equal(steps, 600, `tapped at ${at} s`);
+  }
+});
+
+test("rng: xorshift32 known value (13, 17, 5 shifts): seed 1 gives 270369 first", () => {
+  // Hand-derived: x = 1; x ^= x << 13 → 8193; x ^= x >>> 17 → 8193; x ^= x << 5 → 8193 ^ 262176 = 270369.
+  assert.equal(makeRng(1).next(), 270369);
+  assert.equal(makeRng(1).uniform(), 270369 / 2 ** 32);
 });
 
 test("rng: seed 0 behaves as seed 1; same seed, same sequence; uniform in [0, 1)", () => {

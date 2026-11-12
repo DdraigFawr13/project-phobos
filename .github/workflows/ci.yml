@@ -31,5 +31,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      - run: '[ "$(npm -v)" = "10.9.9" ] || npm install -g npm@10.9.9' # WEB-01: packageManager npm@10.9.9
       - run: npm ci
       - run: npm run check
