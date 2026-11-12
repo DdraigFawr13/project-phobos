@@ -1,10 +1,11 @@
-// J1 browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
+// J1 and J2 browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
 // Uses the container's Playwright and Chromium (WEB-05); not a dependency. Local only, not in CI.
 // dist/lab.html is a fragment, so it is wrapped the way the Artifact host wraps it before loading.
 import { createRequire } from "node:module";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { SEGMENTS, runFixedTest } from "../src/sim/fixed-test.ts";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -54,7 +55,7 @@ try {
       const thumb = await page.evaluate(() => document.getElementById("sp").value);
       check(+thumb === 1.5, `slider follows the model: ${thumb}`);
       // How it works shows the PI's sums for the current state
-      await page.locator("summary", { hasText: "How it works" }).click();
+      await page.locator("#panel-live summary").click();
       await lab("step", 1);
       const sums = await page.evaluate(() => document.getElementById("pi-now").textContent);
       check(/error = 1\.50 − .*valve = P \+ I/.test(sums), `How it works shows the live sums: "${sums.slice(0, 40)}…"`);
@@ -62,18 +63,41 @@ try {
       await lab("pause");
       await lab("setSetpoint", 1.5); await lab("step", 200); await lab("disturb"); await lab("step", 30);
     }
-    // layout at 400 px: no sideways scroll, taps ≥ 44 px, text ≥ 13 px
-    const lay = await page.evaluate(() => ({
-      scrollW: document.documentElement.scrollWidth,
-      smallTaps: [...document.querySelectorAll("button, input, summary")].filter(e => e.getBoundingClientRect().height < 44).map(e => e.id || e.tagName),
-      smallText: [...document.querySelectorAll("body *")].filter(e => [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && parseFloat(getComputedStyle(e).fontSize) < 13).map(e => e.tagName),
-    }));
-    check(lay.scrollW <= 400, `${scheme}: no sideways scroll (${lay.scrollW} px)`);
-    check(lay.smallTaps.length === 0, `${scheme}: taps ≥ 44 px ${lay.smallTaps.join(" ")}`);
-    check(lay.smallText.length === 0, `${scheme}: text ≥ 13 px ${lay.smallText.join(" ")}`);
-    check(errors.length === 0, `${scheme}: no page errors ${errors.join(" | ")}`);
+    const layout = async (where) => {
+      const lay = await page.evaluate(() => ({
+        scrollW: document.documentElement.scrollWidth,
+        smallTaps: [...document.querySelectorAll("button, input, summary")].filter(e => !e.closest("[hidden]") && e.getBoundingClientRect().height < 44).map(e => e.id || e.tagName),
+        smallText: [...document.querySelectorAll("body *")].filter(e => !e.closest("[hidden]") && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && parseFloat(getComputedStyle(e).fontSize) < 13).map(e => e.tagName),
+      }));
+      check(lay.scrollW <= 400, `${scheme} ${where}: no sideways scroll (${lay.scrollW} px)`);
+      check(lay.smallTaps.length === 0, `${scheme} ${where}: taps ≥ 44 px ${lay.smallTaps.join(" ")}`);
+      check(lay.smallText.length === 0, `${scheme} ${where}: text ≥ 13 px ${lay.smallText.join(" ")}`);
+    };
     mkdirSync(new URL("test-results/", root), { recursive: true });
-    await page.screenshot({ path: new URL(`test-results/lab-400-${scheme}.png`, root).pathname, fullPage: true });
+    const shot = name => page.screenshot({ path: new URL(`test-results/${name}-${scheme}.png`, root).pathname, fullPage: true });
+    await layout("Live");
+    await shot("lab-400");
+
+    // J2: the Fixed test tab runs the training set and prints the same numbers as Node
+    const tabs = await page.locator('[role="tab"]').allTextContents();
+    check(tabs.join("|") === "Live|Fixed test", `tab row: ${tabs.join(", ")}`);
+    await page.locator('[role="tab"]', { hasText: "Fixed test" }).click();
+    check(await page.locator("#panel-live").isHidden(), "Live panel hidden on the Fixed test tab");
+    await page.locator("#ft-run").click();
+    await page.locator("#ft-run", { hasText: "Run again" }).waitFor();
+    const want = runFixedTest(SEGMENTS.training);
+    const bars = await page.evaluate(() => [...document.querySelectorAll("#ft-bars .bar")].map(b => [b.dataset.seg, b.querySelector('[data-k="fixed"]').textContent, b.querySelector('[data-k="retuned"]').textContent]));
+    check(bars.length === 5, `5 bar pairs (${bars.length})`);
+    for (const [i, r] of want.rows.entries()) {
+      const got = bars[i] ?? [];
+      check(got[0] === r.name && got[1] === `${r.fixed.iae.toFixed(2)} m·s` && got[2] === `${r.retuned.iae.toFixed(2)} m·s`, `${r.name}: page ${got.slice(1).join(" / ")}, Node ${r.fixed.iae.toFixed(2)} / ${r.retuned.iae.toFixed(2)}`);
+    }
+    const total = await page.locator("#ft-status").textContent();
+    check(total.includes(`tuned once ${want.total.fixed.iae.toFixed(2)} m·s, retuned ${want.total.retuned.iae.toFixed(2)} m·s`), `total line: "${total}"`);
+    if (scheme === "light") await page.locator("#panel-fixed summary").click();
+    await layout("Fixed test");
+    await shot("lab-400-fixed");
+    check(errors.length === 0, `${scheme}: no page errors ${errors.join(" | ")}`);
     await page.close();
   }
 } finally {
