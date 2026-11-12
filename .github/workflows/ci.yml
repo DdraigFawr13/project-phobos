@@ -16,7 +16,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # Draft runs (job skipped) get their own group, so a draft push can't cancel the run that
+  # "ready for review" starts in the same second (seen on PR #2, runs 17 and 18).
+  group: ci-${{ github.ref }}${{ github.event.pull_request.draft && '-draft' || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
