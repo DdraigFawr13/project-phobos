@@ -20,10 +20,11 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 ## Just done
 
 - 2026-11-12 PR #1 merged: bootstrap, planning (D-003 to D-010), spec approved (D-011 to D-013).
+- 2026-11-12 S1 started on branch `ccr-e4e66c33-7nff0t`: `ui-style` taste board published, [Lab look](https://claude.ai/artifact/8tCyT6ng1CGE4dkkCo9NCR) (collection `taste`: looks A Control room, B Strip chart, C Cyanotype, D Valve tag; minimum text/tap and theme questions, since no doc states them).
 
 ## Next
 
-1. New session, new branch from `main`: build S1 per the spec (write-spec step 8). First run `ui-style` to write `docs/UI_STYLE.md`, then `ui-mockups` for the whole Lab layout (Live, Fixed test, Tables, Integer vs float, Net, Replay); Morgan approves before code. Run S1's checks to see them fail first.
+1. Wait for Morgan's "taste done", read collection `taste` with one `ArtifactData` list, then write `docs/UI_STYLE.md` from the picked look (`ui-style` "Write the style"; tokens copied from the board's sample code in the scratchpad build, which a new session must redraw from the published page via `Artifact` read). Then `ui-mockups` for the whole Lab layout (Live, Fixed test, Tables, Integer vs float, Net, Replay); Morgan approves before code. Run S1's checks to see them fail first.
 2. After S1, publish `dist/lab.html` as an Artifact and record its URL here.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
