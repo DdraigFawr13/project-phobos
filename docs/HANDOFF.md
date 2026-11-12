@@ -25,7 +25,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Draft spec `docs/specs/first-usable.md` written; three fresh checks (paraphrase, critic, zero-decisions) running. Next: sort findings (write-spec step 6), reconcile items, then a spec approval page.
+1. Spec `docs/specs/first-usable.md`: first checks done (35 findings, fixed in one pass); critic and zero-decisions re-running. Next: sort findings (write-spec step 6), reconcile items, then a spec approval page.
    Reconcile items to raise: Lab net design (97 params), ES on the integer net, Playwright local only, dev deps typescript 7.0.2 / esbuild 0.28.2 / @types/node, "beats across the range" = total IAE or every segment.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ) (approved 2026-11-12).
