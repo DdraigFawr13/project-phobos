@@ -62,6 +62,16 @@ Sizes (the sample's 11 px labels and axis text are raised to the 13 px minimum):
 - **Tabs:** a row of buttons at the top of Lab; the current one filled `--ink`. Tabs that need missing data (no `models/lab/`) are hidden, not disabled (spec "Lab").
 - **Long work** (Run fixed test): the button reads "Running…" and is disabled until done, then the panel fills in place.
 - Every tap answers on the same screen.
+- **How it works:** a `<details>` disclosure at the end of each tab, summary 15 px 600 weight and 44 px tall, closed by default. Body 15 px; a "Words used here" line at 13 px `--muted` closes it.
+
+## Teaching layer
+
+Lab is for a beginner who wants the full depth (Morgan 2026-11-12, D-015). Every tab has:
+1. **What you're seeing**, under the tabs, always visible: two or three plain sentences on what is on screen. No symbols, no jargon.
+2. **Try this**, after the controls: one thing to do and what to watch for.
+3. **How it works**, a closed disclosure: the real mechanism with the equations and numbers, each fact from the spec, ending with "Words used here".
+
+Labels name what a beginner sees ("water level, m", "valve opening × 2 (0 shut, 1 open)"); status lines say what happened in plain words ("the outlet drains 20% faster"). Engineering terms appear first in How it works, where they are defined.
 
 ## Layout and sizes
 <!-- Columns, gutters and spacing at each target width; what moves or hides at each width. -->
@@ -77,6 +87,7 @@ Master list: `../.claude/skills/ui-style/references/avoid.md` (the path from `do
 ### Project
 
 - (look) Colour on anything that isn't the level, the net or an off-normal state; grey is the normal look [taste board pick A, 2026-11-12]
+- (look) A term used on the always-visible layer before How it works defines it (IAE, Ti, LSB, Q12) [Morgan 2026-11-12, D-015]
 - (look) Numbers without units, or in the body face instead of Plex Mono [taste board sample A]
 
 ## Pitfalls

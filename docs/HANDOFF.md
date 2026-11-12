@@ -22,10 +22,11 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-12 PR #1 merged: bootstrap, planning (D-003 to D-010), spec approved (D-011 to D-013).
 - 2026-11-12 S1 on branch `ccr-e4e66c33-7nff0t`, draft PR #2. Taste board ([Lab look](https://claude.ai/artifact/8tCyT6ng1CGE4dkkCo9NCR)): Morgan kept A Control room, 13 px text, 44 px taps, light and dark. `docs/UI_STYLE.md` and D-014 written.
 - 2026-11-12 Whole-Lab mock-up `mockups/lab.html`, published as [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF) (published copy adds 3 screenshots). Fact check (37 facts), lint 0 warnings, one fresh check (12 findings, all fixed).
+- 2026-11-12 Morgan asked for a beginner-readable Lab with full depth: teaching layer added to the mock-up (What you're seeing, Try this, How it works on every tab); rules in UI_STYLE "Teaching layer"; D-015 Proposed until mock-up approval. Second fresh check: 22 findings, 21 fixed. Facts checked now 49.
 
 ## Next
 
-1. Morgan answers Approve / Change / Rethink on the Lab mock-up. On Approve: put its link in the spec's S1 section, then build S1 per the spec: write the checks first and see them fail (VER-10), then code; `npm run check` timed and its budget in AGENTS.md.
+1. Morgan answers Approve / Change / Rethink on the Lab mock-up. On Approve: mark D-015 Accepted, put its link in the spec's S1 section, then build S1 per the spec: write the checks first and see them fail (VER-10), then code; `npm run check` timed and its budget in AGENTS.md.
 2. After S1, publish `dist/lab.html` as an Artifact and record its URL here.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).

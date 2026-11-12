@@ -73,6 +73,15 @@ td.num, th.num { text-align: right; }
 .heat i { aspect-ratio: 1; background: var(--line); }
 .verdict { font: 600 15px var(--sans); }
 .find { border-left: 3px solid var(--control); padding-left: 10px; display: grid; gap: 4px; }
+.what, .try { display: grid; gap: 2px; }
+.what small, .try small { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.what p { font-size: 15px; } .try p { font-size: 15px; }
+.try { border-top: 1px solid var(--line); padding-top: 10px; }
+details.deep { border-top: 1px solid var(--line); }
+details.deep summary { min-height: 44px; display: flex; align-items: center; font: 600 15px var(--sans); cursor: pointer; }
+.deepin { display: grid; gap: 8px; font-size: 15px; padding-bottom: 4px; }
+.deepin .words { font-size: 13px; color: var(--muted); }
+.deepin .words b { color: var(--ink); }
 #check-record ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 13px; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--level); outline-offset: 2px; }
 </style>
@@ -80,6 +89,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--level); out
 <div class="page">
   <h1>Phobos Lab mock-up</h1>
   <p>The whole Lab layout, in look A Control room (<code>docs/UI_STYLE.md</code>). S1 builds only the Live tab. The other five tabs are here so later slices fill in a layout you have already approved. Each frame is 400 px wide, the first target width; on a phone the row scrolls sideways. The controls are drawn, not wired: each frame shows one state, side by side.</p>
+  <p>For a beginner: every tab opens with "What you're seeing" in plain words, ends with "Try this", and has a "How it works" section that opens on a tap with the maths behind it. One frame per tab shows it open.</p>
   <p class="note">Charts and numbers are computed in this page or by a throwaway script written from the spec's plant, PI and test definitions (<code>docs/specs/first-usable.md</code> "Design"). They are measurements of that script, not of repo code, which does not exist yet. S2 to S4 replace them. Values that need a trained net (M3) show as "–".</p>
 
   <h2>Live (S1)</h2>
@@ -118,18 +128,18 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--level); out
   </div></div>
 
   <section id="check-record"><h2>Check record</h2>
-  <p class="note">Written 2026-11-12 after the fact check and one fresh check.</p>
+  <p class="note">Written 2026-11-12 after the fact check and two fresh checks; updated after the teaching layer.</p>
   <ul>
    <li>Files checked: <code>docs/specs/first-usable.md</code>, <code>docs/DECISIONS.md</code>, <code>docs/UI_STYLE.md</code>, <code>.claude/skills/ui-style/references/avoid.md</code>.</li>
-   <li>Facts checked: <span id="fact-count">37</span>, listed below with their source lines.</li>
+   <li>Facts checked: <span id="fact-count">49</span>, listed below with their source lines.</li>
    <li>Numbers on the Fixed test, Tables and Integer vs float tabs: measured by a throwaway Node script written from the spec (not repo code), 2026-11-12. S2 to S4 recompute them with tests.</li>
    <li>Lint: <code>mockup-lint: 0 warnings</code> (<code>--min-text 13</code>). Also measured in Playwright at 1400 px, light and dark: no text under 13 px, no control under 44 px tall, no console errors.</li>
    <li>Width shown: 400 px frames (the only target width). Screenshots: 3 at 2×, normal state (Live, Fixed test, Integer vs float), embedded in the published copy only.</li>
-   <li>Fresh check: one <code>reviewer</code> agent, 63,889 tokens, 8 tool calls; 12 findings, all verified and fixed. Cost estimated at about $0.30 to $1 (not measured).</li>
-   <li>Running agent cost for this mock-up: the one fresh check above.</li>
+   <li>Fresh checks: two <code>reviewer</code> agents. First: 63,889 tokens, 8 tool calls, 12 findings, all fixed. Second (teaching text): 60,524 tokens, 8 tool calls, 22 findings, 21 fixed. Cost estimated at about $0.30 to $1 each (not measured).</li>
+   <li>Running agent cost for this mock-up: 124,413 tokens over the two checks.</li>
   </ul>
-  <h3 style="margin:8px 0 0;font:600 15px var(--cond)">Fixes made</h3><ul><li>Tables: added exp beside tanh, float curves, error as % of range (spec:214); error now measured against round(4096·f) as the S3 test defines.</li><li>Integer vs float: added the Lab-shaped net's integer valve over its float valve with the agreement % (spec:228).</li><li>Removed an invented behaviour (the live tank pausing during the fixed test) and a promised 'worst check state' list.</li><li>Replay: added the held-out tank the text promised; verdict now has a valve-travel table (fresh check, J5 and D-011).</li><li>Net: two tanks side by side and a status line under the toggle (fresh check, J4, UI_STYLE Controls); heat map now 97 cells.</li><li>Fixed test: total IAE moved out of the travel table; totals computed in the page; units on bar values.</li><li>Colour: pass marks and integer curves moved from the level blue to ink (Project Avoid item).</li><li>Tab renamed 'Integer vs float'; code font set to Plex Mono; valve range 0.60 to 0.69; failing-row example labelled as made up.</li><li>Table colour in dark: tables did not inherit colour without a doctype; set color: inherit.</li><li>Chart labels: '500 600 s' and legend collisions on the taste board fixed before the mock-up.</li></ul>
-  <h3 style="margin:8px 0 0;font:600 15px var(--cond)">Facts and sources</h3><ul class="facts"><li>Slider 0.1 to 1.9 m, step 0.05 (spec:176)</li><li>Disturbance outflow k × 1.2 for 60 s (spec:120,176)</li><li>10× real time (spec:175)</li><li>600 s history (spec:174)</li><li>Area 1 m², level 0 to 2.0 m (chart axis) (spec:117)</li><li>k 0.05, inflow 0.1 × valve (spec:118)</li><li>dt 0.1 s (spec:119)</li><li>Noise ±0.005 m (spec:121)</li><li>Fixed PI Kp 1, Ti 40 s (spec:15)</li><li>Steady valve 0.5·√h (0.50 at 1.00 m) (spec:123)</li><li>Trace: steady 1.0 m, setpoint 1.5 m at 60 s, disturbance 200 to 260 s, seed 1 (spec:195)</li><li>Training segment names (5) (spec:131)</li><li>Held-out segment names (5) (spec:132)</li><li>Noise seeds 1 to 5 (spec:131)</li><li>Segments 300 s (spec:129)</li><li>Retuned Ti 40·√target (spec:135)</li><li>Valve travel beside IAE (spec:134)</li><li>Bars with numbers printed (spec:47)</li><li>tanh and exp tables, 1,025 entries (spec:109-110)</li><li>Tables drawn over float, error in LSB and % (spec:214)</li><li>2 LSB bound vs round(4096·f(x/4096)) (spec:222)</li><li>Output ranges 8,192 and 4,096 LSB (spec:17)</li><li>1% per layer (spec:24)</li><li>≥ 99% agreement, valve within 0.01 (spec:24,229)</li><li>1,000 check states (spec:138,209)</li><li>Test net seed 7, 4→16 tanh, 16→5, action 4 masked (spec:149)</li><li>Lab-shaped net seed 8 (spec:149)</li><li>Lab net 4→16→1, 97 parameters (spec:147)</li><li>Two tanks side by side, heat map (spec:59)</li><li>Net on resets net tank to the PI tank's level (spec:177)</li><li>20 snapshots (10 copy + 10 ES) (spec:168)</li><li>Replay: loss in copy, IAE in ES; held-out tank (spec:65)</li><li>Verdict: IAE and travel, net/fixed/retuned, yes/no (spec:65,170)</li><li>D-011 rule text (DECISIONS D-011)</li><li>Net and Replay hidden without models/lab/ (spec:179)</li><li>Tab names Live, Fixed test, Tables, Integer vs float, Net, Replay (spec:203)</li><li>Minimum text 13 px, tap 44 px, light and dark (UI_STYLE.md, D-014)</li></ul>
+  <h3 style="margin:8px 0 0;font:600 15px var(--cond)">Fixes made</h3><ul><li>Teaching layer added on Morgan's request (D-015): What you're seeing, Try this, How it works on every tab; plain labels on the visible layer.</li><li>Second fresh check: 22 findings, 21 fixed. Wrong claims removed (decimal + and × differing between browsers; the net shipping to a plant controller; 'best' tuning); Try this kept only on frames that show its state; Net and Replay prompts no longer predict a win; jargon moved behind How it works. Kept: 'between 0.60 and 0.69' (data peaks at 0.6827, inside that range).</li><li>Tables: added exp beside tanh, float curves, error as % of range (spec:214); error now measured against round(4096·f) as the S3 test defines.</li><li>Integer vs float: added the Lab-shaped net's integer valve over its float valve with the agreement % (spec:228).</li><li>Removed an invented behaviour (the live tank pausing during the fixed test) and a promised 'worst check state' list.</li><li>Replay: added the held-out tank the text promised; verdict now has a valve-travel table (fresh check, J5 and D-011).</li><li>Net: two tanks side by side and a status line under the toggle (fresh check, J4, UI_STYLE Controls); heat map now 97 cells.</li><li>Fixed test: total IAE moved out of the travel table; totals computed in the page; units on bar values.</li><li>Colour: pass marks and integer curves moved from the level blue to ink (Project Avoid item).</li><li>Tab renamed 'Integer vs float'; code font set to Plex Mono; valve range 0.60 to 0.69; failing-row example labelled as made up.</li><li>Table colour in dark: tables did not inherit colour without a doctype; set color: inherit.</li><li>Chart labels: '500 600 s' and legend collisions on the taste board fixed before the mock-up.</li></ul>
+  <h3 style="margin:8px 0 0;font:600 15px var(--cond)">Facts and sources</h3><ul class="facts"><li>Ti from the IMC rule: 20 s at 0.25 m, 40 s at 1.0 m, about 53 s at 1.75 m (spec:15)</li><li>Steady valve 0.5 at 1.0 m; full valve 0.1 m³/s (spec:118,123)</li><li>Anti-windup: I held when the valve is pinned (spec:123)</li><li>Check states every 15th step = 1.5 s (spec:138)</li><li>Net 4th input: error integral ÷ 32 (spec:145)</li><li>Valve = (y + 4096) / 8192 from the output in −1 to 1 (spec:147)</li><li>Copy phase: 50 PI runs (spec:156)</li><li>ES: 32 members, 50 generations, training-set IAE (spec:161-163)</li><li>Held-out noise seeds 101 to 105 (spec:132)</li><li>Test net last layer has no activation (spec:149)</li><li>Exports to Vulcan and Controls-Simulator's simulator are later work (AGENTS.md, spec Non-goals)</li><li>tanh/exp vary across versions; Vulcan bans transcendental Math (spec Risks, CONCEPT.md What it isn't)</li><li>Slider 0.1 to 1.9 m, step 0.05 (spec:176)</li><li>Disturbance outflow k × 1.2 for 60 s (spec:120,176)</li><li>10× real time (spec:175)</li><li>600 s history (spec:174)</li><li>Area 1 m², level 0 to 2.0 m (chart axis) (spec:117)</li><li>k 0.05, inflow 0.1 × valve (spec:118)</li><li>dt 0.1 s (spec:119)</li><li>Noise ±0.005 m (spec:121)</li><li>Fixed PI Kp 1, Ti 40 s (spec:15)</li><li>Steady valve 0.5·√h (0.50 at 1.00 m) (spec:123)</li><li>Trace: steady 1.0 m, setpoint 1.5 m at 60 s, disturbance 200 to 260 s, seed 1 (spec:195)</li><li>Training segment names (5) (spec:131)</li><li>Held-out segment names (5) (spec:132)</li><li>Noise seeds 1 to 5 (spec:131)</li><li>Segments 300 s (spec:129)</li><li>Retuned Ti 40·√target (spec:135)</li><li>Valve travel beside IAE (spec:134)</li><li>Bars with numbers printed (spec:47)</li><li>tanh and exp tables, 1,025 entries (spec:109-110)</li><li>Tables drawn over float, error in LSB and % (spec:214)</li><li>2 LSB bound vs round(4096·f(x/4096)) (spec:222)</li><li>Output ranges 8,192 and 4,096 LSB (spec:17)</li><li>1% per layer (spec:24)</li><li>≥ 99% agreement, valve within 0.01 (spec:24,229)</li><li>1,000 check states (spec:138,209)</li><li>Test net seed 7, 4→16 tanh, 16→5, action 4 masked (spec:149)</li><li>Lab-shaped net seed 8 (spec:149)</li><li>Lab net 4→16→1, 97 parameters (spec:147)</li><li>Two tanks side by side, heat map (spec:59)</li><li>Net on resets net tank to the PI tank's level (spec:177)</li><li>20 snapshots (10 copy + 10 ES) (spec:168)</li><li>Replay: loss in copy, IAE in ES; held-out tank (spec:65)</li><li>Verdict: IAE and travel, net/fixed/retuned, yes/no (spec:65,170)</li><li>D-011 rule text (DECISIONS D-011)</li><li>Net and Replay hidden without models/lab/ (spec:179)</li><li>Tab names Live, Fixed test, Tables, Integer vs float, Net, Replay (spec:203)</li><li>Minimum text 13 px, tap 44 px, light and dark (UI_STYLE.md, D-014)</li></ul>
 </section>
 </div>
 
@@ -169,38 +179,38 @@ function chart(c, data, o = {}) {
 }
 const head = (chip, cur, tabs = ["Live", "Fixed test", "Tables", "Integer vs float", "Net", "Replay"]) => `<div class="lhead"><b>Phobos Lab</b><span class="chip">${chip}</span></div>
   <div class="tabs" role="tablist">${tabs.map(t => `<button class="tab" type="button" aria-current="${t === cur}">${t}</button>`).join("")}</div>`;
-const key = `<div class="key"><span><i style="background:var(--level)"></i>level</span><span><i style="background:var(--ink)"></i>setpoint (dashed)</span><span><i style="background:var(--valve)"></i>valve × 2</span></div>`;
+const key = `<div class="key"><span><i style="background:var(--level)"></i>water level, m</span><span><i style="background:var(--ink)"></i>setpoint (dashed)</span><span><i style="background:var(--valve)"></i>valve opening, 0 shut to 1 open, drawn double (0.5 sits on the 1.0 line)</span></div>`;
 /* Live frames */
 document.querySelectorAll("[data-live]").forEach((f, i) => {
   const st = f.dataset.live, d = trace({ until: st === "start" ? 0.1 : st === "dist" ? 230 : 600 }), last = d.at(-1), on = st === "dist";
-  f.innerHTML = head(st === "start" ? "t 0 s · 10×" : `t ${Math.round(last.t)} s · 10×`, "Live") + `
-    <div class="reads"><div class="rd lvl"><small>Level</small><b>${last.h.toFixed(2)} m</b></div><div class="rd"><small>Setpoint</small><b>${last.sp.toFixed(2)} m</b></div><div class="rd"><small>Valve</small><b>${last.v.toFixed(2)}</b></div></div>
+  f.innerHTML = head(st === "start" ? "0 s · 10× speed" : `${Math.round(last.t)} s · 10× speed`, "Live") + `
+    <div class="reads"><div class="rd lvl"><small>Level</small><b>${last.h.toFixed(2)} m</b></div><div class="rd"><small>Setpoint</small><b>${last.sp.toFixed(2)} m</b></div><div class="rd"><small>Valve 0–1</small><b>${last.v.toFixed(2)}</b></div></div>
     <canvas aria-label="Level, setpoint and valve, last 600 s"></canvas>${key}
     <div class="ctl"><label for="sp${i}">Setpoint <span>${last.sp.toFixed(2)} m</span></label><input id="sp${i}" type="range" min="0.1" max="1.9" step="0.05" value="${last.sp}"></div>
     <div class="row"><button class="btn" type="button" aria-pressed="${on}">Disturbance</button></div>
-    <p class="status${on ? " alert" : ""}">${on ? "Disturbance on for 60 s: outflow × 1.2. 30 s left." : st === "start" ? "Fixed PI holding 1.00 m. Drag the setpoint or tap Disturbance." : "Fixed PI. Disturbance ended at 260 s."}</p>`;
+    <p class="status${on ? " alert" : ""}">${on ? "Disturbance on: the outlet drains 20% faster for 60 s. 30 s left." : st === "start" ? "PI holding the level at 1.00 m. Drag the setpoint or tap Disturbance." : "PI in control. Disturbance ended at 260 s."}</p>`;
   requestAnimationFrame(() => chart(f.querySelector("canvas"), d, { dist: st !== "start" && last.t >= 200 }));
 });
 /* Fixed test: numbers from specsim.mjs (throwaway, scratchpad), see check record */
 const SEG = [["0.50→0.25", 4.11, 2.28, 10.44, 10.42], ["0.25→1.00", 10.00, 10.00, 11.04, 11.04], ["1.00→1.75", 9.74, 11.79, 10.54, 10.55], ["1.75→0.50", 21.53, 17.95, 10.55, 10.53], ["dist@1.00", 5.56, 5.56, 10.20, 10.20]];
-const ftHead = (btn, dis) => head("t 42 s · 10×", "Fixed test") + `<div class="row"><button class="btn" type="button"${dis ? " disabled" : ""}>${btn}</button><span class="note">5 segments × 5 seeds, 300 s each</span></div>`;
-document.getElementById("ft-empty").innerHTML = ftHead("Run fixed test") + `<div class="empty">Runs the training set under the fixed PI (Ti 40 s) and the retuned PI (Ti 40·√target), and shows IAE per segment.</div>`;
-document.getElementById("ft-busy").innerHTML = ftHead("Running…", true) + `<p class="status">Segment 3 of 5: 1.00→1.75, seed 2.</p>`;
+const ftHead = (btn, dis) => head("42 s · 10× speed", "Fixed test") + `<div class="row"><button class="btn" type="button"${dis ? " disabled" : ""}>${btn}</button><span class="note">5 tests, each 300 s, 5 runs each</span></div>`;
+document.getElementById("ft-empty").innerHTML = ftHead("Run fixed test") + `<div class="empty">Runs the five tests with the PI tuned once and with a PI retuned for each test, and shows an error score per test. Takes a moment.</div>`;
+document.getElementById("ft-busy").innerHTML = ftHead("Running…", true) + `<p class="status">Test 3 of 5 (1.00→1.75), run 2 of 5.</p>`;
 const max = 30, sum = k => SEG.reduce((a, s) => a + s[k], 0).toFixed(2);
-document.getElementById("ft-done").innerHTML = ftHead("Run again") + `<div class="key"><span><i style="background:var(--valve)"></i>fixed PI</span><span><i style="background:var(--ink)"></i>retuned PI</span></div>
+document.getElementById("ft-done").innerHTML = ftHead("Run again") + `<div class="key"><span><i style="background:var(--valve)"></i>PI tuned once for 1.00 m</span><span><i style="background:var(--ink)"></i>PI retuned for each test</span><span>error score, m·s</span></div>
   <div class="bars">${SEG.map(([n, f, r, tf, tr]) => `<div class="bar"><span class="nm">${n}</span><div class="pair">
     <div class="v"><i class="f" style="width:${100 * f / max}%"></i>${f.toFixed(2)} m·s</div><div class="v"><i class="r" style="width:${100 * r / max}%"></i>${r.toFixed(2)} m·s</div></div></div>`).join("")}</div>
-  <table><tr><th>Segment</th><th class="num">Travel fixed</th><th class="num">Travel retuned</th></tr>${SEG.map(s => `<tr><td>${s[0]}</td><td class="num">${s[3].toFixed(2)}</td><td class="num">${s[4].toFixed(2)}</td></tr>`).join("")}
-  <tr><td><b>Total travel</b></td><td class="num">${sum(3)}</td><td class="num">${sum(4)}</td></tr></table>
-  <p class="status">Total IAE: fixed ${sum(1)} m·s, retuned ${sum(2)} m·s.</p>`;
+  <table><tr><th>Valve movement</th><th class="num">Tuned once</th><th class="num">Retuned</th></tr>${SEG.map(s => `<tr><td>${s[0]}</td><td class="num">${s[3].toFixed(2)}</td><td class="num">${s[4].toFixed(2)}</td></tr>`).join("")}
+  <tr><td><b>Total</b></td><td class="num">${sum(3)}</td><td class="num">${sum(4)}</td></tr></table>
+  <p class="status">Total error score: tuned once ${sum(1)} m·s, retuned ${sum(2)} m·s.</p>`;
 /* Tables and Integer vs float: from specsim.mjs */
-document.getElementById("tables").innerHTML = head("t 42 s · 10×", "Tables") + `<canvas aria-label="tanh and exp from the integer tables over the float curves"></canvas><div class="key"><span><i style="background:var(--ink)"></i>integer table</span><span><i style="background:var(--muted)"></i>float (dashed)</span></div>
-  <table><tr><th>Index i</th><th class="num">tanh entry</th><th class="num">exp entry</th></tr>
+document.getElementById("tables").innerHTML = head("42 s · 10× speed", "Tables") + `<canvas aria-label="tanh and exp from the integer tables over the float curves"></canvas><div class="key"><span><i style="background:var(--ink)"></i>from the table</span><span><i style="background:var(--muted)"></i>exact maths (dashed)</span></div>
+  <table><tr><th>Entry</th><th class="num">tanh</th><th class="num">exp</th></tr>
   ${[[0, 0, 4096], [128, 3119, 1507], [256, 3949, 554], [512, 4093, 75], [1024, 4096, 1]].map(r => `<tr><td class="mono">${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td></tr>`).join("")}</table>
-  <table><tr><th>Max error, every int16 input</th><th class="num">LSB</th><th class="num">% range</th><th></th></tr>
-  <tr><td>tanhQ</td><td class="num">1</td><td class="num">0.012%</td><td class="pass">pass</td></tr>
-  <tr><td>expQ</td><td class="num">1</td><td class="num">0.024%</td><td class="pass">pass</td></tr></table>
-  <p class="status">Against round(4096 × f(x / 4096)). Bound 2 LSB (J3).</p>`;
+  <table><tr><th>Largest gap, every input</th><th class="num">Steps</th><th class="num">% of height</th><th></th></tr>
+  <tr><td>tanh table</td><td class="num">1</td><td class="num">0.012%</td><td class="pass">pass</td></tr>
+  <tr><td>exp table</td><td class="num">1</td><td class="num">0.024%</td><td class="pass">pass</td></tr></table>
+  <p class="status">Limit: 2 steps. 4,096 steps make 1.0.</p>`;
 requestAnimationFrame(() => { const c = document.querySelector("#tables canvas"), dpr = devicePixelRatio || 1, W = c.clientWidth; c.width = W * dpr; c.height = 160 * dpr; c.style.height = "160px";
   const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n); g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 160);
   const X = x => 8 + (W - 16) * (x + 8) / 16, Y = y => 80 - 66 * y; g.strokeStyle = T("--line"); g.beginPath(); g.moveTo(8, 80); g.lineTo(W - 8, 80); g.moveTo(X(0), 8); g.lineTo(X(0), 152); g.stroke();
@@ -208,14 +218,14 @@ requestAnimationFrame(() => { const c = document.querySelector("#tables canvas")
   curve(x => Math.round(4096 * Math.tanh(x)) / 4096, T("--ink"), 3); curve(x => Math.tanh(x), T("--muted"), 1.25, [4, 3]);
   curve(x => x <= 0 ? Math.round(4096 * Math.exp(x)) / 4096 : 1, T("--ink"), 3); curve(x => Math.exp(Math.min(0, x)), T("--muted"), 1.25, [4, 3]);
   g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "left"; g.fillText("tanh", X(3), Y(1) + 12); g.fillText("exp", X(-6), Y(0) - 12); g.textAlign = "right"; g.fillText("+8", W - 10, 92); g.textAlign = "left"; g.fillText("−8", 10, 92); });
-const ivf = (rows) => head("t 42 s · 10×", "Integer vs float") + `<table><tr><th>Check</th><th class="num">Result</th><th class="num">Bound</th><th></th></tr>${rows}</table>`;
+const ivf = (rows) => head("42 s · 10× speed", "Integer vs float") + `<table><tr><th>Check</th><th class="num">Result</th><th class="num">Limit</th><th></th></tr>${rows}</table>`;
 document.getElementById("ivf").innerHTML = ivf(`
-  <tr><td>Layer 1, 4→16 tanh</td><td class="num">0.028%</td><td class="num">1%</td><td class="pass">pass</td></tr>
-  <tr><td>Layer 2, 16→5</td><td class="num">0.007%</td><td class="num">1%</td><td class="pass">pass</td></tr>
-  <tr><td>Same masked action</td><td class="num">100.0%</td><td class="num">≥ 99%</td><td class="pass">pass</td></tr>
-  <tr><td>Lab-shaped net (seed 8), valve within 0.01</td><td class="num">100.0%</td><td class="num">≥ 99%</td><td class="pass">pass</td></tr>`) + `<canvas aria-label="Lab-shaped net valve, integer over float, check states"></canvas>
-  <div class="key"><span><i style="background:var(--ink)"></i>integer valve</span><span><i style="background:var(--muted)"></i>float valve (dashed)</span></div>
-  <p class="status">Test-net rows: largest error over 1,000 check states, as a share of each layer's output range. The seed 8 net is random, not trained, so its valve stays between 0.60 and 0.69.</p>`;
+  <tr><td>Layer 1 gap (4→16)</td><td class="num">0.028%</td><td class="num">1%</td><td class="pass">pass</td></tr>
+  <tr><td>Layer 2 gap (16→5)</td><td class="num">0.007%</td><td class="num">1%</td><td class="pass">pass</td></tr>
+  <tr><td>Same choice of action</td><td class="num">100.0%</td><td class="num">≥ 99%</td><td class="pass">pass</td></tr>
+  <tr><td>Lab-shaped net: valve within 0.01</td><td class="num">100.0%</td><td class="num">≥ 99%</td><td class="pass">pass</td></tr>`) + `<canvas aria-label="Lab-shaped net valve, integer over float, check states"></canvas>
+  <div class="key"><span><i style="background:var(--ink)"></i>valve, whole numbers</span><span><i style="background:var(--muted)"></i>valve, exact maths (dashed)</span></div>
+  <p class="status">Gaps are the largest over 1,000 saved tank situations, as a share of how far each layer can swing. The Lab-shaped net has random numbers, so its valve only moves between 0.60 and 0.69.</p>`;
 const LABNET = [[0.6572,0.6574],[0.6539,0.6541],[0.6533,0.6532],[0.6527,0.6529],[0.6526,0.6528],[0.6525,0.6528],[0.653,0.6531],[0.6531,0.6532],[0.6528,0.653],[0.6532,0.6533],[0.6533,0.6534],[0.6533,0.6534],[0.6532,0.6535],[0.6533,0.6536],[0.6533,0.6535],[0.6533,0.6536],[0.6534,0.6536],[0.6537,0.6537],[0.6536,0.6536],[0.6534,0.6537],[0.6534,0.6536],[0.6534,0.6536],[0.6534,0.6537],[0.6533,0.6536],[0.6534,0.6536],[0.6537,0.6538],[0.6537,0.6538],[0.6536,0.6537],[0.6534,0.6536],[0.6536,0.6537],[0.6534,0.6536],[0.6536,0.6536],[0.6537,0.6538],[0.6534,0.6537],[0.6537,0.6538],[0.6534,0.6537],[0.6534,0.6537],[0.6537,0.6538],[0.6537,0.6538],[0.6537,0.6538],[0.6315,0.6317],[0.6248,0.6248],[0.6252,0.6253],[0.626,0.6261],[0.6262,0.6265],[0.6265,0.6267],[0.6268,0.627],[0.6268,0.627],[0.6267,0.6268],[0.6267,0.627],[0.627,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6268,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6268,0.627],[0.6271,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6267,0.6269],[0.6266,0.6269],[0.6267,0.6269],[0.6267,0.6269],[0.6266,0.6268],[0.6271,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6266,0.6268],[0.6267,0.6269],[0.6266,0.6268],[0.6265,0.6268],[0.627,0.627],[0.6267,0.6269],[0.6268,0.627],[0.6268,0.6269],[0.6267,0.6269],[0.627,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6031,0.6033],[0.6058,0.606],[0.6108,0.611],[0.6139,0.6141],[0.6156,0.6157],[0.6162,0.6164],[0.6169,0.6172],[0.6172,0.6174],[0.6171,0.6172],[0.6174,0.6176],[0.6176,0.6178],[0.6174,0.6177],[0.6176,0.6178],[0.6177,0.6178],[0.6174,0.6177],[0.6176,0.6178],[0.6176,0.6178],[0.6177,0.6179],[0.6176,0.6178],[0.6176,0.6178],[0.6176,0.6177],[0.6173,0.6176],[0.6176,0.6177],[0.6174,0.6177],[0.6174,0.6176],[0.6177,0.6179],[0.6177,0.6179],[0.6176,0.6178],[0.6173,0.6175],[0.6174,0.6177],[0.6173,0.6175],[0.6173,0.6176],[0.6177,0.6178],[0.6176,0.6177],[0.6177,0.6178],[0.6174,0.6177],[0.6176,0.6177],[0.6177,0.6179],[0.6177,0.6179],[0.6176,0.6178],[0.6826,0.6827],[0.6646,0.6647],[0.6515,0.6517],[0.6455,0.6457],[0.6431,0.6432],[0.642,0.6422],[0.6418,0.6421],[0.6418,0.6421],[0.6416,0.6418],[0.6418,0.6421],[0.6421,0.6423],[0.6421,0.6422],[0.6421,0.6424],[0.6422,0.6425],[0.6423,0.6425],[0.6423,0.6425],[0.6423,0.6426],[0.6425,0.6427],[0.6423,0.6427],[0.6423,0.6427],[0.6425,0.6426],[0.6425,0.6426],[0.6426,0.6427],[0.6425,0.6426],[0.6423,0.6426],[0.6427,0.6429],[0.6427,0.6428],[0.6427,0.6428],[0.6423,0.6426],[0.6426,0.6427],[0.6425,0.6426],[0.6426,0.6427],[0.6427,0.6428],[0.6426,0.6428],[0.6427,0.6428],[0.6426,0.6427],[0.6426,0.6427],[0.6428,0.6429],[0.6428,0.6429],[0.6427,0.6429],[0.6265,0.6268],[0.6267,0.6269],[0.627,0.6271],[0.6268,0.627],[0.6268,0.6269],[0.6266,0.6268],[0.627,0.6271],[0.6268,0.627],[0.6265,0.6268],[0.6251,0.6254],[0.6245,0.6248],[0.6243,0.6244],[0.6241,0.6243],[0.6241,0.6242],[0.624,0.6241],[0.6239,0.6241],[0.624,0.6241],[0.6256,0.6257],[0.6262,0.6264],[0.6265,0.6268],[0.6267,0.6268],[0.6267,0.6268],[0.627,0.6269],[0.6267,0.6269],[0.6267,0.6268],[0.627,0.6271],[0.627,0.627],[0.627,0.627],[0.6266,0.6268],[0.6268,0.6269],[0.6266,0.6268],[0.6266,0.6268],[0.6268,0.627],[0.6267,0.6269],[0.6268,0.627],[0.6267,0.6269],[0.6267,0.6269],[0.6268,0.6271],[0.6268,0.627],[0.6268,0.627]];
 requestAnimationFrame(() => { const c = document.querySelector("#ivf canvas"), dpr = devicePixelRatio || 1, W = c.clientWidth; c.width = W * dpr; c.height = 120 * dpr; c.style.height = "120px";
   const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n); g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 120);
@@ -223,33 +233,104 @@ requestAnimationFrame(() => { const c = document.querySelector("#ivf canvas"), d
   g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "right"; g.fillText("0.70", 36, Y(0.7)); g.fillText("0.60", 36, Y(0.6));
   [[0, T("--ink"), 3, []], [1, T("--muted"), 1.25, [4, 3]]].forEach(([k, col, w, dash]) => { g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath(); LABNET.forEach((p, i) => i ? g.lineTo(X(i), Y(p[k])) : g.moveTo(X(i), Y(p[k]))); g.stroke(); }); g.setLineDash([]); });
 document.getElementById("ivf-fail").innerHTML = ivf(`
-  <tr><td>Layer 1, 4→16 tanh</td><td class="num">1.40%</td><td class="num">1%</td><td class="fail">over</td></tr>
-  <tr><td>Layer 2, 16→5</td><td class="num">0.007%</td><td class="num">1%</td><td class="pass">pass</td></tr>`) + `<p class="status alert">Layer 1 is over its 1% bound. CI fails on this too (J3).</p>`;
+  <tr><td>Layer 1 gap (4→16)</td><td class="num">1.40%</td><td class="num">1%</td><td class="fail">over</td></tr>
+  <tr><td>Layer 2 gap (16→5)</td><td class="num">0.007%</td><td class="num">1%</td><td class="pass">pass</td></tr>`) + `<p class="status alert">Layer 1 is over its 1% limit, so the whole-number version can't be trusted yet. The automatic checks fail too.</p>`;
 /* Net and Replay: shape only */
-document.getElementById("net").innerHTML = head("t 300 s · 10×", "Net") + `
+document.getElementById("net").innerHTML = head("300 s · 10× speed", "Net") + `
   <div class="reads"><div class="rd lvl"><small>PI level</small><b>– m</b></div><div class="rd net"><small>Net level</small><b>– m</b></div><div class="rd"><small>Setpoint</small><b>1.00 m</b></div></div>
   <canvas aria-label="PI tank and net tank"></canvas>
   <div class="key"><span><i style="background:var(--water)"></i>PI tank (left)</span><span><i style="background:var(--net)"></i>net tank (right, dotted line)</span></div>
   <div class="row"><button class="btn" type="button" aria-pressed="true">Net on</button><button class="btn" type="button">Disturbance</button></div>
   <p class="status">Net on: net tank reset to steady state at the PI tank's level.</p>
-  <p class="note">Weights heat map, 97 values. Layer 1: 4 weight rows and a bias row (16 each). Layer 2: 16 weights and 1 bias. Cell colours for sign and size are picked when S5 builds it.</p><div class="heat">${"<i></i>".repeat(97)}</div>`;
+  <p class="note">The net's 97 learned numbers. Top four rows: how much each of the 4 inputs counts for each of the 16 neurons. Fifth row: each neuron's starting offset. Last row: how the 16 combine into the valve, plus one offset. Each square is one learned number. Cell colours for sign and size are picked when S5 builds it.</p><div class="heat">${"<i></i>".repeat(97)}</div>`;
 requestAnimationFrame(() => chart(document.querySelector("#net canvas"), [{ t: 0, h: 1, sp: 1, v: .5 }], { two: true }));
 const HELD = ["0.75→0.15", "0.15→1.40", "1.40→1.90", "1.90→0.75", "dist@0.35"];
-document.getElementById("replay").innerHTML = head("t 42 s · 10×", "Replay") + `
+document.getElementById("replay").innerHTML = head("42 s · 10× speed", "Replay") + `
   <canvas aria-label="Training curve"></canvas>
   <div class="ctl"><label for="snap">Snapshot <span>– of 20</span></label><input id="snap" type="range" min="0" max="19" step="1" value="0"></div>
-  <p class="note">Copy phase: loss. ES phase: training-set IAE. The tank below plays the held-out test with the chosen snapshot.</p><canvas id="replay-tank" aria-label="Held-out test with the chosen snapshot"></canvas>
-  <h3 style="margin:0;font:600 15px var(--cond)">Verdict, final weights, held-out set</h3>
-  <table><tr><th>IAE, m·s</th><th class="num">Net</th><th class="num">Fixed</th><th class="num">Retuned</th></tr>${HELD.map(n => `<tr><td>${n}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`).join("")}
-  <tr><td><b>Total IAE</b></td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr></table>
-  <table><tr><th>Valve travel</th><th class="num">Net</th><th class="num">Fixed</th><th class="num">Retuned</th></tr>${HELD.map(n => `<tr><td>${n}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`).join("")}
-  <tr><td><b>Total travel</b></td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr></table>
-  <p class="verdict">Beats the fixed PI: –</p><p class="note">Rule D-011: lower total held-out IAE, no segment more than 5% worse, valve travel at most 2× the fixed PI's.</p>`;
+  <p class="note">Left half: copying the PI (lower means closer to the PI). Right half: tuning (lower error score is better). The tank below replays the unseen tests with the chosen snapshot.</p><canvas id="replay-tank" aria-label="Held-out test with the chosen snapshot"></canvas>
+  <h3 style="margin:0;font:600 15px var(--cond)">Verdict on five tests the net never practised on</h3>
+  <table><tr><th>Error score, m·s</th><th class="num">Net</th><th class="num">Fixed</th><th class="num">Retuned</th></tr>${HELD.map(n => `<tr><td>${n}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`).join("")}
+  <tr><td><b>Total</b></td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr></table>
+  <table><tr><th>Valve movement</th><th class="num">Net</th><th class="num">Fixed</th><th class="num">Retuned</th></tr>${HELD.map(n => `<tr><td>${n}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`).join("")}
+  <tr><td><b>Total</b></td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr></table>
+  <p class="verdict">Beats the PI tuned once: –</p><p class="note">Yes needs all three: a lower total error score than the PI tuned once, no test more than 5% worse, and no more than twice its valve movement.</p>`;
 requestAnimationFrame(() => chart(document.getElementById("replay-tank"), [{ t: 0, h: 0.75, sp: 0.15, v: 0 }], {}));
 requestAnimationFrame(() => { const c = document.querySelector("#replay canvas"), dpr = devicePixelRatio || 1, W = c.clientWidth; c.width = W * dpr; c.height = 120 * dpr; c.style.height = "120px";
   const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n); g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 120);
   g.strokeStyle = T("--line"); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(W / 2, 8); g.lineTo(W / 2, 112); g.stroke(); g.setLineDash([]);
-  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "center"; g.fillText("copy: loss", W / 4, 60); g.fillText("ES: IAE", 3 * W / 4, 60); });
-document.getElementById("nomodel").innerHTML = head("t 42 s · 10×", "Live", ["Live", "Fixed test", "Tables", "Integer vs float"]) + `<p class="note">Lab built without <code>models/lab/</code>: the Net and Replay tabs are left out, not greyed out. This is S1 to S4's Lab.</p>`;
-document.fonts && document.fonts.ready.then(() => { document.querySelectorAll("[data-live]").forEach(() => {}); });
+  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "center"; g.fillText("copying", W / 4, 60); g.fillText("tuning", 3 * W / 4, 60); });
+document.getElementById("nomodel").innerHTML = head("42 s · 10× speed", "Live", ["Live", "Fixed test", "Tables", "Integer vs float"]) + `<p class="note">Lab built without <code>models/lab/</code>: the Net and Replay tabs are left out until a trained net exists. This is S1 to S4's Lab.</p>`;
+/* Beginner layer (Morgan 2026-11-12): a plain "What you're seeing" note under the tabs, a "Try this" prompt, and a
+   "How it works" section that opens on a tap. Every fact is from docs/specs/first-usable.md; see the check record. */
+const EXPLAIN = {
+  "Live": {
+    what: "A tank of water. A valve at the top lets water in; a hole at the bottom lets it out, faster when the tank is fuller. A controller called a PI (explained under How it works) opens and closes the valve to hold the water level at the setpoint you choose.",
+    tryit: "Drag the setpoint from 1.00 to 1.50 m. The valve opens wide, the level climbs, and the valve eases back as the level arrives. Then tap Disturbance: the outlet drains 20% faster for 60 s, the level dips, and the PI opens the valve further to win it back.",
+    deep: `<p><b>The error.</b> Every 0.1 s the PI reads the level and works out the error: setpoint minus level. At setpoint 1.50 m and level 1.43 m the error is 0.07 m.</p>
+      <p><b>P, the proportional part.</b> Valve = Kp × error, with the gain Kp = 1.0. A big error opens the valve a lot right now. On its own it would stop short of the setpoint, because once the error shrinks the push shrinks too.</p>
+      <p><b>I, the integral part.</b> I adds up the error over time: each step it grows by (Kp ÷ Ti) × error × 0.1 s. While any error remains it keeps nudging the valve, so the level settles on the setpoint, give or take the sensor noise. Ti = 40 s here: with a steady error, I takes 40 s to grow as large as P's push.</p>
+      <p><b>Valve = P + I</b>, kept between 0 (shut) and 1 (fully open). When the valve is pinned at 0 or 1, I stops adding up. Otherwise it would pile up error it can't act on and overshoot later. This is called anti-windup.</p>
+      <p><b>Why one tuning isn't right everywhere.</b> Water leaves at k × √level (k = 0.05). A fuller tank drains faster, so the tank reacts differently at 0.25 m than at 1.75 m. The tuning rule used here gives Ti = 40 × √level seconds: 20 s at 0.25 m, 40 s at 1.0 m, about 53 s at 1.75 m. This PI uses 40 s everywhere. Fixed test shows what that costs, and Phobos asks whether a small neural net can do better.</p>
+      <p><b>The tank.</b> Floor area 1 m², 2 m tall. Full valve lets in 0.1 m³/s, so holding 1.0 m needs the valve half open. The level sensor adds up to ±5 mm of noise; the PI reacts to it, so the valve twitches slightly all the time. The simulation runs 10 times faster than real time.</p>`,
+    words: [["Setpoint", "the level you ask for"], ["PI", "a controller with a proportional (P) and an integral (I) part. Many controllers add a third, derivative (D) part; this one doesn't"], ["Kp", "the gain: how hard P pushes per metre of error"], ["Disturbance", "something outside the controller that upsets the tank"]]
+  },
+  "Fixed test": {
+    what: "The same five tests every run, so controllers can be compared fairly. Each test starts the tank steady, then either changes the setpoint or upsets the tank. Each bar is an error score: how far the level strayed from the setpoint, and for how long. A shorter bar is better.",
+    tryit: "Compare the two bars in each row. On 0.50→0.25 the PI tuned for that level scores about half. On 0.25→1.00 and dist@1.00 the bars match, because at 1.00 m both PIs are tuned the same. On 1.00→1.75 the retuned PI does worse: How it works explains why.",
+    deep: `<p><b>IAE</b> (integrated absolute error) is the error score on the bars: the area between the level and the setpoint over the 300 s test. 1 m off for 1 s adds 1 m·s; 1 cm off for 100 s adds 1 m·s too. Lower means the level stayed closer to where you asked.</p>
+      <p><b>Fixed PI</b> ("tuned once") uses Ti = 40 s, tuned for 1.0 m. <b>Retuned PI</b> ("retuned") gets Ti = 40 × √target, worked out for each test's target level in advance, as an engineer would with the textbook rule.</p>
+      <p><b>Why 5 seeds.</b> Sensor noise is random. Each test runs with noise seeds 1 to 5 and the bar shows the mean, so one lucky run can't decide the result.</p>
+      <p><b>Valve travel</b> adds up every movement of the valve. A controller that twitches the valve wears out a real one, so the verdict limits it.</p>
+      <p><b>The surprise.</b> On 1.00→1.75 the retuned PI scores worse (11.79 against 9.74 m·s). Its Ti there is about 53 s, so its I part builds more slowly than the fixed PI's. The textbook rule (IMC, λ = 10 s) picks Ti for a target response speed; a lower error score is a different goal. These numbers come from a quick script written from the spec; S2's tests will confirm them.</p>`,
+    words: [["dist@1.00", "hold 1.00 m while the outlet drains 20% faster from 60 s to 120 s"], ["Seed", "the number that fixes a random sequence, so a run can be repeated exactly"]]
+  },
+  "Tables": {
+    what: "A neural net squashes numbers through S-shaped curves called tanh, an S shape from −1 to 1. Phones and plant controllers can compute curves slightly differently, so Phobos stores each curve as a table of 1,025 whole numbers and reads between entries. Every device gets the same answer.",
+    tryit: "Look for daylight between the solid line (table) and the dashed line (exact maths). There isn't any: the largest gap is 1 step, where 4,096 steps make 1.0.",
+    deep: `<p><b>Whole numbers for fractions (Q12).</b> Phobos stores 1.0 as 4096, so 0.5 is 2048 and −0.25 is −1024. Values fit in 16 bits, from −8 up to just under 8. One step, 1/4096 ≈ 0.00024, is called an LSB.</p>
+      <p><b>Reading the table.</b> Entry i holds tanh(i ÷ 128) × 4096, rounded. For an input between two entries, Phobos draws a straight line between them using only adding, multiplying and shifting bits, no decimal maths.</p>
+      <p><b>The check.</b> Every one of the 65,536 possible inputs is compared with the exact curve. The table must be within 2 LSB; it is within 1. As a share of the curve's height that is 0.012% for tanh and 0.024% for exp.</p>
+      <p><b>exp</b> is the falling curve from 1 towards 0. It is the second table the runtime needs.</p>`,
+    words: [["tanh", "hyperbolic tangent, the S-shaped squashing curve"], ["LSB", "least significant bit: the smallest step a whole number can take"]]
+  },
+  "Integer vs float": {
+    what: "The net is worked out two ways: with whole numbers (what Phobos runs, and what later exports to the game and to the plant simulator will use) and with ordinary decimal maths (the reference). If the two agree closely, the whole-number version can be trusted.",
+    tryit: "Read the Result column against the Limit column: every pass is far inside its limit. In the chart, the whole-number valve and the exact valve lie on top of each other.",
+    deep: `<p><b>A dense layer</b> works out each output as a weighted sum of all its inputs plus a bias, then usually squashes it through tanh. The test net's last layer (16→5) skips the squash: its 5 outputs are raw scores, and the highest allowed score wins. 4→16 means 4 inputs and 16 outputs.</p>
+      <p><b>Error as % of range.</b> For each layer, the biggest difference between the two versions over 1,000 test situations, divided by how far that layer's output can swing. The limit is 1%.</p>
+      <p><b>Same masked action.</b> The test net picks one of 5 actions, with action 4 forbidden (masked). Both versions must pick the same action in at least 99% of situations.</p>
+      <p><b>Check states</b> are 1,000 snapshots of the tank's situation (setpoint, level, error, error so far), taken every 1.5 s during the fixed test.</p>
+      <p><b>Why whole numbers at all.</b> Adding and multiplying decimals gives the same answer on every computer, but curves like tanh and exp can differ in the last digit between versions. Some targets also have no decimal maths at all: the Vulcan game engine bans these curves and plant controllers often work in whole numbers. Whole numbers plus lookup tables give the same result everywhere.</p>
+      <p>These nets use random numbers (seeds 7 and 8). The check is about the arithmetic, so trained numbers aren't needed.</p>`,
+    words: [["Float", "floating point, the computer's usual decimal maths"], ["Mask", "a rule that forbids some actions"]]
+  },
+  "Net": {
+    what: "A small neural net drives a second tank beside the PI's tank. Both get the same setpoint and the same disturbance. The net first learned by copying the PI, then was tuned to lower its error score, so watch whether it does anything differently.",
+    tryit: "Tap Disturbance and compare the two tanks: how deep each dips and how fast each gets back. If they look the same, the net has stayed close to the PI it copied.",
+    deep: `<p><b>What the net sees</b> each 0.1 s: the setpoint, the measured level, the error, and the error added up over time (divided by 32 to keep it small). The PI uses only the last two; the net gets all four and can learn to treat different levels differently.</p>
+      <p><b>Inside.</b> 16 neurons each take a weighted sum of the 4 inputs and squash it with tanh. One more neuron combines those 16, plus its own bias, into a number from −1 to 1, which is turned into a valve opening from 0 to 1.</p>
+      <p><b>The heat map</b> shows all 97 learned numbers: 64 weights and 16 biases in the first layer, 16 weights and 1 bias in the second. Colour shows whether each is positive or negative and how big.</p>`,
+    words: [["Weight", "how much one input counts towards a neuron"], ["Bias", "a neuron's starting offset"]]
+  },
+  "Replay": {
+    what: "How the net learned, step by step, and whether it beats the PI tuned once on tests it never practised on. The answer can be no: that is a useful result too.",
+    tryit: "Drag the snapshot slider from the first snapshot to the last and watch how the tank's control changes as the net learns.",
+    deep: `<p><b>Phase 1, copy.</b> The net watches the PI drive 50 runs and learns to give the same valve opening. The curve shows loss: how far its answer is from the PI's. Lower is closer.</p>
+      <p><b>Phase 2, tuning by evolution strategies (ES).</b> Phobos tries 32 small random changes to the net's whole numbers, scores each by IAE on the training tests, and moves towards the changes that scored better. 50 rounds.</p>
+      <p><b>Held-out tests.</b> The verdict uses five different tests and noise seeds 101 to 105 that the net never trained on. A net that only memorised its practice would fail here.</p>
+      <p><b>The verdict</b> is yes only if all three hold: lower total IAE than the fixed PI, no single test more than 5% worse, and valve travel at most twice the fixed PI's.</p>`,
+    words: [["Snapshot", "a saved copy of the net partway through training"], ["Loss", "the training score; lower is better"]]
+  }
+};
+function explainFrame(f, open, showTry) {
+  const cur = f.querySelector('.tab[aria-current="true"]'); if (!cur) return; const e = EXPLAIN[cur.textContent]; if (!e) return;
+  const tabs = f.querySelector(".tabs");
+  tabs.insertAdjacentHTML("afterend", `<div class="what"><small>What you're seeing</small><p>${e.what}</p></div>`);
+  f.insertAdjacentHTML("beforeend", `${showTry ? `<div class="try"><small>Try this</small><p>${e.tryit}</p></div>` : ""}
+    <details class="deep"${open ? " open" : ""}><summary>How it works</summary><div class="deepin">${e.deep}
+    <p class="words"><b>Words used here.</b> ${e.words.map(([w, d]) => `<b>${w}</b>: ${d}.`).join(" ")}</p></div></details>`);
+}
+const OPEN = new Set(["normal", "ft-done", "tables", "ivf", "net", "replay"]);
+document.querySelectorAll(".frame").forEach(f => { if (f.id === "nomodel") return; explainFrame(f, OPEN.has(f.dataset.live || f.id), !["ft-empty", "ft-busy", "ivf-fail"].includes(f.id)); });
 </script>
