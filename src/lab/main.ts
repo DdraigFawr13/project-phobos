@@ -1,5 +1,7 @@
-// Lab v0 (S1): the tank under the fixed PI, live. The view reads one model (live.state) and nothing else (SIM-01).
+// Lab: the Live tab (S1, the tank under the fixed PI) and the Fixed test tab (S2). Each view reads one model
+// (live.state, fixedTest) and nothing else (SIM-01).
 import { createLive, SETPOINT, HISTORY_S, type Sample } from "../sim/live.ts";
+import { SEGMENTS, fixedTestRuns, type FixedTestResult, type Progress } from "../sim/fixed-test.ts";
 import { EXPLAIN, explainHtml } from "./explain.ts";
 
 const SPEED = 10; // simulated seconds per real second (spec "Lab")
@@ -11,11 +13,21 @@ let lastDisturbEnd: number | null = null;
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector(sel) as T;
 
+const TABS = [["live", "Live"], ["fixed", "Fixed test"]] as const;
+type Tab = (typeof TABS)[number][0];
+
+// The Fixed test model: idle, running (with progress) or done. The live tank keeps running meanwhile.
+type FixedTest = { phase: "idle" } | { phase: "running"; at: Progress } | { phase: "done"; result: FixedTestResult };
+let fixedTest: FixedTest = { phase: "idle" };
+const RUN_BUDGET_MS = 12; // runs per frame stop after this, so the page keeps drawing on a slow phone
+
 function mount() {
-  const ex = explainHtml(EXPLAIN.live);
+  const ex = explainHtml(EXPLAIN.live), fx = explainHtml(EXPLAIN.fixed);
   $("#app").innerHTML = `
     <div class="lhead"><h1>Phobos Lab</h1><span class="chip" id="chip"></span></div>
-    <section class="panel" id="panel-live" data-panel="live" aria-label="Live">
+    <div class="tabs" role="tablist" aria-label="Lab tabs">${TABS.map(([id, name], i) =>
+      `<button class="tab" type="button" role="tab" id="tab-${id}" aria-controls="panel-${id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${name}</button>`).join("")}</div>
+    <section class="panel" id="panel-live" data-panel="live" role="tabpanel" aria-labelledby="tab-live">
       ${ex.what}
       <div class="reads">
         <div class="rd lvl"><small>Level</small><b id="r-level"></b></div>
@@ -29,10 +41,91 @@ function mount() {
       <div class="row"><button class="btn" id="dist" type="button" aria-pressed="false">Disturbance</button></div>
       <p class="status" id="status" aria-live="polite"></p>
       ${ex.after}
+    </section>
+    <section class="panel" id="panel-fixed" data-panel="fixed" role="tabpanel" aria-labelledby="tab-fixed" hidden>
+      ${fx.what}
+      <div class="row"><button class="btn" id="ft-run" type="button">Run fixed test</button><span class="note">5 tests, each 300 s, 5 runs each</span></div>
+      <div id="ft-out"></div>
+      <p class="status" id="ft-status" aria-live="polite"></p>
+      ${fx.after}
     </section>`;
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
+  tabs.forEach((b, i) => {
+    b.addEventListener("click", () => showTab(TABS[i][0]));
+    b.addEventListener("keydown", e => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      const next = tabs[(i + d + tabs.length) % tabs.length];
+      next.focus(); showTab(TABS[tabs.indexOf(next)][0]);
+    });
+  });
+  $("#ft-run").addEventListener("click", startFixedTest);
   const sp = $<HTMLInputElement>("#sp");
   sp.addEventListener("input", () => { live.setSetpoint(+sp.value); render(); });
   $("#dist").addEventListener("click", () => { live.disturb(); render(); });
+}
+
+function showTab(id: Tab) {
+  for (const [t] of TABS) {
+    const on = t === id, b = $(`#tab-${t}`);
+    b.setAttribute("aria-selected", String(on));
+    b.tabIndex = on ? 0 : -1;
+    $(`#panel-${t}`).hidden = !on;
+  }
+  render();
+}
+
+function startFixedTest() {
+  if (fixedTest.phase === "running") return;
+  const runs = fixedTestRuns(SEGMENTS.training);
+  const first = runs.next() as IteratorYieldResult<Progress>;
+  fixedTest = { phase: "running", at: first.value };
+  renderFixed();
+  const work = () => {
+    const t0 = performance.now();
+    for (;;) {
+      const r = runs.next();
+      if (r.done) { fixedTest = { phase: "done", result: r.value }; renderFixed(); return; }
+      fixedTest = { phase: "running", at: r.value };
+      if (performance.now() - t0 > RUN_BUDGET_MS) break;
+    }
+    renderFixed();
+    requestAnimationFrame(work);
+  };
+  requestAnimationFrame(work);
+}
+
+function renderFixed() {
+  const btn = $<HTMLButtonElement>("#ft-run"), out = $("#ft-out"), st = $("#ft-status");
+  const tryit = $("#panel-fixed .try");
+  btn.disabled = fixedTest.phase === "running";
+  tryit.hidden = fixedTest.phase !== "done";
+  if (fixedTest.phase === "idle") {
+    btn.textContent = "Run fixed test";
+    out.innerHTML = `<div class="empty">Runs the five tests with the PI tuned once and with a PI retuned for each test, and shows an error score per test. Takes a moment.</div>`;
+    st.textContent = "";
+    return;
+  }
+  if (fixedTest.phase === "running") {
+    const { segment, run, name } = fixedTest.at;
+    btn.textContent = "Running…";
+    out.innerHTML = "";
+    st.textContent = `Test ${segment + 1} of ${SEGMENTS.training.length} (${name}), run ${run + 1} of 5.`;
+    return;
+  }
+  const { rows, total } = fixedTest.result;
+  const max = Math.max(...rows.flatMap(r => [r.fixed.iae, r.retuned.iae]));
+  const w = (v: number) => `${((70 * v) / max).toFixed(1)}%`;
+  btn.textContent = "Run again";
+  out.innerHTML = `<div class="ft">
+    <div class="key"><span><i class="k-fixed"></i>PI tuned once for 1.00 m</span><span><i class="k-ret"></i>PI retuned for each test</span><span>error score, m·s</span></div>
+    <div class="bars" id="ft-bars">${rows.map(r => `<div class="bar" data-seg="${r.name}"><span class="nm">${r.name}</span><div class="pair">
+      <div class="v"><i class="f" style="width:${w(r.fixed.iae)}"></i><span data-k="fixed">${r.fixed.iae.toFixed(2)} m·s</span></div>
+      <div class="v"><i class="r" style="width:${w(r.retuned.iae)}"></i><span data-k="retuned">${r.retuned.iae.toFixed(2)} m·s</span></div></div></div>`).join("")}</div>
+    <table><tr><th>Valve movement</th><th class="num">Tuned once</th><th class="num">Retuned</th></tr>${rows.map(r =>
+      `<tr><td>${r.name}</td><td class="num">${r.fixed.travel.toFixed(2)}</td><td class="num">${r.retuned.travel.toFixed(2)}</td></tr>`).join("")}
+      <tr><td><b>Total</b></td><td class="num">${total.fixed.travel.toFixed(2)}</td><td class="num">${total.retuned.travel.toFixed(2)}</td></tr></table></div>`;
+  st.textContent = `Total error score: tuned once ${total.fixed.iae.toFixed(2)} m·s, retuned ${total.retuned.iae.toFixed(2)} m·s.`;
 }
 
 const tok = (n: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -123,6 +216,7 @@ window.__lab = {
 };
 
 mount();
+renderFixed();
 render();
 requestAnimationFrame(frame);
 document.fonts?.ready.then(render);
