@@ -61,3 +61,21 @@ Settled rules for this project. Not a changelog: an entry stays while the rule i
 - **Status:** Accepted (2026-11-12)
 - **Decision:** Weights in Phobos JSON with a format version (no safetensors). Licence MIT. Personality types later come from trait inputs to shared weights. Apache-2.0 ports carry the licence, NOTICE and stated changes. CfC gets a patent check before it enters Vulcan.
 - **Why:** answers W1, X1, V1; findings 10, 11 (agreed).
+
+## D-011 Lab verdict rule
+
+- **Status:** Accepted (2026-11-12)
+- **Decision:** Lab's net is "worth it" when, on the held-out setpoints and noise seeds, its total IAE is lower than the fixed PI's, no held-out segment is more than 5% worse, and its valve travel is at most 2× the fixed PI's. The verdict panel always also shows the retuned PI.
+- **Why:** Morgan chose option (a) on the [spec approval page](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR); it keeps D-009. Retuning changes only Ti = 40·√level, so the retuned PI is shown to judge whether the net learned more than gain scheduling.
+
+## D-012 Dev dependencies
+
+- **Status:** Accepted (2026-11-12)
+- **Decision:** typescript 7.0.2, esbuild 0.28.2 and @types/node 22.x as exact-pinned dev dependencies; tests use Node's built-in runner on Node 22.23.4 with type stripping; Playwright is the container's copy. No runtime dependencies.
+- **Why:** Morgan approved (SAFE-01). The type check, the `.ts` test run and the single-file bundle were tried in the planning session.
+
+## D-013 Spec additions
+
+- **Status:** Accepted (2026-11-12)
+- **Decision:** Tank 1 m² × 2 m, draining through a fixed opening (k = 0.05 m^2.5/s); Lab net 4 inputs → 16 tanh → 1 (97 weights), with the error integral kept in float outside the integer runtime; evolution strategies tune the integer net directly; browser tests run locally and in PR screenshots, not in CI. Details: `docs/specs/first-usable.md`.
+- **Why:** the spec had to decide these; Morgan accepted them on the approval page.

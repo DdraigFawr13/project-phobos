@@ -1,7 +1,7 @@
 # Phobos first usable version (milestones M1 to M3)
 
-- **Status:** Draft
-- **Planned in:** planning pages [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), 2026-11-12. **Decisions:** D-002 to D-010. "Finding n" and answer ids (P1, N1, Q2, ...) refer to the review 1 and final pages; DECISIONS quotes what they settled.
+- **Status:** Approved 2026-11-12 ([approval page](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR))
+- **Planned in:** planning pages [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), 2026-11-12. **Decisions:** D-002 to D-013. "Finding n" and answer ids (P1, N1, Q2, ...) refer to the review 1 and final pages; DECISIONS quotes what they settled.
 
 This is a new repo: there is no code yet, only docs, the synced `.claude/` harness and a CI drift check (`AGENTS.md`).
 
@@ -72,6 +72,9 @@ Morgan wants "colonists [that] have goals that they work toward" in Project-Vulc
 - Copy the PI, then evolution strategies; Python only by D-008's rule; training replay in Lab (D-008).
 - Tank drains through a fixed opening; the net must beat the fixed PI across the setpoint range (D-009).
 - Phobos JSON weights with a format version; MIT licence (D-010).
+- Verdict rule (a): lower total held-out IAE than the fixed PI, no held-out segment more than 5% worse, valve travel at most 2× the fixed PI's (D-011).
+- Dev dependencies typescript 7.0.2, esbuild 0.28.2, @types/node 22.x (D-012).
+- Tank size, Lab net shape, ES on the integer net, browser tests local only (D-013).
 
 ## Alternatives rejected
 
@@ -164,7 +167,7 @@ The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y 
   - `models/lab/log.json`: `{ version: 1, entries: [{ phase: "copy" | "es", step, loss?, iae? }] }`.
   - `models/lab/snapshots.json`: 10 copy-phase snapshots (quantised) and 10 ES snapshots, each `{ phase, step, layers }`.
   - `models/lab/verdict.json`: the held-out results.
-- **Verdict** (`models/lab/verdict.json`, computed from the final weights, not the snapshot on screen): per held-out segment and in total, IAE and valve travel for the net, the fixed PI and the retuned PI. The yes/no rule is open question 1.
+- **Verdict** (`models/lab/verdict.json`, computed from the final weights, not the snapshot on screen): per held-out segment and in total, IAE and valve travel for the net, the fixed PI and the retuned PI. The yes/no rule is D-011.
 
 **Lab** (`src/lab/`):
 
@@ -258,8 +261,4 @@ The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y 
 
 ## Open questions
 
-1. Verdict rule (for Morgan, before S6). Gain scheduling (Ti = 40·√h) is a one-line fix, so beating only the fixed PI may not show that the net learned anything. Options:
-   - (a) Beats the fixed PI: lower total held-out IAE, no segment more than 5% worse, valve travel at most 2× the fixed PI's.
-   - (b) As (a), plus within 10% of the retuned PI's total IAE.
-   - (c) Beats the retuned PI. This would tighten D-009.
-2. Not for this spec: `docs/CONCEPT.md` "Open for design" and its hard limits are superseded by D-003 to D-010. CONCEPT stays as the brainstorm snapshot.
+- None. `docs/CONCEPT.md` "Open for design" and its hard limits are superseded by D-003 to D-013; CONCEPT stays as the brainstorm snapshot.
