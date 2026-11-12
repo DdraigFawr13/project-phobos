@@ -1,4 +1,4 @@
-// J1 and J2 browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
+// J1, J2 and the S3 Tables tab browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
 // Uses the container's Playwright and Chromium (WEB-05); not a dependency. Local only, not in CI.
 // dist/lab.html is a fragment, so it is wrapped the way the Artifact host wraps it before loading.
 import { createRequire } from "node:module";
@@ -6,6 +6,8 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { SEGMENTS, runFixedTest } from "../src/sim/fixed-test.ts";
+import { TANH, EXP } from "../src/num/tables.gen.ts";
+import { tableErrors } from "../src/num/table-errors.ts";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -80,7 +82,7 @@ try {
 
     // J2: the Fixed test tab runs the training set and prints the same numbers as Node
     const tabs = await page.locator('[role="tab"]').allTextContents();
-    check(tabs.join("|") === "Live|Fixed test", `tab row: ${tabs.join(", ")}`);
+    check(tabs.join("|") === "Live|Fixed test|Tables", `tab row: ${tabs.join(", ")}`);
     await page.locator('[role="tab"]', { hasText: "Fixed test" }).click();
     check(await page.locator("#panel-live").isHidden(), "Live panel hidden on the Fixed test tab");
     await page.locator("#ft-run").click();
@@ -97,6 +99,24 @@ try {
     if (scheme === "light") await page.locator("#panel-fixed summary").click();
     await layout("Fixed test");
     await shot("lab-400-fixed");
+
+    // S3: the Tables tab prints the committed entries and the same largest gaps as Node
+    await page.locator('[role="tab"]', { hasText: "Tables" }).click();
+    check(await page.locator("#panel-fixed").isHidden(), "Fixed test panel hidden on the Tables tab");
+    const entries = await page.evaluate(() => [...document.querySelectorAll("#t-entries tr[data-i]")].map(r => [...r.children].map(c => c.textContent)));
+    check(entries.length === 5 && entries.every(([x, t, e]) => +t === TANH[+x * 128] && +e === EXP[+x * 128]), `entries ${entries.map(r => r.join("/")).join(", ")}`);
+    const gw = tableErrors();
+    const gaps = await page.evaluate(() => [...document.querySelectorAll("#t-gaps tr[data-f]")].map(r => [r.dataset.f, ...[...r.children].slice(1).map(c => c.textContent)]));
+    for (const [f, lsb, pct, verdict] of gaps) {
+      const w = gw[f];
+      check(+lsb === w.lsb && pct === `${w.pct.toFixed(3)}%` && verdict === (w.lsb <= 2 ? "pass" : "fail"), `${f} gap: page ${lsb} / ${pct} / ${verdict}, Node ${w.lsb} / ${w.pct.toFixed(3)}%`);
+    }
+    check(gaps.length === 2, `2 gap rows (${gaps.length})`);
+    const ink = await page.evaluate(() => { const c = document.getElementById("tchart"); const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] !== d[0] || d[i + 1] !== d[1] || d[i + 2] !== d[2]) n++; return n; });
+    check(ink > 1000, `tables chart drew curves (${ink} non-background pixels)`);
+    if (scheme === "light") await page.locator("#panel-tables summary").click();
+    await layout("Tables");
+    await shot("lab-400-tables");
     check(errors.length === 0, `${scheme}: no page errors ${errors.join(" | ")}`);
     await page.close();
   }

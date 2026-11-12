@@ -14,8 +14,8 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 
 ## Local checks (run before pushing)
 
-- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 1.1 to 1.2 s on 2026-11-12 (28 tests, after S2); budget 10 s.
-- Lab changes: `npm run test:browser`, about 2.5 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live and Fixed test tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
+- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 1.27 to 1.31 s on 2026-11-12 (42 tests, after S3); budget 10 s.
+- Lab changes: `npm run test:browser`, about 4.5 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live, Fixed test and Tables tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
 
 ## What CI runs
 
@@ -24,7 +24,7 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 
 ## Project rules
 
-- Runtime maths is integers only: `+ - * /`, shifts and lookup tables; no float `Math` in the runtime path. Why: bit-identical results across browsers, Vulcan V-006, Silvanus integer sim (CONCEPT.md).
+- Runtime maths is integers only: `+ - * /`, shifts and lookup tables; no float `Math` in the runtime path. One exception: `shr` in `src/num/fixed.ts` uses `Math.floor(x / 2 ** n)`, exact below 2^53 (`docs/NUMBERS.md`). Why: bit-identical results across browsers, Vulcan V-006, Silvanus integer sim (CONCEPT.md).
 - Every learned block ships with a plain baseline and a stated test it must beat on a fixed seed list, or it is dropped. Why: kill criteria in CONCEPT.md.
 - Integer layers have golden tests against a float reference within a stated error bound.
 - Never write code that implements a safety function or drives a live plant; exports target Controls-Simulator's simulator, with output clamps and a classic PID fallback. Why: CONCEPT.md "What it isn't".

@@ -59,6 +59,9 @@ th { text-align: left; font-weight: 600; color: var(--muted); padding: 4px 6px 4
 td { padding: 6px 6px 6px 0; border-bottom: 1px solid var(--line); font-family: var(--mono); }
 td:first-child { font-family: var(--sans); }
 td.num, th.num { text-align: right; }
+td.mono { font-family: var(--mono); }
+.pass { color: var(--ink); font-weight: 600; } .fail { color: var(--alert); font-weight: 600; }
+#tchart { height: 160px; }
 .status { font-size: 13px; color: var(--muted); min-height: 1.45em; }
 .status.alert { color: var(--alert); }
 details.deep { border-top: 1px solid var(--line); }
