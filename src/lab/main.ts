@@ -55,13 +55,14 @@ function mount() {
     <section class="panel" id="panel-tables" data-panel="tables" role="tabpanel" aria-labelledby="tab-tables" hidden>
       ${tx.what}
       <canvas id="tchart" role="img" aria-label="tanh and exp from the integer tables drawn over the exact curves, inputs −8 to 8"></canvas>
-      <div class="key"><span><i class="k-sp"></i>from the table</span><span><i class="k-valve"></i>exact maths (dashed)</span></div>
-      <table id="t-entries"><tr><th>Entry</th><th class="num">tanh</th><th class="num">exp</th></tr>${ENTRY_ROWS.map(i =>
-        `<tr data-i="${i}"><td class="mono">${i}</td><td class="num">${TANH[i]}</td><td class="num">${EXP[i]}</td></tr>`).join("")}</table>
-      <table id="t-gaps"><tr><th>Largest gap, every input</th><th class="num">Steps</th><th class="num">% of height</th><th></th></tr>
+      <div class="key"><span><i class="k-sp"></i>read from the table</span><span><i class="k-valve"></i>exact curve (dashed)</span><span>input −8 to +8 across, answer −1 to 1 up</span></div>
+      <p class="note">Five of the 1,025 saved points. Each number is the curve's height × 4,096, so 4096 means 1.0.</p>
+      <table id="t-entries"><tr><th>Input</th><th class="num">tanh(input)</th><th class="num">exp(−input)</th></tr>${ENTRY_ROWS.map(i =>
+        `<tr data-i="${i}"><td class="mono">${i / 128}</td><td class="num">${TANH[i]}</td><td class="num">${EXP[i]}</td></tr>`).join("")}</table>
+      <table id="t-gaps"><tr><th>Worst miss, all 65,536 inputs</th><th class="num">Steps off</th><th class="num">% of height</th><th></th></tr>
         <tr data-f="tanh"><td>tanh table</td><td class="num"></td><td class="num"></td><td></td></tr>
         <tr data-f="exp"><td>exp table</td><td class="num"></td><td class="num"></td><td></td></tr></table>
-      <p class="status" id="t-status">Limit: ${GAP_LIMIT} steps. 4,096 steps make 1.0.</p>
+      <p class="status" id="t-status">A step is 1/4,096, the smallest change these whole numbers can make. A table passes if it never misses the exact curve by more than ${GAP_LIMIT} steps.</p>
       ${tx.after}
     </section>`;
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];

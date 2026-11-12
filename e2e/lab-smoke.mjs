@@ -104,7 +104,7 @@ try {
     await page.locator('[role="tab"]', { hasText: "Tables" }).click();
     check(await page.locator("#panel-fixed").isHidden(), "Fixed test panel hidden on the Tables tab");
     const entries = await page.evaluate(() => [...document.querySelectorAll("#t-entries tr[data-i]")].map(r => [...r.children].map(c => c.textContent)));
-    check(entries.length === 5 && entries.every(([i, t, e]) => +t === TANH[+i] && +e === EXP[+i]), `entries ${entries.map(r => r.join("/")).join(", ")}`);
+    check(entries.length === 5 && entries.every(([x, t, e]) => +t === TANH[+x * 128] && +e === EXP[+x * 128]), `entries ${entries.map(r => r.join("/")).join(", ")}`);
     const gw = tableErrors();
     const gaps = await page.evaluate(() => [...document.querySelectorAll("#t-gaps tr[data-f]")].map(r => [r.dataset.f, ...[...r.children].slice(1).map(c => c.textContent)]));
     for (const [f, lsb, pct, verdict] of gaps) {

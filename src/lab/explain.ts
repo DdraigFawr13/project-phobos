@@ -34,15 +34,19 @@ export const EXPLAIN: Record<string, Explain> = {
     ],
   },
   tables: {
-    what: "A neural net squashes numbers through S-shaped curves called tanh, an S shape from −1 to 1. Phones and plant controllers can compute curves slightly differently, so Phobos stores each curve as a table of 1,025 whole numbers and reads between entries. Every device gets the same answer.",
-    tryit: "Look for daylight between the solid line (table) and the dashed line (exact maths). There isn't any: the largest gap is 1 step, where 4,096 steps make 1.0.",
-    deep: `<p><b>Whole numbers for fractions (Q12).</b> Phobos stores 1.0 as 4096, so 0.5 is 2048 and −0.25 is −1024. Values fit in 16 bits, from −8 up to just under 8. One step, 1/4096 ≈ 0.00024, is called an LSB.</p>
-      <p><b>Reading the table.</b> Entry i holds tanh(i ÷ 128) × 4096, rounded. For an input between two entries, Phobos draws a straight line between them using only adding, multiplying and shifting bits, no decimal maths.</p>
+    what: "A neural net needs two curves. tanh is an S shape that squashes any number into the range −1 to 1. exp falls from 1 towards 0. Working curves like these out exactly needs decimal maths, and different devices can disagree in the last digit. So Phobos works each curve out once, saves 1,025 points along it as whole numbers (a table), and later just looks up the two nearest points. Every device then gets exactly the same answer.",
+    tryit: "In the chart, look for any gap between a solid line (read from the table) and its dashed line (the exact curve). You won't see one: the table is never off by more than 1 step, and a step is about 0.0002, far thinner than the line.",
+    deep: `<p><b>The chart.</b> Left to right is the input, from −8 to +8. Up and down is the answer, from −1 to 1. The S-shaped line is tanh; the line that rises from near 0 to 1 on the left half and then stays flat is exp.</p>
+      <p><b>Whole numbers for fractions.</b> Phobos stores 1.0 as 4096, so 0.5 is 2048 and −0.25 is −1024. Divide by 4,096 to get the real value back. The numbers fit in 16 bits, so they run from −8 to just under 8. The smallest change, 1 ÷ 4,096 ≈ 0.00024, is one step; engineers call it an LSB. This format is called Q12.</p>
+      <p><b>What is saved.</b> Each table holds the curve at 1,025 evenly spaced inputs from 0 to 8, one every 1/128. The small table above shows five of them. For example at input 1: tanh(1) = 0.761594, and 0.761594 × 4,096 = 3119.49, which rounds to 3119. exp(−1) = 0.367879, and 0.367879 × 4,096 = 1506.83, which rounds to 1507.</p>
+      <p><b>Reading between points.</b> Most inputs fall between two saved points. Phobos draws a straight line between the two and reads off the height, using only adding, multiplying and shifting bits, no decimal maths. The points are so close together that the straight piece and the true curve almost match. Negative inputs reuse the tanh table with the sign flipped, because tanh is the same shape upside down on that side.</p>
       <p><b>The check.</b> Every one of the 65,536 possible inputs is compared with the exact curve. The table must be within 2 LSB; it is within 1 LSB for tanh and 1 for exp. As a share of the curve's height that is 0.012% for tanh and 0.024% for exp. The page works these numbers out again when it opens.</p>
-      <p><b>exp</b> is the falling curve from 1 towards 0. It is the second table the runtime needs. Its input is kept at 0 or below, so the table only covers the falling half.</p>`,
+      <p><b>exp</b> is only needed for inputs of 0 or below (falling from 1 at 0 towards 0 at −8), so its table covers that half and any positive input gives 1.</p>`,
     words: [
       ["tanh", "hyperbolic tangent, the S-shaped squashing curve"],
-      ["LSB", "least significant bit: the smallest step a whole number can take"],
+      ["exp", "the exponential curve; here only its falling half"],
+      ["Table", "a list of saved points along a curve"],
+      ["LSB", "least significant bit: the smallest step a whole number can take, here 1/4,096"],
     ],
   },
 };
