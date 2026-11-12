@@ -4,7 +4,7 @@ Updated: 2026-11-12. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 done (PR #4 merged). Next slice: S4.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 done (PR #4 merged). S4 built on branch `ccr-1874ddf3-wku1c5`, draft PR, waiting for Morgan's review.
 
 ## Plan map
 
@@ -14,7 +14,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S1 Lab v0: tank and PI live (M1), PR #2.
 - ✔ S2 gap per level (M1), PR #3.
 - ✔ S3 numbers and tables (M2), PR #4.
-- ▶ S4 dense, mask and float reference (M2).
+- ▶ S4 dense, mask and float reference (M2), draft PR.
 - ○ S5 copy the PI, S6 evolution strategies, replay and verdict (M3).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
@@ -31,9 +31,12 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-12 S3 built: `src/num/{fixed,layer,act,quantise,gen,table-errors}.ts`, `scripts/gen-tables.ts` (`npm run gen-tables`), committed `src/num/tables.gen.ts`, Tables tab with teaching text, `docs/NUMBERS.md`, `shr` exception in AGENTS.md. Tests 42 (was 28); check 1.27 to 1.31 s. Tests failed first (modules missing); 12 planted bugs all caught after adding an exact-32767 quantise case. Measured largest gap over all 65,536 inputs: 1 LSB for tanh (0.012%) and exp (0.024%), limit 2; equal to the mock-up's script. Regeneration is byte-identical. e2e compares the page's entries and gaps with Node's.
 - 2026-11-12 Morgan found the Tables tab hard to follow; text rewritten plainer (chart axes, worked example at input 1, Input column, plain table headings). Morgan approved PR #4 the same day.
 
+- 2026-11-12 S4 built: `src/runtime/{dense,select,net}.ts`, `src/ref/{dense,agreement}.ts`, `src/model/{random,nets,weights}.ts`, `src/sim/net-controller.ts`, Integer vs float tab with teaching text (worked example computed in the page), `tests/runtime.test.ts`, `tests/weights.test.ts`, golden `tests/golden/runtime-testnet.json`. Tests 60 (was 42); check 1.44 to 1.47 s; browser test 4.5 s. Tests failed first (modules missing); 14 planted bugs all caught. Measured: test net layer gaps 0.028% and 0.007%, same action 100.0% (actions 1 and 3 only: exactly the 2 distinct the spec asks for); Lab-shaped net gaps 0.026% and 0.026%, valve within 0.01 on 100.0%, largest gap 0.0005. Equal to the mock-up's script. Lab republished (version 6). Loader also rejects an unknown kind/act and a broken layer chain (beyond the spec's list; NUMBERS.md says so).
+
 ## Next
 
-1. New session, new branch from `main`: build S4 (dense, mask, float reference) per the spec: `src/runtime/*`, `src/ref/*`, `src/model/*`, `src/sim/net-controller.ts`, Integer vs float tab with its teaching text, `tests/runtime.test.ts`, `tests/golden/runtime-testnet.json`. Write the checks first and see them fail (VER-10). Morgan found the S3 Tables text hard to follow: write S4's in the same plain style (a worked example with real numbers, what each axis and column means). Republish Lab to the same link.
+1. Morgan reviews the S4 draft PR and the Lab link on the phone. On approval: GIT-08 finish (HANDOFF merged state, ready, auto-merge).
+2. Then a new session for S5 (copy the PI) per the spec; `tests/weights.test.ts` exists and S5 adds the committed-file case.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 

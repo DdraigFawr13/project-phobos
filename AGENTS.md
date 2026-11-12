@@ -14,8 +14,8 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 
 ## Local checks (run before pushing)
 
-- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 1.27 to 1.31 s on 2026-11-12 (42 tests, after S3); budget 10 s.
-- Lab changes: `npm run test:browser`, about 4.5 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live, Fixed test and Tables tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
+- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 1.44 to 1.47 s on 2026-11-12 (60 tests, after S4); budget 10 s.
+- Lab changes: `npm run test:browser`, about 4.5 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live, Fixed test, Tables and Integer vs float tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
 
 ## What CI runs
 

@@ -49,6 +49,25 @@ export const EXPLAIN: Record<string, Explain> = {
       ["LSB", "least significant bit: the smallest step a whole number can take, here 1/4,096"],
     ],
   },
+  ivf: {
+    what: "Phobos runs its nets with whole numbers, so every device gets exactly the same answer. This tab checks that the whole-number answer stays close to the answer from ordinary decimal maths. Two small nets filled with random numbers are worked out both ways on 1,000 saved tank situations, and the table shows how far apart the two answers get.",
+    tryit: "Compare each Result with its Limit: every row passes with lots of room. In the chart, look for a gap between the solid line (whole numbers) and the dashed line (decimal maths). The biggest gap is printed under the chart, far below the 0.01 allowed.",
+    deep: `<p><b>The chart.</b> Left to right are the 1,000 saved situations in order: the five tests from the Fixed test tab, 200 situations each, one every 1.5 s. The thin upright lines split the five tests. Up and down is the valve opening the Lab-shaped net asks for. Its numbers are random, not trained, so it doesn't control the tank well and its valve barely moves. That is fine: this tab checks the arithmetic, not the control.</p>
+      <p><b>A worked example</b>, the first situation, worked out by this page just now:</p>
+      <div class="now" id="ivf-example" aria-live="off"></div>
+      <p><b>A dense layer</b> works out each output like this: multiply every input by its own weight, add the results, add a bias, then squash the total through tanh (see the Tables tab). "4→16" means 4 inputs in and 16 outputs out. In whole numbers each weight is stored multiplied by a power of two, for example × 16,384, and the total is shifted back down afterwards, dropping the leftover fraction. That dropped fraction, plus the tanh table's tiny misses, is all that separates the two versions.</p>
+      <p><b>Layer gap.</b> For each layer: the biggest difference between the two versions over the 1,000 situations, as a share of how far that layer's output can swing. A tanh output swings from −1 to 1, a swing of 2, so a gap of 0.02 would be 1%. Both versions of a layer are given the same input (the whole-number output of the layer before), so the gap belongs to that layer alone. The limit is 1%.</p>
+      <p><b>The test net</b> picks one of 5 actions (numbered 0 to 4) instead of setting a valve. Its last layer has no squash: its 5 outputs are scores, and the highest score wins. Action 4 is forbidden, so it is never picked however high it scores; this is called a mask. If two scores tie, the lower-numbered action wins. Both versions must pick the same action in at least 99% of the situations. <span id="ivf-actions"></span></p>
+      <p><b>The Lab-shaped net</b> has the shape the trained net will have: 4 inputs (setpoint, level, error, and the error added up over time ÷ 32), 16 numbers in the middle, 1 output that sets the valve. That is 97 weights and biases in all. Its valve must be within 0.01 of the decimal version in at least 99% of the situations.</p>
+      <p><b>Why whole numbers at all.</b> Adding and multiplying decimals gives the same answer on every computer, but curves like tanh and exp can differ in the last digit between versions. Some targets also have no decimal maths: the Vulcan game engine bans these curves, and plant controllers often work in whole numbers. Whole numbers plus lookup tables give the same result everywhere.</p>
+      <p>Seeds 7 (test net) and 8 (Lab-shaped net) fix the random numbers, so every visit checks the same two nets.</p>`,
+    words: [
+      ["Float", "floating point, the computer's usual decimal maths"],
+      ["Weight", "the number an input is multiplied by"],
+      ["Bias", "a number added to a layer's total before the squash"],
+      ["Mask", "a rule that forbids some actions"],
+    ],
+  },
 };
 
 export function explainHtml(e: Explain): { what: string; after: string } {

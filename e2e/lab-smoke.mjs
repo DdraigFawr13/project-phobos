@@ -1,4 +1,4 @@
-// J1, J2 and the S3 Tables tab browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
+// J1, J2, the S3 Tables tab and the S4 Integer vs float tab browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
 // Uses the container's Playwright and Chromium (WEB-05); not a dependency. Local only, not in CI.
 // dist/lab.html is a fragment, so it is wrapped the way the Artifact host wraps it before loading.
 import { createRequire } from "node:module";
@@ -8,6 +8,8 @@ import { join } from "node:path";
 import { SEGMENTS, runFixedTest } from "../src/sim/fixed-test.ts";
 import { TANH, EXP } from "../src/num/tables.gen.ts";
 import { tableErrors } from "../src/num/table-errors.ts";
+import { compareNets } from "../src/ref/agreement.ts";
+import { checkStates } from "../src/sim/check-states.ts";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -82,7 +84,7 @@ try {
 
     // J2: the Fixed test tab runs the training set and prints the same numbers as Node
     const tabs = await page.locator('[role="tab"]').allTextContents();
-    check(tabs.join("|") === "Live|Fixed test|Tables", `tab row: ${tabs.join(", ")}`);
+    check(tabs.join("|") === "Live|Fixed test|Tables|Integer vs float", `tab row: ${tabs.join(", ")}`);
     await page.locator('[role="tab"]', { hasText: "Fixed test" }).click();
     check(await page.locator("#panel-live").isHidden(), "Live panel hidden on the Fixed test tab");
     await page.locator("#ft-run").click();
@@ -117,6 +119,29 @@ try {
     if (scheme === "light") await page.locator("#panel-tables summary").click();
     await layout("Tables");
     await shot("lab-400-tables");
+
+    // S4: the Integer vs float tab prints the same comparison as Node
+    await page.locator('[role="tab"]', { hasText: "Integer vs float" }).click();
+    check(await page.locator("#panel-tables").isHidden(), "Tables panel hidden on the Integer vs float tab");
+    const cmp = compareNets(checkStates());
+    const wantRows = {
+      t1: `${cmp.testNet.layerGaps[0].toFixed(3)}%`, t2: `${cmp.testNet.layerGaps[1].toFixed(3)}%`, same: `${cmp.testNet.samePct.toFixed(1)}%`,
+      l1: `${cmp.labNet.layerGaps[0].toFixed(3)}%`, l2: `${cmp.labNet.layerGaps[1].toFixed(3)}%`, valve: `${cmp.labNet.withinPct.toFixed(1)}%`,
+    };
+    const ivRows = await page.evaluate(() => [...document.querySelectorAll("#ivf-checks tr[data-c]")].map(r => [r.dataset.c, r.children[1].textContent, r.children[3].textContent]));
+    check(ivRows.length === 6, `6 check rows (${ivRows.length})`);
+    for (const [id, got, verdict] of ivRows) check(got === wantRows[id] && verdict === "pass", `${id}: page ${got} ${verdict}, Node ${wantRows[id]}`);
+    const ivStatus = await page.locator("#ivf-status").textContent();
+    check(ivStatus.includes(`Biggest valve gap: ${cmp.labNet.maxGap.toFixed(4)}`), `valve gap line: "${ivStatus}"`);
+    const ivInk = await page.evaluate(() => { const c = document.getElementById("ivfchart"); const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] !== d[0] || d[i + 1] !== d[1] || d[i + 2] !== d[2]) n++; return n; });
+    check(ivInk > 1000, `valve chart drew lines (${ivInk} non-background pixels)`);
+    if (scheme === "light") {
+      await page.locator("#panel-ivf summary").click();
+      const ex = await page.locator("#ivf-example").textContent();
+      check(/as whole numbers \(× 4,096\): 1024, 2028, −1004, 1810/.test(ex) && /gap 0\.0\d{3}, allowed 0\.01/.test(ex), `worked example: "${ex.slice(0, 80)}…"`);
+    }
+    await layout("Integer vs float");
+    await shot("lab-400-ivf");
     check(errors.length === 0, `${scheme}: no page errors ${errors.join(" | ")}`);
     await page.close();
   }

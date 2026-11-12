@@ -62,6 +62,7 @@ td.num, th.num { text-align: right; }
 td.mono { font-family: var(--mono); }
 .pass { color: var(--ink); font-weight: 600; } .fail { color: var(--alert); font-weight: 600; }
 #tchart { height: 160px; }
+#ivfchart { height: 140px; }
 .status { font-size: 13px; color: var(--muted); min-height: 1.45em; }
 .status.alert { color: var(--alert); }
 details.deep { border-top: 1px solid var(--line); }
