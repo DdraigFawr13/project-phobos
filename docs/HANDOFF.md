@@ -22,7 +22,8 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan fills planning round 1; read answers, then the review round.
+1. Morgan fills [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS) (collection `round1`) and says "round 1 done"; read answers and notes, then the review round.
+2. The repo has no `main`: only `ccr-29e6caaf-hdhv3m` (concept commit). PR waits on Morgan's choice of base.
 
 ## Open questions
 
