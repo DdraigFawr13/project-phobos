@@ -20,20 +20,22 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 ## Just done
 
 - 2026-11-12 PR #1 merged: bootstrap, planning (D-003 to D-010), spec approved (D-011 to D-013).
-- 2026-11-12 S1 started on branch `ccr-e4e66c33-7nff0t`: `ui-style` taste board published, [Lab look](https://claude.ai/artifact/8tCyT6ng1CGE4dkkCo9NCR) (collection `taste`: looks A Control room, B Strip chart, C Cyanotype, D Valve tag; minimum text/tap and theme questions, since no doc states them).
+- 2026-11-12 S1 on branch `ccr-e4e66c33-7nff0t`, draft PR #2. Taste board ([Lab look](https://claude.ai/artifact/8tCyT6ng1CGE4dkkCo9NCR)): Morgan kept A Control room, 13 px text, 44 px taps, light and dark. `docs/UI_STYLE.md` and D-014 written.
+- 2026-11-12 Whole-Lab mock-up `mockups/lab.html`, published as [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF) (published copy adds 3 screenshots). Fact check (37 facts), lint 0 warnings, one fresh check (12 findings, all fixed).
 
 ## Next
 
-1. Wait for Morgan's "taste done", read collection `taste` with one `ArtifactData` list, then write `docs/UI_STYLE.md` from the picked look (`ui-style` "Write the style"; tokens copied from the board's sample code in the scratchpad build, which a new session must redraw from the published page via `Artifact` read). Then `ui-mockups` for the whole Lab layout (Live, Fixed test, Tables, Integer vs float, Net, Replay); Morgan approves before code. Run S1's checks to see them fail first.
+1. Morgan answers Approve / Change / Rethink on the Lab mock-up. On Approve: put its link in the spec's S1 section, then build S1 per the spec: write the checks first and see them fail (VER-10), then code; `npm run check` timed and its budget in AGENTS.md.
 2. After S1, publish `dist/lab.html` as an Artifact and record its URL here.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
 ## Open questions
 
-- None.
+- Raise before S6 (found computing the mock-up, throwaway script from the spec): with Kp 1 and ±0.005 m noise, valve travel is about 10 to 11 per fixed-test segment for both PIs, mostly noise, so D-011's travel clause mostly measures noise amplification. Also the retuned PI is worse than the fixed one on `1.00→1.75` (11.79 against 9.74 m·s).
 
 ## Decisions since the last plan update
 
+- 2026-11-12 D-014 Lab look: Control room.
 - 2026-11-12 D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
 - 2026-11-12 D-001 harness; D-002 concept; D-003 round 1; D-004 plan approved; D-005 platforms; D-006 number spec; D-007 accuracy; D-008 training; D-009 Lab pass mark; D-010 files and licence.

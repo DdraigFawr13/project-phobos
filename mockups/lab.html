@@ -1,0 +1,255 @@
+<title>Phobos Lab Mock-up</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: page column of notes, each Lab panel in a 400 px phone frame (docs/UI_STYLE.md). Tokens copied from UI_STYLE.md Tokens. */
+:root {
+  --bg: #dfe2e4; --panel: #eef0f1; --ink: #22292e; --muted: #56616a; --line: #c9ced2; --edge: #b9c0c5; --control: #8e989f;
+  --level: #2b5d8a; --water: #9fb6cc; --valve: #7a858d; --net: #6b4f8a; --dist: #e7c79f; --alert: #8a4f12;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif; --mono: "IBM Plex Mono", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1b2024; --panel: #242a2f; --ink: #e3e7ea; --muted: #9aa5ad; --line: #343c42; --edge: #3f484f; --control: #6c7780;
+  --level: #7fb0dc; --water: #3d5f7f; --valve: #808b93; --net: #b39ddb; --dist: #5a4630; --alert: #e0a35c; color-scheme: dark } }
+:root[data-theme="dark"], .frame.dark {
+  --bg: #1b2024; --panel: #242a2f; --ink: #e3e7ea; --muted: #9aa5ad; --line: #343c42; --edge: #3f484f; --control: #6c7780;
+  --level: #7fb0dc; --water: #3d5f7f; --valve: #808b93; --net: #b39ddb; --dist: #5a4630; --alert: #e0a35c; color-scheme: dark }
+.frame.light {
+  --bg: #dfe2e4; --panel: #eef0f1; --ink: #22292e; --muted: #56616a; --line: #c9ced2; --edge: #b9c0c5; --control: #8e989f;
+  --level: #2b5d8a; --water: #9fb6cc; --valve: #7a858d; --net: #6b4f8a; --dist: #e7c79f; --alert: #8a4f12; color-scheme: light }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 var(--sans); margin: 0; }
+.page { max-width: 760px; margin: 0 auto; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+.page > * { min-width: 0; }
+h1 { font: 600 24px var(--cond); margin: 0; text-wrap: balance; }
+h2 { font: 600 20px var(--cond); margin: 12px 0 0; text-wrap: balance; }
+p { margin: 0; max-width: 65ch; }
+.note { color: var(--muted); font-size: 13px; }
+code { font: inherit; font-family: var(--mono); }
+.scroll { overflow-x: auto; }
+.frames { display: flex; gap: 16px; align-items: flex-start; width: max-content; }
+.frame { width: 400px; box-sizing: border-box; background: var(--bg); color: var(--ink); border: 1px solid var(--edge); padding: 12px 16px 16px; display: grid; gap: 12px; font-variant-numeric: tabular-nums; }
+.cap { font-size: 13px; color: var(--muted); width: 400px; }
+.lhead { display: flex; justify-content: space-between; align-items: baseline; }
+.lhead b { font: 600 18px var(--cond); }
+.chip { font: 500 13px var(--mono); color: var(--muted); }
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.tab { min-height: 44px; font: 600 13px var(--sans); background: var(--panel); color: var(--ink); border: 1px solid var(--control); border-radius: 3px; }
+.tab[aria-current="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.reads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.rd { background: var(--panel); border: 1px solid var(--line); padding: 6px 8px; display: grid; }
+.rd small { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.rd b { font: 500 20px var(--mono); }
+.rd.lvl b { color: var(--level); } .rd.net b { color: var(--net); }
+canvas { width: 100%; display: block; }
+.ctl { display: grid; gap: 4px; }
+.ctl label { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; }
+.ctl label span { font: 500 13px var(--mono); color: var(--ink); }
+input[type=range] { width: 100%; min-height: 44px; margin: 0; accent-color: var(--level); }
+.btn { min-height: 44px; padding: 0 16px; font: 600 15px var(--sans); background: var(--panel); color: var(--ink); border: 1px solid var(--control); border-radius: 3px; }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.btn:disabled { color: var(--muted); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+.status.alert { color: var(--alert); }
+table { color: inherit; border-collapse: collapse; width: 100%; font-size: 13px; }
+th { text-align: left; font-weight: 600; color: var(--muted); padding: 4px 6px 4px 0; border-bottom: 1px solid var(--line); }
+td { padding: 6px 6px 6px 0; border-bottom: 1px solid var(--line); font-family: var(--mono); }
+td:first-child { font-family: var(--sans); }
+td.mono { font-family: var(--mono); }
+td.num, th.num { text-align: right; }
+.bars { display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 82px 1fr; gap: 6px; align-items: center; font-size: 13px; }
+.bar .nm { font-family: var(--mono); }
+.bar .pair { display: grid; gap: 2px; }
+.bar i { display: block; height: 14px; }
+.bar i.f { background: var(--valve); } .bar i.r { background: var(--ink); } .bar i.n { background: var(--net); }
+.bar .v { font: 500 13px var(--mono); display: flex; gap: 6px; align-items: center; }
+.key { display: flex; gap: 12px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.key i { display: inline-block; width: 12px; height: 12px; margin-right: 4px; vertical-align: -1px; }
+.pass { color: var(--ink); font-weight: 600; } .fail { color: var(--alert); font-weight: 600; }
+.empty { background: var(--panel); border: 1px dashed var(--control); padding: 16px; font-size: 13px; color: var(--muted); }
+.tanks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.heat { display: grid; grid-template-columns: repeat(16, 1fr); gap: 2px; }
+.heat i { aspect-ratio: 1; background: var(--line); }
+.verdict { font: 600 15px var(--sans); }
+.find { border-left: 3px solid var(--control); padding-left: 10px; display: grid; gap: 4px; }
+#check-record ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 13px; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--level); outline-offset: 2px; }
+</style>
+
+<div class="page">
+  <h1>Phobos Lab mock-up</h1>
+  <p>The whole Lab layout, in look A Control room (<code>docs/UI_STYLE.md</code>). S1 builds only the Live tab. The other five tabs are here so later slices fill in a layout you have already approved. Each frame is 400 px wide, the first target width; on a phone the row scrolls sideways. The controls are drawn, not wired: each frame shows one state, side by side.</p>
+  <p class="note">Charts and numbers are computed in this page or by a throwaway script written from the spec's plant, PI and test definitions (<code>docs/specs/first-usable.md</code> "Design"). They are measurements of that script, not of repo code, which does not exist yet. S2 to S4 replace them. Values that need a trained net (M3) show as "–".</p>
+
+  <h2>Live (S1)</h2>
+  <p>The spec's trace scenario: steady at 1.00 m, setpoint to 1.50 m at 60 s, disturbance 200 to 260 s, noise seed 1, 600 s of history.</p>
+  <div class="scroll"><div class="frames">
+    <div><div class="frame light" data-live="normal"></div><p class="cap">Normal. Light.</p></div>
+    <div><div class="frame dark" data-live="dist"></div><p class="cap">Disturbance on (alert state). Dark.</p></div>
+    <div><div class="frame light" data-live="start"></div><p class="cap">Just opened: history starts empty and fills at 10× real time.</p></div>
+  </div></div>
+
+  <h2>Fixed test (S2)</h2>
+  <p>Training set, IAE in m·s, mean over noise seeds 1 to 5. Valve travel is beside each pair.</p>
+  <div class="scroll"><div class="frames">
+    <div><div class="frame light" id="ft-empty"></div><p class="cap">Before the run.</p></div>
+    <div><div class="frame light" id="ft-busy"></div><p class="cap">Running.</p></div>
+    <div><div class="frame light" id="ft-done"></div><p class="cap">Done. Numbers from the throwaway script.</p></div>
+  </div></div>
+  <div class="find"><b>Found while computing these:</b>
+    <p>On <code>1.00→1.75</code> the retuned PI is worse than the fixed one (11.79 against 9.74 m·s). Retuning raises Ti there, which slows the integral. Total: fixed 50.94, retuned 47.58 m·s. The spec's J2 assertions still hold: <code>0.50→0.25</code> retuned 2.28 &lt; 0.8 × 4.11, <code>dist@1.00</code> equal, noise changes IAE by at most 0.08 m·s.</p>
+    <p>Valve travel is about 10.2 to 11.0 per segment for both PIs. With Kp = 1, ±0.005 m of sensor noise moves the valve every 0.1 s step, so noise makes up most of that travel. D-011's "valve travel at most 2× the fixed PI's" will mostly measure how much the net amplifies noise. This is not a problem for S1. I'll raise it again before S6.</p>
+  </div>
+
+  <h2>Tables (S3) and Integer vs float (S4)</h2>
+  <div class="scroll"><div class="frames">
+    <div><div class="frame light" id="tables"></div><p class="cap">Tables: tanh and exp, 1,025 entries each.</p></div>
+    <div><div class="frame light" id="ivf"></div><p class="cap">Integer vs float, test net (seed 7), 1,000 check states.</p></div>
+    <div><div class="frame dark" id="ivf-fail"></div><p class="cap">Alert state: a row over its bound. 1.40% is a made-up example to show the state. Dark.</p></div>
+  </div></div>
+
+  <h2>Net and Replay (M3)</h2>
+  <p>Without <code>models/lab/</code> these two tabs are hidden (spec "Lab"). Values need a trained net, so they show "–".</p>
+  <div class="scroll"><div class="frames">
+    <div><div class="frame light" id="net"></div><p class="cap">Net on: two tanks side by side, same setpoint.</p></div>
+    <div><div class="frame light" id="replay"></div><p class="cap">Replay and verdict.</p></div>
+    <div><div class="frame light" id="nomodel"></div><p class="cap">Built without models/lab/: four tabs.</p></div>
+  </div></div>
+
+  <section id="check-record"><h2>Check record</h2>
+  <p class="note">Written 2026-11-12 after the fact check and one fresh check.</p>
+  <ul>
+   <li>Files checked: <code>docs/specs/first-usable.md</code>, <code>docs/DECISIONS.md</code>, <code>docs/UI_STYLE.md</code>, <code>.claude/skills/ui-style/references/avoid.md</code>.</li>
+   <li>Facts checked: <span id="fact-count">37</span>, listed below with their source lines.</li>
+   <li>Numbers on the Fixed test, Tables and Integer vs float tabs: measured by a throwaway Node script written from the spec (not repo code), 2026-11-12. S2 to S4 recompute them with tests.</li>
+   <li>Lint: <code>mockup-lint: 0 warnings</code> (<code>--min-text 13</code>). Also measured in Playwright at 1400 px, light and dark: no text under 13 px, no control under 44 px tall, no console errors.</li>
+   <li>Width shown: 400 px frames (the only target width). Screenshots: 3 at 2×, normal state (Live, Fixed test, Integer vs float), embedded in the published copy only.</li>
+   <li>Fresh check: one <code>reviewer</code> agent, 63,889 tokens, 8 tool calls; 12 findings, all verified and fixed. Cost estimated at about $0.30 to $1 (not measured).</li>
+   <li>Running agent cost for this mock-up: the one fresh check above.</li>
+  </ul>
+  <h3 style="margin:8px 0 0;font:600 15px var(--cond)">Fixes made</h3><ul><li>Tables: added exp beside tanh, float curves, error as % of range (spec:214); error now measured against round(4096·f) as the S3 test defines.</li><li>Integer vs float: added the Lab-shaped net's integer valve over its float valve with the agreement % (spec:228).</li><li>Removed an invented behaviour (the live tank pausing during the fixed test) and a promised 'worst check state' list.</li><li>Replay: added the held-out tank the text promised; verdict now has a valve-travel table (fresh check, J5 and D-011).</li><li>Net: two tanks side by side and a status line under the toggle (fresh check, J4, UI_STYLE Controls); heat map now 97 cells.</li><li>Fixed test: total IAE moved out of the travel table; totals computed in the page; units on bar values.</li><li>Colour: pass marks and integer curves moved from the level blue to ink (Project Avoid item).</li><li>Tab renamed 'Integer vs float'; code font set to Plex Mono; valve range 0.60 to 0.69; failing-row example labelled as made up.</li><li>Table colour in dark: tables did not inherit colour without a doctype; set color: inherit.</li><li>Chart labels: '500 600 s' and legend collisions on the taste board fixed before the mock-up.</li></ul>
+  <h3 style="margin:8px 0 0;font:600 15px var(--cond)">Facts and sources</h3><ul class="facts"><li>Slider 0.1 to 1.9 m, step 0.05 (spec:176)</li><li>Disturbance outflow k × 1.2 for 60 s (spec:120,176)</li><li>10× real time (spec:175)</li><li>600 s history (spec:174)</li><li>Area 1 m², level 0 to 2.0 m (chart axis) (spec:117)</li><li>k 0.05, inflow 0.1 × valve (spec:118)</li><li>dt 0.1 s (spec:119)</li><li>Noise ±0.005 m (spec:121)</li><li>Fixed PI Kp 1, Ti 40 s (spec:15)</li><li>Steady valve 0.5·√h (0.50 at 1.00 m) (spec:123)</li><li>Trace: steady 1.0 m, setpoint 1.5 m at 60 s, disturbance 200 to 260 s, seed 1 (spec:195)</li><li>Training segment names (5) (spec:131)</li><li>Held-out segment names (5) (spec:132)</li><li>Noise seeds 1 to 5 (spec:131)</li><li>Segments 300 s (spec:129)</li><li>Retuned Ti 40·√target (spec:135)</li><li>Valve travel beside IAE (spec:134)</li><li>Bars with numbers printed (spec:47)</li><li>tanh and exp tables, 1,025 entries (spec:109-110)</li><li>Tables drawn over float, error in LSB and % (spec:214)</li><li>2 LSB bound vs round(4096·f(x/4096)) (spec:222)</li><li>Output ranges 8,192 and 4,096 LSB (spec:17)</li><li>1% per layer (spec:24)</li><li>≥ 99% agreement, valve within 0.01 (spec:24,229)</li><li>1,000 check states (spec:138,209)</li><li>Test net seed 7, 4→16 tanh, 16→5, action 4 masked (spec:149)</li><li>Lab-shaped net seed 8 (spec:149)</li><li>Lab net 4→16→1, 97 parameters (spec:147)</li><li>Two tanks side by side, heat map (spec:59)</li><li>Net on resets net tank to the PI tank's level (spec:177)</li><li>20 snapshots (10 copy + 10 ES) (spec:168)</li><li>Replay: loss in copy, IAE in ES; held-out tank (spec:65)</li><li>Verdict: IAE and travel, net/fixed/retuned, yes/no (spec:65,170)</li><li>D-011 rule text (DECISIONS D-011)</li><li>Net and Replay hidden without models/lab/ (spec:179)</li><li>Tab names Live, Fixed test, Tables, Integer vs float, Net, Replay (spec:203)</li><li>Minimum text 13 px, tap 44 px, light and dark (UI_STYLE.md, D-014)</li></ul>
+</section>
+</div>
+
+<script>
+/* Spec plant and PI ("Design" > Plant, PI, RNG): A 1 m², k 0.05, inflow 0.1 × valve, dt 0.1 s, fixed Kp 1, Ti 40 s. */
+function rngOf(seed) { let x = (seed >>> 0) || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 2 ** 32; }; }
+function trace(opts) {
+  const k = 0.05, dt = 0.1, rng = rngOf(opts.seed || 1); let h = opts.h0 ?? 1.0, I = 0.5 * Math.sqrt(h); const out = [];
+  for (let n = 0; n <= opts.until * 10; n++) {
+    const t = n * dt, sp = t < 60 ? 1.0 : 1.5, m = h + rng() * 0.01 - 0.005, e = sp - m, u = e + I, v = Math.min(1, Math.max(0, u));
+    if (u >= 0 && u <= 1) I += (1 / 40) * e * dt;
+    if (n % 10 === 0) out.push({ t, h, sp, v });
+    const kk = t >= 200 && t < 260 ? k * 1.2 : k;
+    h = Math.min(2, Math.max(0, h + (0.1 * v - kk * Math.sqrt(Math.max(h, 0))) * dt));
+  }
+  return out;
+}
+const tok = (el, n) => getComputedStyle(el).getPropertyValue(n).trim();
+function chart(c, data, o = {}) {
+  const dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.height = 200 * dpr; c.width = W * dpr; c.style.height = "200px";
+  const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n);
+  g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 200);
+  const x0 = 72, x1 = W - 8, y0 = 8, y1 = 178, X = t => x0 + (x1 - x0) * t / 600, Y = m => y1 - (y1 - y0) * m / 2;
+  g.font = "13px 'IBM Plex Mono', monospace"; g.textBaseline = "middle";
+  if (o.dist) { g.fillStyle = T("--dist"); g.fillRect(X(200), y0, X(Math.min(260, data.at(-1).t)) - X(200), y1 - y0); }
+  g.strokeStyle = T("--line"); g.lineWidth = 1;
+  for (let m = 0; m <= 2; m += 0.5) { g.beginPath(); g.moveTo(x0, Y(m)); g.lineTo(x1, Y(m)); g.stroke(); g.fillStyle = T("--muted"); g.textAlign = "right"; g.fillText(m.toFixed(1), x0 - 4, Y(m)); }
+  for (let t = 0; t <= 600; t += 200) { g.beginPath(); g.moveTo(X(t), y0); g.lineTo(X(t), y1); g.stroke(); if (t < 600) { g.fillStyle = T("--muted"); g.textAlign = t ? "center" : "left"; g.fillText(String(t), X(t), y1 + 12); } }
+  g.textAlign = "right"; g.fillStyle = T("--muted"); g.fillText("t, s", x1, y1 + 12);
+  const line = (f, col, w, dash) => { g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash || []); g.beginPath(); data.forEach((p, i) => { const x = X(p.t), y = Y(f(p)); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); g.setLineDash([]); };
+  if (data.length > 1) { line(p => p.v * 2, T("--valve"), 1.5); line(p => p.sp, T("--ink"), 1.5, [5, 4]); line(p => p.h, T("--level"), 2.25); if (o.net) line(p => p.h, T("--net"), 2.25, [2, 3]); }
+  const last = data.at(-1), tank = (tx, tw, h, fill) => { g.fillStyle = fill; g.fillRect(tx, Y(h), tw, y1 - Y(h));
+    g.strokeStyle = T("--ink"); g.lineWidth = 2; g.strokeRect(tx, y0, tw, y1 - y0);
+    g.setLineDash([4, 3]); g.beginPath(); g.moveTo(tx - 2, Y(last.sp)); g.lineTo(tx + tw + 2, Y(last.sp)); g.stroke(); g.setLineDash([]); };
+  if (o.two) { tank(4, 16, last.h, T("--water")); tank(26, 16, last.h, T("--net")); } else tank(4, 36, last.h, T("--water"));
+  g.textAlign = "left"; g.fillStyle = T("--muted"); g.fillText("m", 4, y1 + 12);
+}
+const head = (chip, cur, tabs = ["Live", "Fixed test", "Tables", "Integer vs float", "Net", "Replay"]) => `<div class="lhead"><b>Phobos Lab</b><span class="chip">${chip}</span></div>
+  <div class="tabs" role="tablist">${tabs.map(t => `<button class="tab" type="button" aria-current="${t === cur}">${t}</button>`).join("")}</div>`;
+const key = `<div class="key"><span><i style="background:var(--level)"></i>level</span><span><i style="background:var(--ink)"></i>setpoint (dashed)</span><span><i style="background:var(--valve)"></i>valve × 2</span></div>`;
+/* Live frames */
+document.querySelectorAll("[data-live]").forEach((f, i) => {
+  const st = f.dataset.live, d = trace({ until: st === "start" ? 0.1 : st === "dist" ? 230 : 600 }), last = d.at(-1), on = st === "dist";
+  f.innerHTML = head(st === "start" ? "t 0 s · 10×" : `t ${Math.round(last.t)} s · 10×`, "Live") + `
+    <div class="reads"><div class="rd lvl"><small>Level</small><b>${last.h.toFixed(2)} m</b></div><div class="rd"><small>Setpoint</small><b>${last.sp.toFixed(2)} m</b></div><div class="rd"><small>Valve</small><b>${last.v.toFixed(2)}</b></div></div>
+    <canvas aria-label="Level, setpoint and valve, last 600 s"></canvas>${key}
+    <div class="ctl"><label for="sp${i}">Setpoint <span>${last.sp.toFixed(2)} m</span></label><input id="sp${i}" type="range" min="0.1" max="1.9" step="0.05" value="${last.sp}"></div>
+    <div class="row"><button class="btn" type="button" aria-pressed="${on}">Disturbance</button></div>
+    <p class="status${on ? " alert" : ""}">${on ? "Disturbance on for 60 s: outflow × 1.2. 30 s left." : st === "start" ? "Fixed PI holding 1.00 m. Drag the setpoint or tap Disturbance." : "Fixed PI. Disturbance ended at 260 s."}</p>`;
+  requestAnimationFrame(() => chart(f.querySelector("canvas"), d, { dist: st !== "start" && last.t >= 200 }));
+});
+/* Fixed test: numbers from specsim.mjs (throwaway, scratchpad), see check record */
+const SEG = [["0.50→0.25", 4.11, 2.28, 10.44, 10.42], ["0.25→1.00", 10.00, 10.00, 11.04, 11.04], ["1.00→1.75", 9.74, 11.79, 10.54, 10.55], ["1.75→0.50", 21.53, 17.95, 10.55, 10.53], ["dist@1.00", 5.56, 5.56, 10.20, 10.20]];
+const ftHead = (btn, dis) => head("t 42 s · 10×", "Fixed test") + `<div class="row"><button class="btn" type="button"${dis ? " disabled" : ""}>${btn}</button><span class="note">5 segments × 5 seeds, 300 s each</span></div>`;
+document.getElementById("ft-empty").innerHTML = ftHead("Run fixed test") + `<div class="empty">Runs the training set under the fixed PI (Ti 40 s) and the retuned PI (Ti 40·√target), and shows IAE per segment.</div>`;
+document.getElementById("ft-busy").innerHTML = ftHead("Running…", true) + `<p class="status">Segment 3 of 5: 1.00→1.75, seed 2.</p>`;
+const max = 30, sum = k => SEG.reduce((a, s) => a + s[k], 0).toFixed(2);
+document.getElementById("ft-done").innerHTML = ftHead("Run again") + `<div class="key"><span><i style="background:var(--valve)"></i>fixed PI</span><span><i style="background:var(--ink)"></i>retuned PI</span></div>
+  <div class="bars">${SEG.map(([n, f, r, tf, tr]) => `<div class="bar"><span class="nm">${n}</span><div class="pair">
+    <div class="v"><i class="f" style="width:${100 * f / max}%"></i>${f.toFixed(2)} m·s</div><div class="v"><i class="r" style="width:${100 * r / max}%"></i>${r.toFixed(2)} m·s</div></div></div>`).join("")}</div>
+  <table><tr><th>Segment</th><th class="num">Travel fixed</th><th class="num">Travel retuned</th></tr>${SEG.map(s => `<tr><td>${s[0]}</td><td class="num">${s[3].toFixed(2)}</td><td class="num">${s[4].toFixed(2)}</td></tr>`).join("")}
+  <tr><td><b>Total travel</b></td><td class="num">${sum(3)}</td><td class="num">${sum(4)}</td></tr></table>
+  <p class="status">Total IAE: fixed ${sum(1)} m·s, retuned ${sum(2)} m·s.</p>`;
+/* Tables and Integer vs float: from specsim.mjs */
+document.getElementById("tables").innerHTML = head("t 42 s · 10×", "Tables") + `<canvas aria-label="tanh and exp from the integer tables over the float curves"></canvas><div class="key"><span><i style="background:var(--ink)"></i>integer table</span><span><i style="background:var(--muted)"></i>float (dashed)</span></div>
+  <table><tr><th>Index i</th><th class="num">tanh entry</th><th class="num">exp entry</th></tr>
+  ${[[0, 0, 4096], [128, 3119, 1507], [256, 3949, 554], [512, 4093, 75], [1024, 4096, 1]].map(r => `<tr><td class="mono">${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td></tr>`).join("")}</table>
+  <table><tr><th>Max error, every int16 input</th><th class="num">LSB</th><th class="num">% range</th><th></th></tr>
+  <tr><td>tanhQ</td><td class="num">1</td><td class="num">0.012%</td><td class="pass">pass</td></tr>
+  <tr><td>expQ</td><td class="num">1</td><td class="num">0.024%</td><td class="pass">pass</td></tr></table>
+  <p class="status">Against round(4096 × f(x / 4096)). Bound 2 LSB (J3).</p>`;
+requestAnimationFrame(() => { const c = document.querySelector("#tables canvas"), dpr = devicePixelRatio || 1, W = c.clientWidth; c.width = W * dpr; c.height = 160 * dpr; c.style.height = "160px";
+  const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n); g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 160);
+  const X = x => 8 + (W - 16) * (x + 8) / 16, Y = y => 80 - 66 * y; g.strokeStyle = T("--line"); g.beginPath(); g.moveTo(8, 80); g.lineTo(W - 8, 80); g.moveTo(X(0), 8); g.lineTo(X(0), 152); g.stroke();
+  const curve = (f, col, w, dash) => { g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash || []); g.beginPath(); for (let x = -8; x <= 8.001; x += 0.05) { const y = f(x); x === -8 ? g.moveTo(X(x), Y(y)) : g.lineTo(X(x), Y(y)); } g.stroke(); g.setLineDash([]); };
+  curve(x => Math.round(4096 * Math.tanh(x)) / 4096, T("--ink"), 3); curve(x => Math.tanh(x), T("--muted"), 1.25, [4, 3]);
+  curve(x => x <= 0 ? Math.round(4096 * Math.exp(x)) / 4096 : 1, T("--ink"), 3); curve(x => Math.exp(Math.min(0, x)), T("--muted"), 1.25, [4, 3]);
+  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "left"; g.fillText("tanh", X(3), Y(1) + 12); g.fillText("exp", X(-6), Y(0) - 12); g.textAlign = "right"; g.fillText("+8", W - 10, 92); g.textAlign = "left"; g.fillText("−8", 10, 92); });
+const ivf = (rows) => head("t 42 s · 10×", "Integer vs float") + `<table><tr><th>Check</th><th class="num">Result</th><th class="num">Bound</th><th></th></tr>${rows}</table>`;
+document.getElementById("ivf").innerHTML = ivf(`
+  <tr><td>Layer 1, 4→16 tanh</td><td class="num">0.028%</td><td class="num">1%</td><td class="pass">pass</td></tr>
+  <tr><td>Layer 2, 16→5</td><td class="num">0.007%</td><td class="num">1%</td><td class="pass">pass</td></tr>
+  <tr><td>Same masked action</td><td class="num">100.0%</td><td class="num">≥ 99%</td><td class="pass">pass</td></tr>
+  <tr><td>Lab-shaped net (seed 8), valve within 0.01</td><td class="num">100.0%</td><td class="num">≥ 99%</td><td class="pass">pass</td></tr>`) + `<canvas aria-label="Lab-shaped net valve, integer over float, check states"></canvas>
+  <div class="key"><span><i style="background:var(--ink)"></i>integer valve</span><span><i style="background:var(--muted)"></i>float valve (dashed)</span></div>
+  <p class="status">Test-net rows: largest error over 1,000 check states, as a share of each layer's output range. The seed 8 net is random, not trained, so its valve stays between 0.60 and 0.69.</p>`;
+const LABNET = [[0.6572,0.6574],[0.6539,0.6541],[0.6533,0.6532],[0.6527,0.6529],[0.6526,0.6528],[0.6525,0.6528],[0.653,0.6531],[0.6531,0.6532],[0.6528,0.653],[0.6532,0.6533],[0.6533,0.6534],[0.6533,0.6534],[0.6532,0.6535],[0.6533,0.6536],[0.6533,0.6535],[0.6533,0.6536],[0.6534,0.6536],[0.6537,0.6537],[0.6536,0.6536],[0.6534,0.6537],[0.6534,0.6536],[0.6534,0.6536],[0.6534,0.6537],[0.6533,0.6536],[0.6534,0.6536],[0.6537,0.6538],[0.6537,0.6538],[0.6536,0.6537],[0.6534,0.6536],[0.6536,0.6537],[0.6534,0.6536],[0.6536,0.6536],[0.6537,0.6538],[0.6534,0.6537],[0.6537,0.6538],[0.6534,0.6537],[0.6534,0.6537],[0.6537,0.6538],[0.6537,0.6538],[0.6537,0.6538],[0.6315,0.6317],[0.6248,0.6248],[0.6252,0.6253],[0.626,0.6261],[0.6262,0.6265],[0.6265,0.6267],[0.6268,0.627],[0.6268,0.627],[0.6267,0.6268],[0.6267,0.627],[0.627,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6268,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6268,0.627],[0.6271,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6267,0.6269],[0.6266,0.6269],[0.6267,0.6269],[0.6267,0.6269],[0.6266,0.6268],[0.6271,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6266,0.6268],[0.6267,0.6269],[0.6266,0.6268],[0.6265,0.6268],[0.627,0.627],[0.6267,0.6269],[0.6268,0.627],[0.6268,0.6269],[0.6267,0.6269],[0.627,0.6271],[0.6268,0.627],[0.6268,0.627],[0.6031,0.6033],[0.6058,0.606],[0.6108,0.611],[0.6139,0.6141],[0.6156,0.6157],[0.6162,0.6164],[0.6169,0.6172],[0.6172,0.6174],[0.6171,0.6172],[0.6174,0.6176],[0.6176,0.6178],[0.6174,0.6177],[0.6176,0.6178],[0.6177,0.6178],[0.6174,0.6177],[0.6176,0.6178],[0.6176,0.6178],[0.6177,0.6179],[0.6176,0.6178],[0.6176,0.6178],[0.6176,0.6177],[0.6173,0.6176],[0.6176,0.6177],[0.6174,0.6177],[0.6174,0.6176],[0.6177,0.6179],[0.6177,0.6179],[0.6176,0.6178],[0.6173,0.6175],[0.6174,0.6177],[0.6173,0.6175],[0.6173,0.6176],[0.6177,0.6178],[0.6176,0.6177],[0.6177,0.6178],[0.6174,0.6177],[0.6176,0.6177],[0.6177,0.6179],[0.6177,0.6179],[0.6176,0.6178],[0.6826,0.6827],[0.6646,0.6647],[0.6515,0.6517],[0.6455,0.6457],[0.6431,0.6432],[0.642,0.6422],[0.6418,0.6421],[0.6418,0.6421],[0.6416,0.6418],[0.6418,0.6421],[0.6421,0.6423],[0.6421,0.6422],[0.6421,0.6424],[0.6422,0.6425],[0.6423,0.6425],[0.6423,0.6425],[0.6423,0.6426],[0.6425,0.6427],[0.6423,0.6427],[0.6423,0.6427],[0.6425,0.6426],[0.6425,0.6426],[0.6426,0.6427],[0.6425,0.6426],[0.6423,0.6426],[0.6427,0.6429],[0.6427,0.6428],[0.6427,0.6428],[0.6423,0.6426],[0.6426,0.6427],[0.6425,0.6426],[0.6426,0.6427],[0.6427,0.6428],[0.6426,0.6428],[0.6427,0.6428],[0.6426,0.6427],[0.6426,0.6427],[0.6428,0.6429],[0.6428,0.6429],[0.6427,0.6429],[0.6265,0.6268],[0.6267,0.6269],[0.627,0.6271],[0.6268,0.627],[0.6268,0.6269],[0.6266,0.6268],[0.627,0.6271],[0.6268,0.627],[0.6265,0.6268],[0.6251,0.6254],[0.6245,0.6248],[0.6243,0.6244],[0.6241,0.6243],[0.6241,0.6242],[0.624,0.6241],[0.6239,0.6241],[0.624,0.6241],[0.6256,0.6257],[0.6262,0.6264],[0.6265,0.6268],[0.6267,0.6268],[0.6267,0.6268],[0.627,0.6269],[0.6267,0.6269],[0.6267,0.6268],[0.627,0.6271],[0.627,0.627],[0.627,0.627],[0.6266,0.6268],[0.6268,0.6269],[0.6266,0.6268],[0.6266,0.6268],[0.6268,0.627],[0.6267,0.6269],[0.6268,0.627],[0.6267,0.6269],[0.6267,0.6269],[0.6268,0.6271],[0.6268,0.627],[0.6268,0.627]];
+requestAnimationFrame(() => { const c = document.querySelector("#ivf canvas"), dpr = devicePixelRatio || 1, W = c.clientWidth; c.width = W * dpr; c.height = 120 * dpr; c.style.height = "120px";
+  const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n); g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 120);
+  const X = i => 40 + (W - 48) * i / (LABNET.length - 1), Y = v => 108 - 100 * (v - 0.6) / 0.1;
+  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "right"; g.fillText("0.70", 36, Y(0.7)); g.fillText("0.60", 36, Y(0.6));
+  [[0, T("--ink"), 3, []], [1, T("--muted"), 1.25, [4, 3]]].forEach(([k, col, w, dash]) => { g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath(); LABNET.forEach((p, i) => i ? g.lineTo(X(i), Y(p[k])) : g.moveTo(X(i), Y(p[k]))); g.stroke(); }); g.setLineDash([]); });
+document.getElementById("ivf-fail").innerHTML = ivf(`
+  <tr><td>Layer 1, 4→16 tanh</td><td class="num">1.40%</td><td class="num">1%</td><td class="fail">over</td></tr>
+  <tr><td>Layer 2, 16→5</td><td class="num">0.007%</td><td class="num">1%</td><td class="pass">pass</td></tr>`) + `<p class="status alert">Layer 1 is over its 1% bound. CI fails on this too (J3).</p>`;
+/* Net and Replay: shape only */
+document.getElementById("net").innerHTML = head("t 300 s · 10×", "Net") + `
+  <div class="reads"><div class="rd lvl"><small>PI level</small><b>– m</b></div><div class="rd net"><small>Net level</small><b>– m</b></div><div class="rd"><small>Setpoint</small><b>1.00 m</b></div></div>
+  <canvas aria-label="PI tank and net tank"></canvas>
+  <div class="key"><span><i style="background:var(--water)"></i>PI tank (left)</span><span><i style="background:var(--net)"></i>net tank (right, dotted line)</span></div>
+  <div class="row"><button class="btn" type="button" aria-pressed="true">Net on</button><button class="btn" type="button">Disturbance</button></div>
+  <p class="status">Net on: net tank reset to steady state at the PI tank's level.</p>
+  <p class="note">Weights heat map, 97 values. Layer 1: 4 weight rows and a bias row (16 each). Layer 2: 16 weights and 1 bias. Cell colours for sign and size are picked when S5 builds it.</p><div class="heat">${"<i></i>".repeat(97)}</div>`;
+requestAnimationFrame(() => chart(document.querySelector("#net canvas"), [{ t: 0, h: 1, sp: 1, v: .5 }], { two: true }));
+const HELD = ["0.75→0.15", "0.15→1.40", "1.40→1.90", "1.90→0.75", "dist@0.35"];
+document.getElementById("replay").innerHTML = head("t 42 s · 10×", "Replay") + `
+  <canvas aria-label="Training curve"></canvas>
+  <div class="ctl"><label for="snap">Snapshot <span>– of 20</span></label><input id="snap" type="range" min="0" max="19" step="1" value="0"></div>
+  <p class="note">Copy phase: loss. ES phase: training-set IAE. The tank below plays the held-out test with the chosen snapshot.</p><canvas id="replay-tank" aria-label="Held-out test with the chosen snapshot"></canvas>
+  <h3 style="margin:0;font:600 15px var(--cond)">Verdict, final weights, held-out set</h3>
+  <table><tr><th>IAE, m·s</th><th class="num">Net</th><th class="num">Fixed</th><th class="num">Retuned</th></tr>${HELD.map(n => `<tr><td>${n}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`).join("")}
+  <tr><td><b>Total IAE</b></td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr></table>
+  <table><tr><th>Valve travel</th><th class="num">Net</th><th class="num">Fixed</th><th class="num">Retuned</th></tr>${HELD.map(n => `<tr><td>${n}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`).join("")}
+  <tr><td><b>Total travel</b></td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr></table>
+  <p class="verdict">Beats the fixed PI: –</p><p class="note">Rule D-011: lower total held-out IAE, no segment more than 5% worse, valve travel at most 2× the fixed PI's.</p>`;
+requestAnimationFrame(() => chart(document.getElementById("replay-tank"), [{ t: 0, h: 0.75, sp: 0.15, v: 0 }], {}));
+requestAnimationFrame(() => { const c = document.querySelector("#replay canvas"), dpr = devicePixelRatio || 1, W = c.clientWidth; c.width = W * dpr; c.height = 120 * dpr; c.style.height = "120px";
+  const g = c.getContext("2d"); g.scale(dpr, dpr); const T = n => tok(c, n); g.fillStyle = T("--panel"); g.fillRect(0, 0, W, 120);
+  g.strokeStyle = T("--line"); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(W / 2, 8); g.lineTo(W / 2, 112); g.stroke(); g.setLineDash([]);
+  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = T("--muted"); g.textBaseline = "middle"; g.textAlign = "center"; g.fillText("copy: loss", W / 4, 60); g.fillText("ES: IAE", 3 * W / 4, 60); });
+document.getElementById("nomodel").innerHTML = head("t 42 s · 10×", "Live", ["Live", "Fixed test", "Tables", "Integer vs float"]) + `<p class="note">Lab built without <code>models/lab/</code>: the Net and Replay tabs are left out, not greyed out. This is S1 to S4's Lab.</p>`;
+document.fonts && document.fonts.ready.then(() => { document.querySelectorAll("[data-live]").forEach(() => {}); });
+</script>
