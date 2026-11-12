@@ -22,14 +22,15 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan answers [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH) (collection `review1`: 13 findings + round 2 questions P1, N1, N2, T1-T3, L1, M1, X1, W1, V1) and says "review done". Read answers and notes, then a final page if few questions remain.
-2. After final approval: DECISIONS for each settled choice, then the phase 1 spec with `write-spec`.
+1. Morgan answers the [final page](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ) (collection `final`: Q1 Lab pass mark, Q2 how to watch training, `approval`) and says "final done".
+2. On approval: DECISIONS for the round 2 and final answers (D-004 on), HANDOFF phase = phase 1, then the phase 1 spec with `write-spec` from its step 3.
 
-Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS) (answered 2026-11-12, collection `round1`), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH).
+Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH) (all 13 findings agreed; round 2 answered 2026-11-12, collection `review1`), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ).
 
 ## Open questions
 
-- Round 2 (on the review page). Biggest: training method (none named in round 1), number spec (int16 sums overflow int32; JS shift floors, ST division truncates), v1 platforms (round 1 said phone only, but Node is needed).
+- Q1: Morgan agreed with finding 6 (Lab pass mark "close to PID") but answered L1 "Net must beat the PID". Recommended: beat a fixed-gain PID across the whole setpoint range, with outflow through a fixed opening.
+- Q2: Morgan wants to watch training (comment on finding 3). Recommended: Lab replays Node training runs; live phone training stays Later.
 
 ## Decisions since the last plan update
 
