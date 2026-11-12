@@ -1,0 +1,6 @@
+{
+  "version": "v4.14.2",
+  "layers": ["core", "stacks/node-web", "project-types/simulator"],
+  "exclude": [],
+  "overrides": []
+}
