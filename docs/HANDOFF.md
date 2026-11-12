@@ -4,7 +4,7 @@ Updated: 2026-11-12. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 built on branch `s3-numbers-tables`, draft PR awaiting Morgan's approval.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 built on branch `s3-numbers-tables`, draft PR #4 awaiting Morgan's approval.
 
 ## Plan map
 
@@ -13,7 +13,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ Brainstorm, bootstrap, planning interview, spec (PR #1, merged).
 - ✔ S1 Lab v0: tank and PI live (M1), PR #2.
 - ✔ S2 gap per level (M1), PR #3.
-- ▶ S3 numbers and tables (M2), draft PR.
+- ▶ S3 numbers and tables (M2), draft PR #4.
 - ○ S4 dense, mask and float reference (M2).
 - ○ S5 copy the PI, S6 evolution strategies, replay and verdict (M3).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
@@ -32,7 +32,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan reviews the S3 draft PR and the republished [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (Tables tab). On approval: merged state here, ready, auto-merge (GIT-08).
+1. Morgan reviews draft [PR #4](https://github.com/DdraigFawr13/project-phobos/pull/4) and the republished [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (Tables tab). On approval: merged state here, ready, auto-merge (GIT-08).
 2. Then a new session for S4 (dense, mask, float reference) per the spec.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
