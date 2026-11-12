@@ -4,7 +4,7 @@ Updated: 2026-11-12. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 built on branch `ccr-99f48d32-pgq719`, draft PR, waiting for Morgan's check.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). Next slice: S3.
 
 ## Plan map
 
@@ -12,8 +12,9 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 - ✔ Brainstorm, bootstrap, planning interview, spec (PR #1, merged).
 - ✔ S1 Lab v0: tank and PI live (M1), PR #2.
-- ▶ S2 gap per level (M1).
-- ○ S3 numbers and tables, S4 dense, mask and float reference (M2).
+- ✔ S2 gap per level (M1), PR #3.
+- ▶ S3 numbers and tables (M2).
+- ○ S4 dense, mask and float reference (M2).
 - ○ S5 copy the PI, S6 evolution strategies, replay and verdict (M3).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
@@ -26,12 +27,11 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-12 Mock-up approved; D-015 Accepted. S1 built: `src/rng.ts`, `src/sim/{plant,pi,live}.ts`, `src/lab/*`, `scripts/build-lab.ts`, tests (11, plus `e2e/lab-smoke.mjs`), golden `tests/golden/trace-seed1.json`, CI runs `npm run check` (1.2 s). Lab published: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb). Fresh code review: 11 findings, 6 acted on (RNG known value, disturbance counted in steps, tighter trace checks, pinned-shut PI and plant clamps tested, npm 10.9.9 in CI); tests now 14. `__lab.setNet`/`setSnapshot` are absent until M3 on purpose.
 - 2026-11-12 Morgan checked Lab on the phone ("it works great") and approved PR #2. Tabs stay hidden until built (UI_STYLE rule kept; Morgan asked how to reach other pages, answered that they arrive with S2 to S6).
 
-- 2026-11-12 S2 built: `src/sim/{fixed-test,net-inputs,check-states}.ts`, `scripts/fixed-test.ts` (`npm run fixed-test`), Lab tab row and Fixed test tab with teaching text, tests 28 (was 14), e2e compares the page's bars with Node's numbers. Repo numbers equal the mock-up's throwaway script: totals fixed 50.94, retuned 47.58 m·s. 6 planted bugs all caught (VER-10). Lab republished to the same link.
+- 2026-11-12 S2 built: `src/sim/{fixed-test,net-inputs,check-states}.ts`, `scripts/fixed-test.ts` (`npm run fixed-test`), Lab tab row and Fixed test tab with teaching text, tests 28 (was 14), e2e compares the page's bars with Node's numbers. Repo numbers equal the mock-up's throwaway script: totals fixed 50.94, retuned 47.58 m·s. 6 planted bugs all caught (VER-10). Lab republished to the same link. Morgan approved PR #3 on 2026-11-12 and asked for a new session for S3.
 
 ## Next
 
-1. Morgan opens [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb), taps Fixed test, Run fixed test, and approves or asks for changes on the S2 PR.
-2. After merge: new branch from `main`, build S3 (numbers and tables) per the spec. Write the checks first and see them fail (VER-10).
+1. New session, new branch from `main`: build S3 (numbers and tables) per the spec: `src/num/*`, `scripts/gen-tables.ts`, committed `src/num/tables.gen.ts`, `npm run gen-tables`, Tables tab from the approved mock-up with its teaching text (D-015), `docs/NUMBERS.md`, the `shr` exception in AGENTS.md. Write the checks first and see them fail (VER-10). Republish `dist/lab.html` to the [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) link.
 
 Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
