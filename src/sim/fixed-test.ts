@@ -15,7 +15,12 @@ export type Segment = {
 export const SEGMENT_S = 300;
 export const STEPS = Math.round(SEGMENT_S / TANK.dt); // 3,000
 
-const step = (a: number, b: number): Segment => ({ name: `${a.toFixed(2)}→${b.toFixed(2)}`, start: a, setpoint: b, disturb: null });
+const step = (a: number, b: number): Segment => ({
+  name: `${a.toFixed(2)}→${b.toFixed(2)}`,
+  start: a,
+  setpoint: b,
+  disturb: null,
+});
 const dist = (h: number): Segment => ({ name: `dist@${h.toFixed(2)}`, start: h, setpoint: h, disturb: [60, 120] });
 
 export const SEGMENTS = {
@@ -36,8 +41,10 @@ export const fixedPI = () => makePI(FIXED_PI.Kp, FIXED_PI.Ti);
 export function runSegment(seg: Segment, ctrl: Controller, seed: number, noise = true): Score {
   const plant = makePlant({ level: seg.start, rng: noise ? makeRng(seed) : undefined });
   ctrl.reset(seg.start, seg.setpoint);
-  const [d0, d1] = seg.disturb ? seg.disturb.map(s => Math.round(s / TANK.dt)) : [0, 0];
-  let iae = 0, travel = 0, prev = steadyValve(seg.start);
+  const [d0, d1] = seg.disturb ? seg.disturb.map((s) => Math.round(s / TANK.dt)) : [0, 0];
+  let iae = 0,
+    travel = 0,
+    prev = steadyValve(seg.start);
   for (let n = 0; n < STEPS; n++) {
     const valve = Math.min(1, Math.max(0, ctrl.step(plant.measure(), seg.setpoint)));
     travel += Math.abs(valve - prev);
@@ -57,11 +64,16 @@ export type Progress = { segment: number; run: number; name: string }; // 0-base
 
 /** The fixed test one run at a time: yields before each run (so Lab can show progress) and returns the result.
  *  Mean over seeds per segment; totals are sums over segments. Fixed and retuned see the same noise sequence. */
-export function* fixedTestRuns(segments: readonly Segment[], opts: { seeds?: readonly number[]; noise?: boolean } = {}): Generator<Progress, FixedTestResult> {
-  const seeds = opts.seeds ?? SEEDS.training, noise = opts.noise ?? true;
+export function* fixedTestRuns(
+  segments: readonly Segment[],
+  opts: { seeds?: readonly number[]; noise?: boolean } = {},
+): Generator<Progress, FixedTestResult> {
+  const seeds = opts.seeds ?? SEEDS.training,
+    noise = opts.noise ?? true;
   const rows: Row[] = [];
   for (const [i, seg] of segments.entries()) {
-    const fixed: Score[] = [], retuned: Score[] = [];
+    const fixed: Score[] = [],
+      retuned: Score[] = [];
     for (const [j, seed] of seeds.entries()) {
       yield { segment: i, run: j, name: seg.name };
       fixed.push(runSegment(seg, fixedPI(), seed, noise));
@@ -76,17 +88,25 @@ export function* fixedTestRuns(segments: readonly Segment[], opts: { seeds?: rea
   return { rows, total: { fixed: sum("fixed"), retuned: sum("retuned") } };
 }
 
-export function runFixedTest(segments: readonly Segment[], opts: { seeds?: readonly number[]; noise?: boolean } = {}): FixedTestResult {
+export function runFixedTest(
+  segments: readonly Segment[],
+  opts: { seeds?: readonly number[]; noise?: boolean } = {},
+): FixedTestResult {
   const g = fixedTestRuns(segments, opts);
-  for (;;) { const r = g.next(); if (r.done) return r.value; }
+  for (;;) {
+    const r = g.next();
+    if (r.done) return r.value;
+  }
 }
 
 /** `npm run fixed-test`'s table: name, fixed IAE, retuned IAE, in m·s to 2 decimals. */
 export function formatTable(r: FixedTestResult): string {
   const line = (a: string, b: string, c: string) => `${a.padEnd(10)}  ${b.padStart(8)}  ${c.padStart(10)}`;
-  return [
-    line("segment", "fixedIAE", "retunedIAE"),
-    ...r.rows.map(x => line(x.name, x.fixed.iae.toFixed(2), x.retuned.iae.toFixed(2))),
-    line("total", r.total.fixed.iae.toFixed(2), r.total.retuned.iae.toFixed(2)),
-  ].join("\n") + "\n";
+  return (
+    [
+      line("segment", "fixedIAE", "retunedIAE"),
+      ...r.rows.map((x) => line(x.name, x.fixed.iae.toFixed(2), x.retuned.iae.toFixed(2))),
+      line("total", r.total.fixed.iae.toFixed(2), r.total.retuned.iae.toFixed(2)),
+    ].join("\n") + "\n"
+  );
 }

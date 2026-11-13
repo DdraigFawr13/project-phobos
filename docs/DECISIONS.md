@@ -71,8 +71,8 @@ Settled rules for this project. Not a changelog: an entry stays while the rule i
 ## D-012 Dev dependencies
 
 - **Status:** Accepted (2026-11-12)
-- **Decision:** typescript 7.0.2, esbuild 0.28.2 and @types/node 22.x as exact-pinned dev dependencies; tests use Node's built-in runner on Node 22.23.4 with type stripping; Playwright is the container's copy. No runtime dependencies.
-- **Why:** Morgan approved (SAFE-01). The type check, the `.ts` test run and the single-file bundle were tried in the planning session.
+- **Decision:** typescript 7.0.2, esbuild 0.28.2, @types/node 22.x and prettier 3.9.10 (added 2026-11-13, M3 audit F8) as exact-pinned dev dependencies; tests use Node's built-in runner on Node 22.23.4 with type stripping; Playwright is the container's copy. No runtime dependencies.
+- **Why:** Morgan approved (SAFE-01). The type check, the `.ts` test run and the single-file bundle were tried in the planning session. Prettier: Morgan approved it on 2026-11-13 so WEB-03's format check can run; `npm run check` runs `prettier --check --cache`, print width 120, and `.prettierignore` keeps synced, generated, golden and Markdown files out.
 
 ## D-013 Spec additions
 

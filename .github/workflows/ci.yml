@@ -1,6 +1,6 @@
 # Template from AI-Master-Instructions, adapted with the efficient-github-actions skill.
-# Tier 1 only: type check, unit and golden tests, test-traps and the master drift check (`npm run check`,
-# about 1.2 s locally on 2026-11-12). Browser tests (e2e/) run locally with a PR screenshot, never in CI (D-013).
+# Tier 1 only: `npm run check` (format, type check, unit and golden tests, test-traps, master drift check);
+# its measured time lives in AGENTS.md "Local checks". Browser tests (e2e/) run locally with a PR screenshot, never in CI (D-013).
 name: CI
 
 on:
@@ -10,7 +10,6 @@ on:
   push:
     branches: [main]
     paths-ignore: ["**/*.md", "docs/**"]
-  workflow_dispatch:
 
 permissions:
   contents: read

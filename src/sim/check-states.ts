@@ -12,18 +12,24 @@ export function checkStates(): Int16Array[];
 export function checkStates(opts: { withPI: true }): { states: Int16Array[]; piI: number[]; piValve: number[] };
 /** withPI also returns the PI's integral part at each state and the valve it then set (for tests). */
 export function checkStates(opts: { withPI?: boolean } = {}) {
-  const states: Int16Array[] = [], piI: number[] = [], piValve: number[] = [];
+  const states: Int16Array[] = [],
+    piI: number[] = [],
+    piValve: number[] = [];
   for (const seg of SEGMENTS.training) {
     const plant = makePlant({ level: seg.start, rng: makeRng(CHECK_SEED) });
-    const pi = fixedPI(), inputs = makeNetInputs();
+    const pi = fixedPI(),
+      inputs = makeNetInputs();
     pi.reset(seg.start, seg.setpoint);
     inputs.reset(seg.start);
-    const [d0, d1] = seg.disturb ? seg.disturb.map(s => Math.round(s / TANK.dt)) : [0, 0];
+    const [d0, d1] = seg.disturb ? seg.disturb.map((s) => Math.round(s / TANK.dt)) : [0, 0];
     for (let n = 0; n < STEPS; n++) {
       const measured = plant.measure();
       const x = inputs.next(measured, seg.setpoint);
       const take = n % CHECK_EVERY === 0;
-      if (take) { states.push(x); piI.push(pi.I); }
+      if (take) {
+        states.push(x);
+        piI.push(pi.I);
+      }
       const valve = pi.step(measured, seg.setpoint);
       if (take) piValve.push(valve);
       inputs.after(valve);

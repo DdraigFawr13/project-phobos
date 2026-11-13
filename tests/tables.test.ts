@@ -19,7 +19,8 @@ test("each table has 1,025 entries; tanh starts at 0, exp at 4096", () => {
 });
 
 test("a fresh generation matches the committed tables within 1 LSB", () => {
-  const t = tanhEntries(), e = expEntries();
+  const t = tanhEntries(),
+    e = expEntries();
   for (let i = 0; i <= 1024; i++) {
     assert.ok(Math.abs(t[i] - TANH[i]) <= 1, `tanh entry ${i}: fresh ${t[i]}, committed ${TANH[i]}`);
     assert.ok(Math.abs(e[i] - EXP[i]) <= 1, `exp entry ${i}: fresh ${e[i]}, committed ${EXP[i]}`);
@@ -52,5 +53,8 @@ test("Tables teaching text quotes the measured largest gaps", () => {
   const { tanh, exp } = tableErrors();
   const text = EXPLAIN.tables.deep + EXPLAIN.tables.tryit;
   assert.ok(text.includes(`within ${tanh.lsb} LSB for tanh and ${exp.lsb} for exp`), "deep text names the LSB gaps");
-  assert.ok(text.includes(`${tanh.pct.toFixed(3)}% for tanh and ${exp.pct.toFixed(3)}% for exp`), "deep text names the % gaps");
+  assert.ok(
+    text.includes(`${tanh.pct.toFixed(3)}% for tanh and ${exp.pct.toFixed(3)}% for exp`),
+    "deep text names the % gaps",
+  );
 });

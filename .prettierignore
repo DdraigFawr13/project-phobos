@@ -1,2 +1,16 @@
+# Prettier skips what .gitignore skips (dist/, test-results/, node_modules/), plus:
+# worktrees and archives
 /.claude/worktrees/
 /docs/archive/
+# files synced from AI-Master-Instructions (.ai-master.lock)
+/.claude/
+/.github/workflows/prune-merged-branches.yml
+# generated or golden output: changed only by its script, in a commit that says why (SIM-02)
+/models/
+/tests/golden/
+/src/num/tables.gen.ts
+/docs/harness/
+package-lock.json
+# Markdown (long-row tables, synced rules) and the approved mock-up
+*.md
+/mockups/

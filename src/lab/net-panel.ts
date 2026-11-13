@@ -22,16 +22,19 @@ export function netPanel(models: LabModels, { live, $, tok }: Deps) {
   const ex = explainHtml(EXPLAIN.net);
 
   // Each layer's real numbers (w / 2^shift, b / 4096), scaled by the layer's largest |value| for the colours.
-  const real = layers.map(L => ({ w: [...L.w].map(v => v / 2 ** L.shift), b: [...L.b].map(v => v / 4096) }));
-  const maxOf = real.map(r => Math.max(...r.w.map(Math.abs), ...r.b.map(Math.abs)));
-  const cell = (v: number, k: number) => `<i class="${v >= 0 ? "pos" : "neg"}" style="opacity:${(0.15 + (0.85 * Math.abs(v)) / maxOf[k]).toFixed(2)}" title="${neg(v.toFixed(3))}"></i>`;
+  const real = layers.map((L) => ({ w: [...L.w].map((v) => v / 2 ** L.shift), b: [...L.b].map((v) => v / 4096) }));
+  const maxOf = real.map((r) => Math.max(...r.w.map(Math.abs), ...r.b.map(Math.abs)));
+  const cell = (v: number, k: number) =>
+    `<i class="${v >= 0 ? "pos" : "neg"}" style="opacity:${(0.15 + (0.85 * Math.abs(v)) / maxOf[k]).toFixed(2)}" title="${neg(v.toFixed(3))}"></i>`;
   const [L1, L2] = [real[0], real[1]];
   const rows = [
-    ...[0, 1, 2, 3].map(i => Array.from({ length: 16 }, (_, o) => cell(L1.w[o * 4 + i], 0))),
-    L1.b.map(v => cell(v, 0)),
-    L2.w.map(v => cell(v, 1)),
+    ...[0, 1, 2, 3].map((i) => Array.from({ length: 16 }, (_, o) => cell(L1.w[o * 4 + i], 0))),
+    L1.b.map((v) => cell(v, 0)),
+    L2.w.map((v) => cell(v, 1)),
   ];
-  const heat = rows.map((r, k) => `<span class="hl">${HEAT_ROWS[k]}</span>${r.join("")}`).join("") + `<span class="hl">valve bias</span>${cell(L2.b[0], 1)}`;
+  const heat =
+    rows.map((r, k) => `<span class="hl">${HEAT_ROWS[k]}</span>${r.join("")}`).join("") +
+    `<span class="hl">valve bias</span>${cell(L2.b[0], 1)}`;
   const top = Math.max(...maxOf).toFixed(2);
 
   const html = `
@@ -58,24 +61,48 @@ export function netPanel(models: LabModels, { live, $, tok }: Deps) {
   function fillSummary() {
     if (summary) return;
     summary = true;
-    const log = models.log?.entries.filter(e => e.phase === "copy" && e.loss !== undefined) ?? [];
+    const log = models.log?.entries.filter((e) => e.phase === "copy" && e.loss !== undefined) ?? [];
     const { states, piValve } = checkStates({ withPI: true });
-    let gap = 0, within = 0;
+    let gap = 0,
+      within = 0;
     states.forEach((s, i) => {
       const vi = valveOf(forward(layers, s).at(-1)![0]);
       gap += Math.abs(vi - piValve[i]);
-      if (Math.abs(vi - valveOfRef(forwardRef(layers, [...s].map(v => v / 4096)).at(-1)![0])) <= 0.01) within++;
+      if (
+        Math.abs(
+          vi -
+            valveOfRef(
+              forwardRef(
+                layers,
+                [...s].map((v) => v / 4096),
+              ).at(-1)![0],
+            ),
+        ) <= 0.01
+      )
+        within++;
     });
-    const first = log[0], last = log.at(-1);
-    $("#net-train").textContent = `The PI drove the tank for 50 runs of 400 s, each starting at a random level with two random setpoints and one 60 s disturbance at a random time. The disturbances matter: without them the error so far always matched the level, so the net learned to ignore it and could not hold a low level. Every 2 s Phobos saved what the net would have seen and the valve the PI chose: 10,000 situations. Training then took ${last ? last.step.toLocaleString("en-GB") : "2,000"} small steps. Each step looks at 64 situations, works out which way each of the 97 numbers should move to bring the net's valve closer to the PI's, and moves it a little; part of the last step's move carries on (momentum).${first && last ? ` The loss fell from ${first.loss!.toFixed(4)} to ${last.loss!.toFixed(5)}.` : ""} On the 1,000 saved situations from the Fixed test tab, this page measures the net's valve at ${(gap / states.length).toFixed(3)} from the PI's on average (the test's limit is 0.05).`;
-    $("#net-ivf").textContent = `On those 1,000 situations the whole-number valve is within 0.01 of the decimal one in ${(within / 10).toFixed(1)}% of them (limit 99%).`;
+    const first = log[0],
+      last = log.at(-1);
+    $("#net-train").textContent =
+      `The PI drove the tank for 50 runs of 400 s, each starting at a random level with two random setpoints and one 60 s disturbance at a random time. The disturbances matter: without them the error so far always matched the level, so the net learned to ignore it and could not hold a low level. Every 2 s Phobos saved what the net would have seen and the valve the PI chose: 10,000 situations. Training then took ${last ? last.step.toLocaleString("en-GB") : "2,000"} small steps. Each step looks at 64 situations, works out which way each of the 97 numbers should move to bring the net's valve closer to the PI's, and moves it a little; part of the last step's move carries on (momentum).${first && last ? ` The loss fell from ${first.loss!.toFixed(4)} to ${last.loss!.toFixed(5)}.` : ""} On the 1,000 saved situations from the Fixed test tab, this page measures the net's valve at ${(gap / states.length).toFixed(3)} from the PI's on average (the test's limit is 0.05).`;
+    $("#net-ivf").textContent =
+      `On those 1,000 situations the whole-number valve is within 0.01 of the decimal one in ${(within / 10).toFixed(1)}% of them (limit 99%).`;
   }
 
   function mount(render: () => void) {
     const sp = $<HTMLInputElement>("#sp-net");
-    sp.addEventListener("input", () => { live.setSetpoint(+sp.value); render(); });
-    $("#net-on").addEventListener("click", () => { setNet(!live.state.net); render(); });
-    $("#dist-net").addEventListener("click", () => { live.disturb(); render(); });
+    sp.addEventListener("input", () => {
+      live.setSetpoint(+sp.value);
+      render();
+    });
+    $("#net-on").addEventListener("click", () => {
+      setNet(!live.state.net);
+      render();
+    });
+    $("#dist-net").addEventListener("click", () => {
+      live.disturb();
+      render();
+    });
   }
 
   function setNet(on: boolean) {
@@ -84,7 +111,9 @@ export function netPanel(models: LabModels, { live, $, tok }: Deps) {
   }
 
   function render(drawChart: (c: HTMLCanvasElement, two: boolean) => void) {
-    const s = live.state, n = s.net, on = live.disturbed();
+    const s = live.state,
+      n = s.net,
+      on = live.disturbed();
     $("#n-pi").textContent = `${s.level.toFixed(2)} m`;
     $("#n-net").textContent = n ? `${n.level.toFixed(2)} m` : "– m";
     $("#n-sp").textContent = `${s.setpoint.toFixed(2)} m`;
@@ -106,15 +135,26 @@ export function netPanel(models: LabModels, { live, $, tok }: Deps) {
     if (now && (now.closest("details") as HTMLDetailsElement).open) {
       if (!n || !n.inputs) now.textContent = "Tap Net on to see the net's sums for its tank here.";
       else {
-        const x = n.inputs, outs = forward(layers, x), y = outs.at(-1)![0], f3 = (v: number) => neg((v / 4096).toFixed(3));
-        now.innerHTML = `inputs: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${neg([...x].join(", "))}<br>16 neurons, each −1 to 1: ${neg([...outs[0]].map(v => (v / 4096).toFixed(2)).join(" "))}<br>valve neuron: ${neg(String(y))} (${f3(y)})<br>valve = (5 × ${neg(String(y))} + 16384) ÷ 32768 = ${valveOf(y).toFixed(3)}${valveOf(y) === 0 || valveOf(y) === 1 ? " (kept 0 to 1)" : ""}`;
+        const x = n.inputs,
+          outs = forward(layers, x),
+          y = outs.at(-1)![0],
+          f3 = (v: number) => neg((v / 4096).toFixed(3));
+        now.innerHTML = `inputs: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${neg([...x].join(", "))}<br>16 neurons, each −1 to 1: ${neg([...outs[0]].map((v) => (v / 4096).toFixed(2)).join(" "))}<br>valve neuron: ${neg(String(y))} (${f3(y)})<br>valve = (5 × ${neg(String(y))} + 16384) ÷ 32768 = ${valveOf(y).toFixed(3)}${valveOf(y) === 0 || valveOf(y) === 1 ? " (kept 0 to 1)" : ""}`;
       }
     }
     drawChart($<HTMLCanvasElement>("#netchart"), !!n);
   }
 
   return {
-    tab: ["net", "Net"] as const, html, mount, render, fillSummary,
-    hooks: { setNet(on: boolean) { setNet(on); } },
+    tab: ["net", "Net"] as const,
+    html,
+    mount,
+    render,
+    fillSummary,
+    hooks: {
+      setNet(on: boolean) {
+        setNet(on);
+      },
+    },
   };
 }

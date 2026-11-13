@@ -26,7 +26,9 @@ export function makePlant(opts: { level: number; rng?: Rng }): Plant {
   let h = opts.level;
   const rng = opts.rng;
   return {
-    get level() { return h; },
+    get level() {
+      return h;
+    },
     step(valve, disturbed) {
       const v = Math.min(1, Math.max(0, valve));
       const k = disturbed ? TANK.k * TANK.disturbFactor : TANK.k;

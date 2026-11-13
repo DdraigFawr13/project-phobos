@@ -4,6 +4,9 @@ import type { Layer } from "../num/layer.ts";
 
 export function forward(layers: Layer[], x: Int16Array): Int16Array[] {
   const outs: Int16Array[] = [];
-  for (const L of layers) { x = dense(L, x); outs.push(x); }
+  for (const L of layers) {
+    x = dense(L, x);
+    outs.push(x);
+  }
   return outs;
 }

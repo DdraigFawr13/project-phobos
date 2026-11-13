@@ -31,7 +31,12 @@ const tok = (n: string) => getComputedStyle(document.documentElement).getPropert
 
 // The Net tab exists only when models/lab/ was inlined; esbuild drops netPanel when __LAB_MODELS__ is null.
 const NET = __LAB_MODELS__ ? netPanel(__LAB_MODELS__, { live, $, tok }) : null;
-const TABS: (readonly [string, string])[] = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"], ["ivf", "Integer vs float"]];
+const TABS: (readonly [string, string])[] = [
+  ["live", "Live"],
+  ["fixed", "Fixed test"],
+  ["tables", "Tables"],
+  ["ivf", "Integer vs float"],
+];
 const REPLAY = __LAB_MODELS__ ? replayPanel(__LAB_MODELS__, { $, tok }) : null;
 if (NET) TABS.push(NET.tab);
 if (REPLAY) TABS.push(REPLAY.tab);
@@ -43,11 +48,16 @@ let fixedTest: FixedTest = { phase: "idle" };
 const RUN_BUDGET_MS = 12; // runs per frame stop after this, so the page keeps drawing on a slow phone
 
 function mount() {
-  const ex = explainHtml(EXPLAIN.live), fx = explainHtml(EXPLAIN.fixed), tx = explainHtml(EXPLAIN.tables), ix = explainHtml(EXPLAIN.ivf);
+  const ex = explainHtml(EXPLAIN.live),
+    fx = explainHtml(EXPLAIN.fixed),
+    tx = explainHtml(EXPLAIN.tables),
+    ix = explainHtml(EXPLAIN.ivf);
   $("#app").innerHTML = `
     <div class="lhead"><h1>Phobos Lab</h1><span class="chip" id="chip"></span></div>
-    <div class="tabs" role="tablist" aria-label="Lab tabs">${TABS.map(([id, name], i) =>
-      `<button class="tab" type="button" role="tab" id="tab-${id}" aria-controls="panel-${id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${name}</button>`).join("")}</div>
+    <div class="tabs" role="tablist" aria-label="Lab tabs">${TABS.map(
+      ([id, name], i) =>
+        `<button class="tab" type="button" role="tab" id="tab-${id}" aria-controls="panel-${id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${name}</button>`,
+    ).join("")}</div>
     <section class="panel" id="panel-live" data-panel="live" role="tabpanel" aria-labelledby="tab-live">
       ${ex.what}
       <div class="reads">
@@ -75,8 +85,10 @@ function mount() {
       <canvas id="tchart" role="img" aria-label="tanh and exp from the integer tables drawn over the exact curves, inputs −8 to 8"></canvas>
       <div class="key"><span><i class="k-sp"></i>read from the table</span><span><i class="k-valve"></i>exact curve (dashed)</span><span>input −8 to +8 across, answer −1 to 1 up</span></div>
       <p class="note">Five of the 1,025 saved points. Each number is the curve's height × 4,096, so 4096 means 1.0.</p>
-      <table id="t-entries"><tr><th>Input</th><th class="num">tanh(input)</th><th class="num">exp(−input)</th></tr>${ENTRY_ROWS.map(i =>
-        `<tr data-i="${i}"><td class="mono">${i / 128}</td><td class="num">${TANH[i]}</td><td class="num">${EXP[i]}</td></tr>`).join("")}</table>
+      <table id="t-entries"><tr><th>Input</th><th class="num">tanh(input)</th><th class="num">exp(−input)</th></tr>${ENTRY_ROWS.map(
+        (i) =>
+          `<tr data-i="${i}"><td class="mono">${i / 128}</td><td class="num">${TANH[i]}</td><td class="num">${EXP[i]}</td></tr>`,
+      ).join("")}</table>
       <table id="t-gaps"><tr><th>Worst miss, all 65,536 inputs</th><th class="num">Steps off</th><th class="num">% of height</th><th></th></tr>
         <tr data-f="tanh"><td>tanh table</td><td class="num"></td><td class="num"></td><td></td></tr>
         <tr data-f="exp"><td>exp table</td><td class="num"></td><td class="num"></td><td></td></tr></table>
@@ -85,8 +97,10 @@ function mount() {
     </section>
     <section class="panel" id="panel-ivf" data-panel="ivf" role="tabpanel" aria-labelledby="tab-ivf" hidden>
       ${ix.what}
-      <table id="ivf-checks"><tr><th>Check, 1,000 situations</th><th class="num">Result</th><th class="num">Limit</th><th></th></tr>${IVF_ROWS.map(r =>
-        `<tr data-c="${r.id}"><td>${r.label}</td><td class="num"></td><td class="num">${r.limit}</td><td></td></tr>`).join("")}</table>
+      <table id="ivf-checks"><tr><th>Check, 1,000 situations</th><th class="num">Result</th><th class="num">Limit</th><th></th></tr>${IVF_ROWS.map(
+        (r) =>
+          `<tr data-c="${r.id}"><td>${r.label}</td><td class="num"></td><td class="num">${r.limit}</td><td></td></tr>`,
+      ).join("")}</table>
       <canvas id="ivfchart" role="img" aria-label="Lab-shaped net valve over the 1,000 situations, whole numbers drawn over decimal maths"></canvas>
       <div class="key"><span><i class="k-sp"></i>valve, whole numbers</span><span><i class="k-valve"></i>valve, decimal maths (dashed)</span><span>1,000 situations across, valve opening up</span></div>
       <p class="status" id="ivf-status"></p>
@@ -95,24 +109,32 @@ function mount() {
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
   tabs.forEach((b, i) => {
     b.addEventListener("click", () => showTab(TABS[i][0]));
-    b.addEventListener("keydown", e => {
+    b.addEventListener("keydown", (e) => {
       const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
       if (!d) return;
       const next = tabs[(i + d + tabs.length) % tabs.length];
-      next.focus(); showTab(TABS[tabs.indexOf(next)][0]);
+      next.focus();
+      showTab(TABS[tabs.indexOf(next)][0]);
     });
   });
   $("#ft-run").addEventListener("click", startFixedTest);
   const sp = $<HTMLInputElement>("#sp");
-  sp.addEventListener("input", () => { live.setSetpoint(+sp.value); render(); });
-  $("#dist").addEventListener("click", () => { live.disturb(); render(); });
+  sp.addEventListener("input", () => {
+    live.setSetpoint(+sp.value);
+    render();
+  });
+  $("#dist").addEventListener("click", () => {
+    live.disturb();
+    render();
+  });
   NET?.mount(render);
   REPLAY?.mount(render);
 }
 
 function showTab(id: Tab) {
   for (const [t] of TABS) {
-    const on = t === id, b = $(`#tab-${t}`);
+    const on = t === id,
+      b = $(`#tab-${t}`);
     b.setAttribute("aria-selected", String(on));
     b.tabIndex = on ? 0 : -1;
     $(`#panel-${t}`).hidden = !on;
@@ -132,82 +154,209 @@ let gaps: { tanh: TableError; exp: TableError } | null = null;
 function renderTables() {
   gaps ??= tableErrors();
   for (const f of ["tanh", "exp"] as const) {
-    const g = gaps[f], td = document.querySelectorAll(`#t-gaps [data-f="${f}"] td`);
+    const g = gaps[f],
+      td = document.querySelectorAll(`#t-gaps [data-f="${f}"] td`);
     td[1].textContent = String(g.lsb);
     td[2].textContent = `${g.pct.toFixed(3)}%`;
     td[3].textContent = g.lsb <= GAP_LIMIT ? "pass" : "fail";
     td[3].className = g.lsb <= GAP_LIMIT ? "pass" : "fail";
   }
-  const c = $<HTMLCanvasElement>("#tchart"), dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
+  const c = $<HTMLCanvasElement>("#tchart"),
+    dpr = window.devicePixelRatio || 1,
+    W = c.clientWidth,
+    H = c.clientHeight;
   if (!W || !H) return;
-  c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+  c.width = Math.round(W * dpr);
+  c.height = Math.round(H * dpr);
   const g = c.getContext("2d")!;
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  g.fillStyle = tok("--panel"); g.fillRect(0, 0, W, H);
-  const mid = H / 2, X = (x: number) => 8 + ((W - 16) * (x + 8)) / 16, Y = (y: number) => mid - (mid - 14) * y;
-  g.strokeStyle = tok("--line"); g.lineWidth = 1;
-  g.beginPath(); g.moveTo(8, mid); g.lineTo(W - 8, mid); g.moveTo(X(0), 8); g.lineTo(X(0), H - 8); g.stroke();
+  g.fillStyle = tok("--panel");
+  g.fillRect(0, 0, W, H);
+  const mid = H / 2,
+    X = (x: number) => 8 + ((W - 16) * (x + 8)) / 16,
+    Y = (y: number) => mid - (mid - 14) * y;
+  g.strokeStyle = tok("--line");
+  g.lineWidth = 1;
+  g.beginPath();
+  g.moveTo(8, mid);
+  g.lineTo(W - 8, mid);
+  g.moveTo(X(0), 8);
+  g.lineTo(X(0), H - 8);
+  g.stroke();
   const q = (x: number) => Math.max(-32768, Math.min(32767, Math.round(x * 4096)));
   const curve = (f: (x: number) => number, col: string, w: number, dash: number[] = []) => {
-    g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath();
-    for (let k = 0; k <= 320; k++) { const x = -8 + k * 0.05, y = f(x); k ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); }
-    g.stroke(); g.setLineDash([]);
+    g.strokeStyle = col;
+    g.lineWidth = w;
+    g.setLineDash(dash);
+    g.beginPath();
+    for (let k = 0; k <= 320; k++) {
+      const x = -8 + k * 0.05,
+        y = f(x);
+      k ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y));
+    }
+    g.stroke();
+    g.setLineDash([]);
   };
-  curve(x => tanhQ(q(x)) / 4096, tok("--ink"), 3); curve(Math.tanh, tok("--valve"), 1.25, [4, 3]);
-  curve(x => expQ(q(x)) / 4096, tok("--ink"), 3); curve(x => Math.exp(Math.min(0, x)), tok("--valve"), 1.25, [4, 3]);
-  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = tok("--muted"); g.textBaseline = "middle";
-  g.textAlign = "left"; g.fillText("tanh", X(3), Y(1) + 14); g.fillText("exp", X(-6), Y(0) - 14); g.fillText("−8", 10, mid + 12);
-  g.textAlign = "right"; g.fillText("+8", W - 10, mid + 12);
+  curve((x) => tanhQ(q(x)) / 4096, tok("--ink"), 3);
+  curve(Math.tanh, tok("--valve"), 1.25, [4, 3]);
+  curve((x) => expQ(q(x)) / 4096, tok("--ink"), 3);
+  curve((x) => Math.exp(Math.min(0, x)), tok("--valve"), 1.25, [4, 3]);
+  g.font = "13px 'IBM Plex Mono', monospace";
+  g.fillStyle = tok("--muted");
+  g.textBaseline = "middle";
+  g.textAlign = "left";
+  g.fillText("tanh", X(3), Y(1) + 14);
+  g.fillText("exp", X(-6), Y(0) - 14);
+  g.fillText("−8", 10, mid + 12);
+  g.textAlign = "right";
+  g.fillText("+8", W - 10, mid + 12);
 }
 
 // The Integer vs float model: the check states and both nets compared on them, computed once when the tab opens.
-type IvfRow = { id: string; label: string; limit: string; value: (c: Comparison) => number; text: (v: number) => string; pass: (v: number) => boolean };
+type IvfRow = {
+  id: string;
+  label: string;
+  limit: string;
+  value: (c: Comparison) => number;
+  text: (v: number) => string;
+  pass: (v: number) => boolean;
+};
 const pct = (d: number) => (v: number) => `${v.toFixed(d)}%`;
 const IVF_ROWS: IvfRow[] = [
-  { id: "t1", label: "Test net, layer 1 gap (4→16)", limit: "1%", value: c => c.testNet.layerGaps[0], text: pct(3), pass: v => v < 1 },
-  { id: "t2", label: "Test net, layer 2 gap (16→5)", limit: "1%", value: c => c.testNet.layerGaps[1], text: pct(3), pass: v => v < 1 },
-  { id: "same", label: "Test net, same choice of action", limit: "≥ 99%", value: c => c.testNet.samePct, text: pct(1), pass: v => v >= 99 },
-  { id: "l1", label: "Lab-shaped net, layer 1 gap (4→16)", limit: "1%", value: c => c.labNet.layerGaps[0], text: pct(3), pass: v => v < 1 },
-  { id: "l2", label: "Lab-shaped net, layer 2 gap (16→1)", limit: "1%", value: c => c.labNet.layerGaps[1], text: pct(3), pass: v => v < 1 },
-  { id: "valve", label: "Lab-shaped net, valve within 0.01", limit: "≥ 99%", value: c => c.labNet.withinPct, text: pct(1), pass: v => v >= 99 },
+  {
+    id: "t1",
+    label: "Test net, layer 1 gap (4→16)",
+    limit: "1%",
+    value: (c) => c.testNet.layerGaps[0],
+    text: pct(3),
+    pass: (v) => v < 1,
+  },
+  {
+    id: "t2",
+    label: "Test net, layer 2 gap (16→5)",
+    limit: "1%",
+    value: (c) => c.testNet.layerGaps[1],
+    text: pct(3),
+    pass: (v) => v < 1,
+  },
+  {
+    id: "same",
+    label: "Test net, same choice of action",
+    limit: "≥ 99%",
+    value: (c) => c.testNet.samePct,
+    text: pct(1),
+    pass: (v) => v >= 99,
+  },
+  {
+    id: "l1",
+    label: "Lab-shaped net, layer 1 gap (4→16)",
+    limit: "1%",
+    value: (c) => c.labNet.layerGaps[0],
+    text: pct(3),
+    pass: (v) => v < 1,
+  },
+  {
+    id: "l2",
+    label: "Lab-shaped net, layer 2 gap (16→1)",
+    limit: "1%",
+    value: (c) => c.labNet.layerGaps[1],
+    text: pct(3),
+    pass: (v) => v < 1,
+  },
+  {
+    id: "valve",
+    label: "Lab-shaped net, valve within 0.01",
+    limit: "≥ 99%",
+    value: (c) => c.labNet.withinPct,
+    text: pct(1),
+    pass: (v) => v >= 99,
+  },
 ];
 let ivf: { states: Int16Array[]; c: Comparison } | null = null;
 
 function renderIvf() {
-  if (!ivf) { const states = checkStates(); ivf = { states, c: compareNets(states) }; }
+  if (!ivf) {
+    const states = checkStates();
+    ivf = { states, c: compareNets(states) };
+  }
   const { states, c } = ivf;
   for (const r of IVF_ROWS) {
-    const v = r.value(c), ok = r.pass(v), td = document.querySelectorAll(`#ivf-checks [data-c="${r.id}"] td`);
+    const v = r.value(c),
+      ok = r.pass(v),
+      td = document.querySelectorAll(`#ivf-checks [data-c="${r.id}"] td`);
     td[1].textContent = r.text(v);
     td[3].textContent = ok ? "pass" : "fail";
     td[3].className = ok ? "pass" : "fail";
   }
-  const vals = c.labNet.series.flat(), lo = Math.floor(Math.min(...vals) * 20) / 20, hi = Math.ceil(Math.max(...vals) * 20) / 20;
-  $("#ivf-status").textContent = `Biggest valve gap: ${c.labNet.maxGap.toFixed(4)} (allowed 0.01). The random net's valve stays between ${lo.toFixed(2)} and ${hi.toFixed(2)}, so the chart shows only that band.`;
-  const chosen = c.testNet.counts.map((n, a) => [a, n]).filter(([, n]) => n > 0).map(([a, n]) => `action ${a} in ${n}`);
-  $("#ivf-actions").textContent = `Here the whole-number test net picks ${chosen.join(" and ")} of the 1,000 situations.`;
+  const vals = c.labNet.series.flat(),
+    lo = Math.floor(Math.min(...vals) * 20) / 20,
+    hi = Math.ceil(Math.max(...vals) * 20) / 20;
+  $("#ivf-status").textContent =
+    `Biggest valve gap: ${c.labNet.maxGap.toFixed(4)} (allowed 0.01). The random net's valve stays between ${lo.toFixed(2)} and ${hi.toFixed(2)}, so the chart shows only that band.`;
+  const chosen = c.testNet.counts
+    .map((n, a) => [a, n])
+    .filter(([, n]) => n > 0)
+    .map(([a, n]) => `action ${a} in ${n}`);
+  $("#ivf-actions").textContent =
+    `Here the whole-number test net picks ${chosen.join(" and ")} of the 1,000 situations.`;
   // worked example: the first check state through the Lab-shaped net, both ways
-  const x = states[0], net = labShapedNet(), y = forward(net, x).at(-1)![0], yf = forwardRef(net, [...x].map(v => v / 4096)).at(-1)![0];
-  const vi = valveOf(y), vf = valveOfRef(yf), neg = (t: string) => t.replace("-", "−"), f3 = (v: number) => neg((v / 4096).toFixed(3));
-  $("#ivf-example").innerHTML = `situation: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${[...x].map(v => neg(String(v))).join(", ")}<br>whole numbers: output ${neg(String(y))}, valve = (5 × ${neg(String(y))} + 16384) ÷ 32768 = ${vi.toFixed(4)}<br>decimal maths: output ${neg(yf.toFixed(4))}, valve = (1.25 × ${neg(yf.toFixed(4))} + 1) ÷ 2 = ${vf.toFixed(4)}<br>gap ${Math.abs(vi - vf).toFixed(4)}, allowed 0.01`;
-  const cv = $<HTMLCanvasElement>("#ivfchart"), dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  const x = states[0],
+    net = labShapedNet(),
+    y = forward(net, x).at(-1)![0],
+    yf = forwardRef(
+      net,
+      [...x].map((v) => v / 4096),
+    ).at(-1)![0];
+  const vi = valveOf(y),
+    vf = valveOfRef(yf),
+    neg = (t: string) => t.replace("-", "−"),
+    f3 = (v: number) => neg((v / 4096).toFixed(3));
+  $("#ivf-example").innerHTML =
+    `situation: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${[...x].map((v) => neg(String(v))).join(", ")}<br>whole numbers: output ${neg(String(y))}, valve = (5 × ${neg(String(y))} + 16384) ÷ 32768 = ${vi.toFixed(4)}<br>decimal maths: output ${neg(yf.toFixed(4))}, valve = (1.25 × ${neg(yf.toFixed(4))} + 1) ÷ 2 = ${vf.toFixed(4)}<br>gap ${Math.abs(vi - vf).toFixed(4)}, allowed 0.01`;
+  const cv = $<HTMLCanvasElement>("#ivfchart"),
+    dpr = window.devicePixelRatio || 1,
+    W = cv.clientWidth,
+    H = cv.clientHeight;
   if (!W || !H) return;
-  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  cv.width = Math.round(W * dpr);
+  cv.height = Math.round(H * dpr);
   const g = cv.getContext("2d")!;
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  g.fillStyle = tok("--panel"); g.fillRect(0, 0, W, H);
-  const n = c.labNet.series.length, x0 = 44, x1 = W - 8, y0 = 10, y1 = H - 10;
-  const X = (i: number) => x0 + ((x1 - x0) * i) / (n - 1), Y = (v: number) => y1 - ((y1 - y0) * (v - lo)) / (hi - lo);
-  g.strokeStyle = tok("--line"); g.lineWidth = 1;
-  for (let k = 0; k <= 5; k++) { const xx = X((k * (n - 1)) / 5); g.beginPath(); g.moveTo(xx, y0); g.lineTo(xx, y1); g.stroke(); }
-  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = tok("--muted"); g.textBaseline = "middle"; g.textAlign = "right";
-  g.fillText(hi.toFixed(2), x0 - 4, Y(hi)); g.fillText(lo.toFixed(2), x0 - 4, Y(lo));
+  g.fillStyle = tok("--panel");
+  g.fillRect(0, 0, W, H);
+  const n = c.labNet.series.length,
+    x0 = 44,
+    x1 = W - 8,
+    y0 = 10,
+    y1 = H - 10;
+  const X = (i: number) => x0 + ((x1 - x0) * i) / (n - 1),
+    Y = (v: number) => y1 - ((y1 - y0) * (v - lo)) / (hi - lo);
+  g.strokeStyle = tok("--line");
+  g.lineWidth = 1;
+  for (let k = 0; k <= 5; k++) {
+    const xx = X((k * (n - 1)) / 5);
+    g.beginPath();
+    g.moveTo(xx, y0);
+    g.lineTo(xx, y1);
+    g.stroke();
+  }
+  g.font = "13px 'IBM Plex Mono', monospace";
+  g.fillStyle = tok("--muted");
+  g.textBaseline = "middle";
+  g.textAlign = "right";
+  g.fillText(hi.toFixed(2), x0 - 4, Y(hi));
+  g.fillText(lo.toFixed(2), x0 - 4, Y(lo));
   const line = (k: 0 | 1, col: string, w: number, dash: number[] = []) => {
-    g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath();
+    g.strokeStyle = col;
+    g.lineWidth = w;
+    g.setLineDash(dash);
+    g.beginPath();
     c.labNet.series.forEach((p, i) => (i ? g.lineTo(X(i), Y(p[k])) : g.moveTo(X(i), Y(p[k]))));
-    g.stroke(); g.setLineDash([]);
+    g.stroke();
+    g.setLineDash([]);
   };
-  line(0, tok("--ink"), 3); line(1, tok("--valve"), 1.25, [4, 3]);
+  line(0, tok("--ink"), 3);
+  line(1, tok("--valve"), 1.25, [4, 3]);
 }
 
 function startFixedTest() {
@@ -220,7 +369,11 @@ function startFixedTest() {
     const t0 = performance.now();
     for (;;) {
       const r = runs.next();
-      if (r.done) { fixedTest = { phase: "done", result: r.value }; renderFixed(); return; }
+      if (r.done) {
+        fixedTest = { phase: "done", result: r.value };
+        renderFixed();
+        return;
+      }
       fixedTest = { phase: "running", at: r.value };
       if (performance.now() - t0 > RUN_BUDGET_MS) break;
     }
@@ -231,7 +384,9 @@ function startFixedTest() {
 }
 
 function renderFixed() {
-  const btn = $<HTMLButtonElement>("#ft-run"), out = $("#ft-out"), st = $("#ft-status");
+  const btn = $<HTMLButtonElement>("#ft-run"),
+    out = $("#ft-out"),
+    st = $("#ft-status");
   const tryit = $("#panel-fixed .try");
   btn.disabled = fixedTest.phase === "running";
   tryit.hidden = fixedTest.phase !== "done";
@@ -249,70 +404,148 @@ function renderFixed() {
     return;
   }
   const { rows, total } = fixedTest.result;
-  const max = Math.max(...rows.flatMap(r => [r.fixed.iae, r.retuned.iae]));
+  const max = Math.max(...rows.flatMap((r) => [r.fixed.iae, r.retuned.iae]));
   const w = (v: number) => `${((70 * v) / max).toFixed(1)}%`;
   btn.textContent = "Run again";
   out.innerHTML = `<div class="ft">
     <div class="key"><span><i class="k-fixed"></i>PI tuned once for 1.00 m</span><span><i class="k-ret"></i>PI retuned for each test</span><span>error score, m·s</span></div>
-    <div class="bars" id="ft-bars">${rows.map(r => `<div class="bar" data-seg="${r.name}"><span class="nm">${r.name}</span><div class="pair">
+    <div class="bars" id="ft-bars">${rows
+      .map(
+        (r) => `<div class="bar" data-seg="${r.name}"><span class="nm">${r.name}</span><div class="pair">
       <div class="v"><i class="f" style="width:${w(r.fixed.iae)}"></i><span data-k="fixed">${r.fixed.iae.toFixed(2)} m·s</span></div>
-      <div class="v"><i class="r" style="width:${w(r.retuned.iae)}"></i><span data-k="retuned">${r.retuned.iae.toFixed(2)} m·s</span></div></div></div>`).join("")}</div>
-    <table><tr><th>Valve movement</th><th class="num">Tuned once</th><th class="num">Retuned</th></tr>${rows.map(r =>
-      `<tr><td>${r.name}</td><td class="num">${r.fixed.travel.toFixed(2)}</td><td class="num">${r.retuned.travel.toFixed(2)}</td></tr>`).join("")}
+      <div class="v"><i class="r" style="width:${w(r.retuned.iae)}"></i><span data-k="retuned">${r.retuned.iae.toFixed(2)} m·s</span></div></div></div>`,
+      )
+      .join("")}</div>
+    <table><tr><th>Valve movement</th><th class="num">Tuned once</th><th class="num">Retuned</th></tr>${rows
+      .map(
+        (r) =>
+          `<tr><td>${r.name}</td><td class="num">${r.fixed.travel.toFixed(2)}</td><td class="num">${r.retuned.travel.toFixed(2)}</td></tr>`,
+      )
+      .join("")}
       <tr><td><b>Total</b></td><td class="num">${total.fixed.travel.toFixed(2)}</td><td class="num">${total.retuned.travel.toFixed(2)}</td></tr></table></div>`;
   st.textContent = `Total error score: tuned once ${total.fixed.iae.toFixed(2)} m·s, retuned ${total.retuned.iae.toFixed(2)} m·s.`;
 }
 
 /** The live chart; two = draw the net tank beside the PI tank and the net tank's level line (Net tab). */
-function drawChart(c: HTMLCanvasElement, hist: Sample[], now: { level: number; setpoint: number; net: { level: number } | null }, t: number, two = false) {
-  const dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
+function drawChart(
+  c: HTMLCanvasElement,
+  hist: Sample[],
+  now: { level: number; setpoint: number; net: { level: number } | null },
+  t: number,
+  two = false,
+) {
+  const dpr = window.devicePixelRatio || 1,
+    W = c.clientWidth,
+    H = c.clientHeight;
   if (!W || !H) return;
-  if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) {
+    c.width = Math.round(W * dpr);
+    c.height = Math.round(H * dpr);
+  }
   const g = c.getContext("2d")!;
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  g.fillStyle = tok("--panel"); g.fillRect(0, 0, W, H);
-  const t1 = Math.max(HISTORY_S, t), t0 = t1 - HISTORY_S;
-  const x0 = 72, x1 = W - 8, y0 = 8, y1 = H - 22;
-  const X = (s: number) => x0 + ((x1 - x0) * (s - t0)) / HISTORY_S, Y = (m: number) => y1 - ((y1 - y0) * m) / 2;
-  g.font = "13px 'IBM Plex Mono', monospace"; g.textBaseline = "middle";
+  g.fillStyle = tok("--panel");
+  g.fillRect(0, 0, W, H);
+  const t1 = Math.max(HISTORY_S, t),
+    t0 = t1 - HISTORY_S;
+  const x0 = 72,
+    x1 = W - 8,
+    y0 = 8,
+    y1 = H - 22;
+  const X = (s: number) => x0 + ((x1 - x0) * (s - t0)) / HISTORY_S,
+    Y = (m: number) => y1 - ((y1 - y0) * m) / 2;
+  g.font = "13px 'IBM Plex Mono', monospace";
+  g.textBaseline = "middle";
   // disturbance bands
   g.fillStyle = tok("--dist");
-  for (let i = 1; i < hist.length; i++) if (hist[i - 1].disturbed) g.fillRect(X(hist[i - 1].t), y0, X(hist[i].t) - X(hist[i - 1].t) + 0.5, y1 - y0);
+  for (let i = 1; i < hist.length; i++)
+    if (hist[i - 1].disturbed) g.fillRect(X(hist[i - 1].t), y0, X(hist[i].t) - X(hist[i - 1].t) + 0.5, y1 - y0);
   // grid
-  g.strokeStyle = tok("--line"); g.lineWidth = 1; g.fillStyle = tok("--muted");
-  for (let m = 0; m <= 2; m += 0.5) { g.beginPath(); g.moveTo(x0, Y(m)); g.lineTo(x1, Y(m)); g.stroke(); g.textAlign = "right"; g.fillText(m.toFixed(1), x0 - 4, Y(m)); }
-  for (let s = Math.ceil(t0 / 200) * 200; s < t1; s += 200) {
-    g.beginPath(); g.moveTo(X(s), y0); g.lineTo(X(s), y1); g.stroke();
-    if (X(s) < x1 - 60) { g.textAlign = s === t0 ? "left" : "center"; g.fillText(String(s), X(s), y1 + 12); }
+  g.strokeStyle = tok("--line");
+  g.lineWidth = 1;
+  g.fillStyle = tok("--muted");
+  for (let m = 0; m <= 2; m += 0.5) {
+    g.beginPath();
+    g.moveTo(x0, Y(m));
+    g.lineTo(x1, Y(m));
+    g.stroke();
+    g.textAlign = "right";
+    g.fillText(m.toFixed(1), x0 - 4, Y(m));
   }
-  g.textAlign = "right"; g.fillText("t, s", x1, y1 + 12);
+  for (let s = Math.ceil(t0 / 200) * 200; s < t1; s += 200) {
+    g.beginPath();
+    g.moveTo(X(s), y0);
+    g.lineTo(X(s), y1);
+    g.stroke();
+    if (X(s) < x1 - 60) {
+      g.textAlign = s === t0 ? "left" : "center";
+      g.fillText(String(s), X(s), y1 + 12);
+    }
+  }
+  g.textAlign = "right";
+  g.fillText("t, s", x1, y1 + 12);
   const line = (f: (p: Sample) => number, col: string, w: number, dash: number[] = []) => {
-    g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath();
+    g.strokeStyle = col;
+    g.lineWidth = w;
+    g.setLineDash(dash);
+    g.beginPath();
     hist.forEach((p, i) => (i ? g.lineTo(X(p.t), Y(f(p))) : g.moveTo(X(p.t), Y(f(p)))));
-    g.stroke(); g.setLineDash([]);
+    g.stroke();
+    g.setLineDash([]);
   };
   if (hist.length > 1) {
-    line(p => p.valve * 2, tok("--valve"), 1.5); line(p => p.setpoint, tok("--ink"), 1.5, [5, 4]); line(p => p.level, tok("--level"), 2.25);
+    line((p) => p.valve * 2, tok("--valve"), 1.5);
+    line((p) => p.setpoint, tok("--ink"), 1.5, [5, 4]);
+    line((p) => p.level, tok("--level"), 2.25);
     if (two) {
-      g.strokeStyle = tok("--net"); g.lineWidth = 2.25; g.setLineDash([2, 3]); g.beginPath();
+      g.strokeStyle = tok("--net");
+      g.lineWidth = 2.25;
+      g.setLineDash([2, 3]);
+      g.beginPath();
       let pen = false; // the net line starts where Net was turned on
-      for (const p of hist) { if (p.net === null) { pen = false; continue; } pen ? g.lineTo(X(p.t), Y(p.net)) : g.moveTo(X(p.t), Y(p.net)); pen = true; }
-      g.stroke(); g.setLineDash([]);
+      for (const p of hist) {
+        if (p.net === null) {
+          pen = false;
+          continue;
+        }
+        pen ? g.lineTo(X(p.t), Y(p.net)) : g.moveTo(X(p.t), Y(p.net));
+        pen = true;
+      }
+      g.stroke();
+      g.setLineDash([]);
     }
   }
   // the tank, or the PI tank (left) and net tank (right)
   const tank = (tx: number, tw: number, h: number, fill: string) => {
-    g.fillStyle = fill; g.fillRect(tx, Y(h), tw, y1 - Y(h));
-    g.strokeStyle = tok("--ink"); g.lineWidth = 2; g.strokeRect(tx, y0, tw, y1 - y0);
-    g.setLineDash([4, 3]); g.beginPath(); g.moveTo(tx - 2, Y(now.setpoint)); g.lineTo(tx + tw + 2, Y(now.setpoint)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = fill;
+    g.fillRect(tx, Y(h), tw, y1 - Y(h));
+    g.strokeStyle = tok("--ink");
+    g.lineWidth = 2;
+    g.strokeRect(tx, y0, tw, y1 - y0);
+    g.setLineDash([4, 3]);
+    g.beginPath();
+    g.moveTo(tx - 2, Y(now.setpoint));
+    g.lineTo(tx + tw + 2, Y(now.setpoint));
+    g.stroke();
+    g.setLineDash([]);
   };
-  if (two) { tank(4, 16, now.level, tok("--water")); if (now.net) tank(26, 16, now.net.level, tok("--net")); else { g.strokeStyle = tok("--control"); g.lineWidth = 1; g.strokeRect(26, y0, 16, y1 - y0); } }
-  else tank(4, 36, now.level, tok("--water"));
-  g.textAlign = "left"; g.fillStyle = tok("--muted"); g.fillText("m", 4, y1 + 12);
+  if (two) {
+    tank(4, 16, now.level, tok("--water"));
+    if (now.net) tank(26, 16, now.net.level, tok("--net"));
+    else {
+      g.strokeStyle = tok("--control");
+      g.lineWidth = 1;
+      g.strokeRect(26, y0, 16, y1 - y0);
+    }
+  } else tank(4, 36, now.level, tok("--water"));
+  g.textAlign = "left";
+  g.fillStyle = tok("--muted");
+  g.fillText("m", 4, y1 + 12);
 }
 
 function render() {
-  const s = live.state, on = live.disturbed();
+  const s = live.state,
+    on = live.disturbed();
   if (!on && s.disturbedUntil > 0) lastDisturbEnd = s.disturbedUntil;
   $("#chip").textContent = `${Math.floor(s.t)} s · ${paused ? "paused" : `${SPEED}× speed`}`;
   $("#r-level").textContent = `${s.level.toFixed(2)} m`;
@@ -340,37 +573,83 @@ function render() {
   if (REPLAY && !$("#panel-replay").hidden) REPLAY.render();
 }
 
-let last = 0, carry = 0;
+let last = 0,
+  carry = 0;
 function frame(ms: number) {
   if (!paused && last) {
     carry = Math.min(carry + ((ms - last) / 1000) * SPEED, MAX_SIM_S_PER_FRAME);
     const whole = Math.floor(carry * 10) / 10;
-    if (whole > 0) { live.step(whole); REPLAY?.step(whole); carry -= whole; }
+    if (whole > 0) {
+      live.step(whole);
+      REPLAY?.step(whole);
+      carry -= whole;
+    }
   }
   last = ms;
   render();
   requestAnimationFrame(frame);
 }
 
-declare global { interface Window { __lab: unknown } }
+declare global {
+  interface Window {
+    __lab: unknown;
+  }
+}
 window.__lab = {
   /** Stop the live clock; step() is then the only clock. */
-  pause() { paused = true; render(); },
+  pause() {
+    paused = true;
+    render();
+  },
   state: () => ({
-    t: live.state.t, level: live.state.level, setpoint: live.state.setpoint, valve: live.state.valve, disturbed: live.disturbed(),
+    t: live.state.t,
+    level: live.state.level,
+    setpoint: live.state.setpoint,
+    valve: live.state.valve,
+    disturbed: live.disturbed(),
     net: live.state.net ? { level: live.state.net.level, valve: live.state.net.valve } : null,
-    snapshot: null, replay: null, ...(REPLAY ? REPLAY.hooks.state() : {}),
+    snapshot: null,
+    replay: null,
+    ...(REPLAY ? REPLAY.hooks.state() : {}),
   }),
-  step(seconds: number) { live.step(seconds); REPLAY?.step(seconds); render(); },
-  setSetpoint(m: number) { live.setSetpoint(m); render(); },
-  disturb() { live.disturb(); render(); },
+  step(seconds: number) {
+    live.step(seconds);
+    REPLAY?.step(seconds);
+    render();
+  },
+  setSetpoint(m: number) {
+    live.setSetpoint(m);
+    render();
+  },
+  disturb() {
+    live.disturb();
+    render();
+  },
   // present only when the build inlined models/lab/ (spec "Lab")
-  ...(NET ? { setNet(on: boolean) { NET.hooks.setNet(on); render(); } } : {}),
-  ...(REPLAY ? { setSnapshot(i: number) { REPLAY.hooks.setSnapshot(i); render(); } } : {}),
+  ...(NET
+    ? {
+        setNet(on: boolean) {
+          NET.hooks.setNet(on);
+          render();
+        },
+      }
+    : {}),
+  ...(REPLAY
+    ? {
+        setSnapshot(i: number) {
+          REPLAY.hooks.setSnapshot(i);
+          render();
+        },
+      }
+    : {}),
 };
 
 mount();
 renderFixed();
 render();
 requestAnimationFrame(frame);
-document.fonts?.ready.then(() => { render(); if (!$("#panel-tables").hidden) renderTables(); if (!$("#panel-ivf").hidden) renderIvf(); });
+document.fonts?.ready.then(() => {
+  render();
+  if (!$("#panel-tables").hidden) renderTables();
+  if (!$("#panel-ivf").hidden) renderIvf();
+});

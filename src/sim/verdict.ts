@@ -8,16 +8,24 @@ import type { Layer } from "../num/layer.ts";
 export type VerdictRow = { name: string; net: Score; fixed: Score; retuned: Score };
 export type Checks = { lowerTotal: boolean; noSegmentOver5: boolean; travelWithin2x: boolean };
 export type Verdict = {
-  version: 1; seeds: number[]; rows: VerdictRow[];
+  version: 1;
+  seeds: number[];
+  rows: VerdictRow[];
   total: { net: Score; fixed: Score; retuned: Score };
-  checks: Checks; worthIt: boolean;
+  checks: Checks;
+  worthIt: boolean;
 };
 
 /** The net on each segment: mean IAE and travel over the seeds; total = sum over segments. */
 export function scoreNet(layers: Layer[], segments: readonly Segment[], seeds: readonly number[]) {
-  const rows = segments.map(seg => {
-    let iae = 0, travel = 0;
-    for (const s of seeds) { const r = runSegment(seg, makeNetController(layers), s); iae += r.iae; travel += r.travel; }
+  const rows = segments.map((seg) => {
+    let iae = 0,
+      travel = 0;
+    for (const s of seeds) {
+      const r = runSegment(seg, makeNetController(layers), s);
+      iae += r.iae;
+      travel += r.travel;
+    }
     return { name: seg.name, iae: iae / seeds.length, travel: travel / seeds.length };
   });
   const total = { iae: rows.reduce((a, r) => a + r.iae, 0), travel: rows.reduce((a, r) => a + r.travel, 0) };
@@ -28,7 +36,8 @@ export function scoreNet(layers: Layer[], segments: readonly Segment[], seeds: r
 export const trainingIae = (layers: Layer[]) => scoreNet(layers, SEGMENTS.training, SEEDS.training).total.iae;
 
 const sum = (rows: VerdictRow[], k: "net" | "fixed" | "retuned"): Score => ({
-  iae: rows.reduce((a, r) => a + r[k].iae, 0), travel: rows.reduce((a, r) => a + r[k].travel, 0),
+  iae: rows.reduce((a, r) => a + r[k].iae, 0),
+  travel: rows.reduce((a, r) => a + r[k].travel, 0),
 });
 
 /** D-011: worth it when total IAE is lower than the fixed PI's, no segment is more than 5% worse, and total valve
@@ -37,7 +46,7 @@ export function judge(rows: VerdictRow[]) {
   const total = { net: sum(rows, "net"), fixed: sum(rows, "fixed"), retuned: sum(rows, "retuned") };
   const checks: Checks = {
     lowerTotal: total.net.iae < total.fixed.iae,
-    noSegmentOver5: rows.every(r => r.net.iae <= 1.05 * r.fixed.iae),
+    noSegmentOver5: rows.every((r) => r.net.iae <= 1.05 * r.fixed.iae),
     travelWithin2x: total.net.travel <= 2 * total.fixed.travel,
   };
   return { total, checks, worthIt: checks.lowerTotal && checks.noSegmentOver5 && checks.travelWithin2x };
@@ -47,6 +56,11 @@ export function judge(rows: VerdictRow[]) {
 export function verdictOf(layers: Layer[]): Verdict {
   const pi = runFixedTest(SEGMENTS.heldOut, { seeds: SEEDS.heldOut });
   const net = scoreNet(layers, SEGMENTS.heldOut, SEEDS.heldOut);
-  const rows = pi.rows.map((r, i) => ({ name: r.name, net: { iae: net.rows[i].iae, travel: net.rows[i].travel }, fixed: r.fixed, retuned: r.retuned }));
+  const rows = pi.rows.map((r, i) => ({
+    name: r.name,
+    net: { iae: net.rows[i].iae, travel: net.rows[i].travel },
+    fixed: r.fixed,
+    retuned: r.retuned,
+  }));
   return { version: 1, seeds: [...SEEDS.heldOut], rows, ...judge(rows) };
 }

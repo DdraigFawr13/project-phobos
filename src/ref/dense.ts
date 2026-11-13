@@ -4,7 +4,8 @@
 import type { Layer } from "../num/layer.ts";
 
 export function denseRef(layer: Layer, x: number[]): number[] {
-  const { in: n, out, w, b, shift, act } = layer, scale = 2 ** shift;
+  const { in: n, out, w, b, shift, act } = layer,
+    scale = 2 ** shift;
   const y: number[] = [];
   for (let o = 0; o < out; o++) {
     let s = 0;
@@ -17,7 +18,10 @@ export function denseRef(layer: Layer, x: number[]): number[] {
 
 export function forwardRef(layers: Layer[], x: number[]): number[][] {
   const outs: number[][] = [];
-  for (const L of layers) { x = denseRef(L, x); outs.push(x); }
+  for (const L of layers) {
+    x = denseRef(L, x);
+    outs.push(x);
+  }
   return outs;
 }
 

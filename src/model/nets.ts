@@ -2,9 +2,16 @@
 // Lab-shaped net: 4→16 tanh, 16→1 tanh (97 parameters), seed 8. Valve = (5y + 16384) / 32768, that is (1.25·y + 1) / 2, clamped to [0, 1] (D-018).
 import { randomNet, type Shape } from "./random.ts";
 
-export const TEST_SHAPE: Shape = [{ in: 4, out: 16, act: "tanh" }, { in: 16, out: 5, act: "none" }];
-export const LAB_SHAPE: Shape = [{ in: 4, out: 16, act: "tanh" }, { in: 16, out: 1, act: "tanh" }];
-export const TEST_SEED = 7, LAB_SEED = 8;
+export const TEST_SHAPE: Shape = [
+  { in: 4, out: 16, act: "tanh" },
+  { in: 16, out: 5, act: "none" },
+];
+export const LAB_SHAPE: Shape = [
+  { in: 4, out: 16, act: "tanh" },
+  { in: 16, out: 1, act: "tanh" },
+];
+export const TEST_SEED = 7,
+  LAB_SEED = 8;
 export const TEST_NET_ALLOWED = [true, true, true, true, false];
 
 export const testNet = () => randomNet(TEST_SHAPE, TEST_SEED);

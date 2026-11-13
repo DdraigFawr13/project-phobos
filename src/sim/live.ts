@@ -11,7 +11,14 @@ export const DISTURB_S = 60; // s a disturbance lasts
 export const NET_SEED = 2; // the net tank's own sensor noise (spec "Lab")
 export const SETPOINT = { min: 0.1, max: 1.9, step: 0.05 } as const; // m, the slider
 
-export type Sample = { t: number; level: number; setpoint: number; valve: number; disturbed: boolean; net: number | null /* net tank level, m */ };
+export type Sample = {
+  t: number;
+  level: number;
+  setpoint: number;
+  valve: number;
+  disturbed: boolean;
+  net: number | null; /* net tank level, m */
+};
 export type NetTank = { level: number; measured: number; valve: number; inputs: Int16Array | null };
 export type LiveState = {
   t: number; // s
@@ -36,12 +43,26 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
   let n = 0; // steps taken; t = n·dt avoids summing dt
   let disturbEndStep = 0; // disturbed while n < disturbEndStep: exactly DISTURB_S of steps per tap
   const state: LiveState = {
-    t: 0, level: level0, measured: level0, setpoint: opts.setpoint ?? level0, valve: steadyValve(level0),
-    pTerm: 0, iTerm: steadyValve(level0),
-    disturbedUntil: 0, net: null, history: [],
+    t: 0,
+    level: level0,
+    measured: level0,
+    setpoint: opts.setpoint ?? level0,
+    valve: steadyValve(level0),
+    pTerm: 0,
+    iTerm: steadyValve(level0),
+    disturbedUntil: 0,
+    net: null,
+    history: [],
   };
   const record = () => {
-    state.history.push({ t: state.t, level: state.level, setpoint: state.setpoint, valve: state.valve, disturbed: n < disturbEndStep, net: state.net?.level ?? null });
+    state.history.push({
+      t: state.t,
+      level: state.level,
+      setpoint: state.setpoint,
+      valve: state.valve,
+      disturbed: n < disturbEndStep,
+      net: state.net?.level ?? null,
+    });
     if (state.history.length > HISTORY_S + 1) state.history.shift();
   };
   record();
@@ -79,12 +100,19 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
       state.setpoint = Math.round(s * 100) / 100;
     },
     /** Outflow × 1.2 for the next 60 s; tapping again restarts the 60 s. */
-    disturb() { disturbEndStep = n + DISTURB_S * STEPS_PER_S; state.disturbedUntil = disturbEndStep * TANK.dt; },
+    disturb() {
+      disturbEndStep = n + DISTURB_S * STEPS_PER_S;
+      state.disturbedUntil = disturbEndStep * TANK.dt;
+    },
     disturbed: () => n < disturbEndStep,
     /** Net on: a second tank, reset to steady state at the PI tank's true level, with its own noise (seed 2).
      *  null turns it off. */
     setNet(layers: Layer[] | null) {
-      if (!layers) { net = null; state.net = null; return; }
+      if (!layers) {
+        net = null;
+        state.net = null;
+        return;
+      }
       const h = state.level;
       net = { plant: makePlant({ level: h, rng: makeRng(NET_SEED) }), ctrl: makeNetController(layers) };
       net.ctrl.reset(h, state.setpoint);

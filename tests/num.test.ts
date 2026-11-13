@@ -61,12 +61,28 @@ test("quantise rejects a w or b of the wrong length", () => {
 
 test("checkBound throws when the largest row sum × 32768 reaches the limit", () => {
   // rows [3, −2] and [1, 1]: largest Σ|w| = 5, so the bound is 5 × 32768 = 163840
-  const l: Layer = { kind: "dense", in: 2, out: 2, shift: 0, w: Int16Array.from([3, -2, 1, 1]), b: new Int16Array(2), act: "none" };
+  const l: Layer = {
+    kind: "dense",
+    in: 2,
+    out: 2,
+    shift: 0,
+    w: Int16Array.from([3, -2, 1, 1]),
+    b: new Int16Array(2),
+    act: "none",
+  };
   assert.doesNotThrow(() => checkBound(l, 163841));
   assert.throws(() => checkBound(l, 163840));
   assert.throws(() => checkBound(l, 100000));
   // the default limit is 2^53: a full-scale 16→1 layer passes
-  const big: Layer = { kind: "dense", in: 16, out: 1, shift: 0, w: new Int16Array(16).fill(-32768), b: new Int16Array(1), act: "tanh" };
+  const big: Layer = {
+    kind: "dense",
+    in: 16,
+    out: 1,
+    shift: 0,
+    w: new Int16Array(16).fill(-32768),
+    b: new Int16Array(1),
+    act: "tanh",
+  };
   assert.doesNotThrow(() => checkBound(big));
 });
 

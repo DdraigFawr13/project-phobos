@@ -13,7 +13,10 @@ export const MODELS_DIR = new URL("models/lab/", root);
 export function readModels(dir: URL): Record<string, unknown> | null {
   if (!existsSync(new URL("weights.json", dir))) return null;
   const out: Record<string, unknown> = {};
-  for (const f of readdirSync(dir).filter(f => f.endsWith(".json")).sort()) out[f.replace(/\.json$/, "")] = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
+  for (const f of readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .sort())
+    out[f.replace(/\.json$/, "")] = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
   return out;
 }
 
@@ -21,7 +24,12 @@ export async function buildLabHtml(modelsDir: URL = MODELS_DIR): Promise<string>
   const models = readModels(modelsDir);
   const js = await build({
     entryPoints: [fileURLToPath(new URL("src/lab/main.ts", root))],
-    bundle: true, write: false, format: "iife", target: "es2022", minify: true, legalComments: "none",
+    bundle: true,
+    write: false,
+    format: "iife",
+    target: "es2022",
+    minify: true,
+    legalComments: "none",
     define: { __LAB_MODELS__: JSON.stringify(models) },
   });
   const css = readFileSync(new URL("src/lab/lab.css", root), "utf8");
@@ -40,5 +48,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const html = await buildLabHtml();
   mkdirSync(new URL("dist/", root), { recursive: true });
   writeFileSync(new URL("dist/lab.html", root), html);
-  console.log(`build-lab: dist/lab.html ${html.length} bytes${readModels(MODELS_DIR) ? ", with models/lab/" : ", no models/lab/"}`);
+  console.log(
+    `build-lab: dist/lab.html ${html.length} bytes${readModels(MODELS_DIR) ? ", with models/lab/" : ", no models/lab/"}`,
+  );
 }
