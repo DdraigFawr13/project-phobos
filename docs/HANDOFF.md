@@ -4,7 +4,7 @@ Updated: 2026-11-13. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 done (PR #4 merged). S4 done (PR #5 merged). S5 done (PR #6 merged). Next slice: S6.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S6 done (PRs #2 to #7 merged); S6 ended milestone M3 and the spec. The verdict was No. Next: one shut-valve fix, judged by the same verdict, then Vulcan.
 
 ## Plan map
 
@@ -16,34 +16,34 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S3 numbers and tables (M2), PR #4.
 - ✔ S4 dense, mask and float reference (M2), PR #5.
 - ✔ S5 copy the PI (M3), PR #6.
-- ▶ S6 evolution strategies, replay and verdict (M3).
+- ✔ S6 evolution strategies, replay and verdict (M3), PR #7.
+- ▶ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
 
-- 2026-11-12 S4 built: `src/runtime/{dense,select,net}.ts`, `src/ref/{dense,agreement}.ts`, `src/model/{random,nets,weights}.ts`, `src/sim/net-controller.ts`, Integer vs float tab with teaching text (worked example computed in the page), `tests/runtime.test.ts`, `tests/weights.test.ts`, golden `tests/golden/runtime-testnet.json`. Tests 60 (was 42); check 1.44 to 1.47 s; browser test 4.5 s. Tests failed first (modules missing); 14 planted bugs all caught. Measured: test net layer gaps 0.028% and 0.007%, same action 100.0% (actions 1 and 3 only: exactly the 2 distinct the spec asks for); Lab-shaped net gaps 0.026% and 0.026%, valve within 0.01 on 100.0%, largest gap 0.0005. Equal to the mock-up's script. Lab republished (version 6). Loader also rejects an unknown kind/act and a broken layer chain (beyond the spec's list; NUMBERS.md says so).
-
-- 2026-11-13 Morgan approved PR #5 and asked for S5 in a new session. Older entries: `docs/archive/handoff-2026-11.md`.
-- 2026-11-13 S5 built on branch `s5-copy-pi`: `src/train/copy.ts`, `scripts/train-lab.ts` (`npm run train:lab`), `models/lab/{copy-weights,weights,log,snapshots}.json`, `src/sim/live.ts` net tank (seed 2), Net tab `src/lab/net-panel.ts` (toggle, two tanks, heat map, teaching text with a live worked example), `scripts/build-lab.ts` exports `buildLabHtml` and inlines models via `__LAB_MODELS__`. Tests 71 (was 60); check 3.40 to 3.48 s; browser 4.1 to 4.5 s. Tests failed first (modules and files missing); 10 planted bugs all caught.
-- 2026-11-13 S5 measured (after D-016): training 1.12 s (`npm run train:lab`, D-008 limit 10 min). Loss 0.0741 → 0.00209 at step 200 → 0.00074 at 2,000. Mean |valve − PI valve| on the check states 0.0170 (limit 0.05); integer within 0.01 of float on 100.0% (D-007); J4 net tank 1.003 m after 300 s. In control it holds 0.10 to 1.90 m within 0.009 m at 900 s (new test, limit 0.02). Shifts 14 and 14.
-- 2026-11-13 Choices beyond the spec: the data shuffle uses a fresh rng seed 11; batches are taken in order from the shuffled data, wrapping round; the log records full-data loss; weight meta `{ trainer: "copy", seed: 13 }`; the Net tab adds a setpoint slider (the mock-up had none); heat-map negatives are grey `--valve` (ink turned white in dark). Lab republished to the same link (version 7).
-- 2026-11-13 Morgan found on the phone that the net could not hold 0.10 m (settled near 0.20 m): it ignored its error-so-far input because the copy data had no disturbances. Fixed by D-016 (one 60 s disturbance per run), with a closed-loop test at 0.10 to 1.90 m; Lab republished (version 8).
-- 2026-11-13 Morgan approved PR #6 and asked for S6 in a new session.
+- 2026-11-13 Morgan approved PR #6 and asked for S6 in a new session. Older entries: `docs/archive/handoff-2026-11.md`.
+- 2026-11-13 Morgan approved PR #7 (S6) and asked to try the shut-valve fix.
+- 2026-11-13 Valve travel: Morgan kept D-011 as written (noise included). Measured trial: fixed PI 52.37, ES net 37.07 held-out travel; noise off 3.84 and 3.52.
+- 2026-11-13 ES re-check (D-017): the spec's noise 64 / step 512 swung training IAE 54.6 to 58.3; 32/128 fell every generation, 57.18 → 53.49 m·s (fixed PI 50.94). `shr` now divides by a stored 2^n (same results, 7× faster).
+- 2026-11-13 S6 built: `src/train/{es,pool,lab-files}.ts`, `src/sim/{verdict,replay}.ts`, `scripts/train-lab.ts` (copy, ES on worker threads, verdict), `models/lab/` (weights.json is now ES; ES log, 10 ES snapshots, `esExample`, `verdict.json`), Replay tab `src/lab/replay-panel.ts` (curve, 20-snapshot slider, held-out replay tank on seed 101, verdict tables and checks, ES worked example from the real generation 1). Tests 86 (was 71); check 6.0 to 6.6 s; browser 5.6 to 6.0 s; `train:lab` 40.2 s (D-008 limit 10 min). Tests failed first; 9 planted bugs caught.
+- 2026-11-13 Verdict (held-out, seeds 101 to 105): **No.** Net 63.49 m·s against fixed PI 58.89 (retuned 55.52); worse than 5% on 0.75→0.15 (16.92 vs 11.61), 1.40→1.90 (8.32 vs 5.24) and dist@0.35 (4.48 vs 2.96); better on 0.15→1.40 (17.21 vs 22.36). Travel 37.52 vs 52.37 (0.72×). ES net in control: within 0.0088 m at 0.10 to 1.90 m (limit 0.02).
+- 2026-11-13 Why the net loses at low levels (measured, 0.75→0.15, seed 101): the PI shuts the valve (min 0.0000) and is below 0.17 m at 106 s; the copied and ES nets never go below 0.0637 and 0.0599 and stay above 0.17 m all 300 s. Inference, not tested: the copy phase never taught it to shut fully, and 50 small ES steps can't move it that far.
+- 2026-11-13 Choices beyond the spec: J5's "state().net.valve" is `state().replay.valve` (the Replay tank restarts at 0 s on each snapshot, so two snapshots compare from the same state); training IAE logged at generation 0 too (51 entries); `log.json` carries `esExample`; the Replay curve shows the fixed PI's training IAE dashed. Lab republished to the same link (version 9).
 
 ## Next
 
-1. New session, new branch from `main`: build S6 (evolution strategies, Replay tab, verdict) per the spec "S6" and "Trainer". First raise the valve-travel question under Open questions with Morgan (it affects D-011's verdict), then re-check the ES settings before building and record any change in DECISIONS. Write checks first and see them fail (VER-10); test the ES net in control across 0.10 to 1.90 m as well as on the held-out set (LESSONS `train`). Report the measured training time (D-008). Keep the teaching text plain, with a worked example. Republish Lab to the same link.
+1. New branch from `main`: try one fix for the net never shutting the valve (see Just done), retrain, and report the held-out verdict against the same D-011 rule. Record the fix in DECISIONS. Test in control across 0.10 to 1.90 m (LESSONS `train`).
+2. Then offer an M3 audit (VER-09) and move to the Vulcan phase whichever way the verdict goes.
 
-Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 8, S5 with D-016). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
+Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9, S6). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
 ## Open questions
 
-- Raise before S6, now measured by S2's repo code: valve travel is 10.20 to 11.04 per training segment for both PIs with noise, and 0.20 to 1.25 with noise off, so noise causes 88 to 98% of it. D-011's travel clause mostly measures noise amplification. The retuned PI is worse on `1.00→1.75` (11.79 against 9.74 m·s) and on held-out `0.15→1.40` (25.25 against 22.36) and `1.40→1.90` (6.40 against 5.24).
-- For S4 (minor, follows the spec): the net's integral input holds when the valve is ≥ 0.999 or ≤ 0.001, the PI when u leaves [0, 1]. On `1.00→1.75` that leaves a constant 0.0026 offset in I-equivalent (about 13 LSB on the input); other segments agree within 0.0001. Locked in `tests/check-states.test.ts`.
+- For S4 (minor, follows the spec): the net's integral input holds when the valve is ≥ 0.999 or ≤ 0.001, the PI when u leaves [0, 1]. On `1.00→1.75` that leaves a constant 0.0026 offset in I-equivalent. Locked in `tests/check-states.test.ts`.
 
 ## Decisions since the last plan update
 
-- 2026-11-13 D-016 copy data includes disturbances (Morgan, on PR #6). None in S3.
-- 2026-11-12 D-014 Lab look: Control room.
-- 2026-11-12 D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
-- 2026-11-12 D-001 harness; D-002 concept; D-003 round 1; D-004 plan approved; D-005 platforms; D-006 number spec; D-007 accuracy; D-008 training; D-009 Lab pass mark; D-010 files and licence.
+- 2026-11-13 Morgan: try one shut-valve fix after the No. D-017 ES settings after the S6 re-check; D-011 kept (Morgan). D-016 copy data includes disturbances.
+- 2026-11-12 D-014 Lab look: Control room; D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
+- 2026-11-12 D-001 to D-010: harness, concept, round 1, plan, platforms, number spec, accuracy, training, pass mark, files and licence.

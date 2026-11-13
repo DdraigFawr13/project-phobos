@@ -14,9 +14,9 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 
 ## Local checks (run before pushing)
 
-- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 3.40 to 3.48 s on 2026-11-13 (71 tests, after S5 and D-016; `tests/train.test.ts` retrains the copy phase, about 1 s); budget 10 s.
-- Lab changes: `npm run test:browser`, 4.1 to 4.5 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live, Fixed test, Tables, Integer vs float and Net tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
-- Training: `npm run train:lab` rewrites `models/lab/*.json` (1.12 s on 2026-11-13); commit the files it changes, saying why (SIM-02).
+- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 6.0 to 6.6 s on 2026-11-13 (86 tests, after S6; `tests/es.test.ts` reruns 5 ES generations on 3 worker threads, about 4 s, and `tests/train.test.ts` retrains the copy phase, about 1 s); budget 10 s.
+- Lab changes: `npm run test:browser`, 5.6 to 6.0 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live, Fixed test, Tables, Integer vs float, Net and Replay tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
+- Training: `npm run train:lab` rewrites `models/lab/*.json` (copy phase, then ES on worker threads, then the verdict; 40.2 s on 2026-11-13 with 3 workers); commit the files it changes, saying why (SIM-02).
 
 ## What CI runs
 

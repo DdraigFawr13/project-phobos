@@ -1,4 +1,4 @@
-// S5 copy phase (docs/specs/first-usable.md "Trainer", "S5", J4; D-007, D-008). The committed files in
+// S5 copy phase (docs/specs/first-usable.md "Trainer", "S5", J4; D-007, D-008). The committed copy-phase files in
 // models/lab/ come from `npm run train:lab`; the last test retrains and asserts the same bytes (SIM-02).
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -105,15 +105,15 @@ test("log and snapshots: loss every 10 steps from 0 to 2,000; 10 quantised snaps
   assert.deepEqual(copySnaps.map((s: any) => s.step), Array.from({ length: 10 }, (_, i) => (i + 1) * 200));
   for (const s of copySnaps) assert.doesNotThrow(() => loadWeights({ format: "phobos-weights", version: 1, layers: s.layers, meta: {} }));
   assert.deepEqual(copySnaps.at(-1).layers, JSON.parse(readModel("copy-weights.json")).layers);
-  // S5 copies copy-weights.json to weights.json; S6 replaces it with the ES result
-  assert.equal(readModel("weights.json"), readModel("copy-weights.json"));
+  // S6 replaced weights.json with the ES result (tests/es.test.ts); the copy keeps its own file
+  assert.notEqual(readModel("weights.json"), readModel("copy-weights.json"));
 });
 
-test("train:lab is reproducible: a fresh copy run writes exactly the committed files", () => {
+test("train:lab is reproducible: a fresh copy run writes exactly the committed copy-weights.json and copy-phase log and snapshots", () => {
   const files = copyFiles();
-  for (const name of ["copy-weights.json", "weights.json", "log.json", "snapshots.json"] as const) {
-    assert.equal(files[name], readModel(name), name);
-  }
+  assert.equal(files["copy-weights.json"], readModel("copy-weights.json"));
+  assert.deepEqual(files.log, JSON.parse(readModel("log.json")).entries.filter((e: any) => e.phase === "copy"));
+  assert.deepEqual(files.snapshots, JSON.parse(readModel("snapshots.json")).snapshots.filter((s: any) => s.phase === "copy"));
 });
 
 test("J4 in Lab's live sim: the copied net holds its tank at the setpoint, and Net on leaves the PI tank unchanged", () => {

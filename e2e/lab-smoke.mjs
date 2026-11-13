@@ -1,4 +1,4 @@
-// J1, J2, the S3 Tables tab, the S4 Integer vs float tab and J4 (S5 Net tab) browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
+// J1, J2, the S3 Tables tab, the S4 Integer vs float tab, J4 (S5 Net tab) and J5 (S6 Replay tab) browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
 // Uses the container's Playwright and Chromium (WEB-05); not a dependency. Local only, not in CI.
 // dist/lab.html is a fragment, so it is wrapped the way the Artifact host wraps it before loading.
 import { createRequire } from "node:module";
@@ -14,7 +14,9 @@ import { loadWeights } from "../src/model/weights.ts";
 import { forward } from "../src/runtime/net.ts";
 import { valveOf } from "../src/model/nets.ts";
 
-const committed = loadWeights(JSON.parse(readFileSync(new URL("../models/lab/weights.json", import.meta.url), "utf8"))).layers;
+const model = f => JSON.parse(readFileSync(new URL(`../models/lab/${f}`, import.meta.url), "utf8"));
+const committed = loadWeights(model("weights.json")).layers;
+const snapshots = model("snapshots.json").snapshots, verdict = model("verdict.json"), esExample = model("log.json").esExample;
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -89,7 +91,7 @@ try {
 
     // J2: the Fixed test tab runs the training set and prints the same numbers as Node
     const tabs = await page.locator('[role="tab"]').allTextContents();
-    check(tabs.join("|") === "Live|Fixed test|Tables|Integer vs float|Net", `tab row: ${tabs.join(", ")}`);
+    check(tabs.join("|") === "Live|Fixed test|Tables|Integer vs float|Net|Replay", `tab row: ${tabs.join(", ")}`);
     await page.locator('[role="tab"]', { hasText: "Fixed test" }).click();
     check(await page.locator("#panel-live").isHidden(), "Live panel hidden on the Fixed test tab");
     await page.locator("#ft-run").click();
@@ -187,6 +189,45 @@ try {
     await shot("lab-400-net");
     await page.locator("#net-on").click();
     check((await lab("state")).net === null, "tapping Net off turns the net tank off");
+
+    // J5: the Replay tab follows the snapshot slider; the verdict is the final weights' and never changes with it
+    await page.locator('[role="tab"]', { hasText: "Replay" }).click();
+    check(await page.locator("#panel-net").isHidden(), "Net panel hidden on the Replay tab");
+    const vtext = async () => page.locator("#verdict").textContent();
+    const v0text = await vtext();
+    check(v0text.startsWith(verdict.worthIt ? "Yes" : "No"), `verdict line: "${v0text}"`);
+    const cellsIae = await page.locator('#v-iae td[data-k="net"]').allTextContents();
+    check(cellsIae.join("|") === [...verdict.rows.map(r => r.net.iae), verdict.total.net.iae].map(v => v.toFixed(2)).join("|"), `verdict net IAE cells: ${cellsIae.join(", ")}`);
+    const cellsTr = await page.locator('#v-travel td[data-k="fixed"]').allTextContents();
+    check(cellsTr.join("|") === [...verdict.rows.map(r => r.fixed.travel), verdict.total.fixed.travel].map(v => v.toFixed(2)).join("|"), `verdict fixed-PI travel cells: ${cellsTr.join(", ")}`);
+    await lab("setSnapshot", 0);
+    let r = await lab("state");
+    check(r.snapshot?.phase === snapshots[0].phase && r.snapshot?.step === snapshots[0].step, `setSnapshot(0): state().snapshot ${JSON.stringify(r.snapshot)}`);
+    check(r.replay?.t === 0 && r.replay?.segment === 0, `the replay restarts at 0 s on the first held-out test (${JSON.stringify(r.replay && { t: r.replay.t, segment: r.replay.segment })})`);
+    check(await page.locator("#snap").inputValue() === "0", "the slider shows snapshot 0");
+    await lab("step", 10);
+    const valveFirst = (await lab("state")).replay.valve;
+    const last = snapshots.length - 1;
+    await lab("setSnapshot", last);
+    r = await lab("state");
+    check(r.snapshot?.phase === "es" && r.snapshot?.step === snapshots[last].step, `setSnapshot(${last}): state().snapshot ${JSON.stringify(r.snapshot)}`);
+    await lab("step", 10);
+    const valveLast = (await lab("state")).replay.valve;
+    check(valveFirst !== valveLast, `the replay valve after 10 s differs between snapshots (${valveFirst} and ${valveLast})`);
+    check(await vtext() === v0text, "the verdict text stays the same across snapshots");
+    const curveInk = await page.evaluate(() => { const c = document.getElementById("curve"); const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let k = 0; for (let i = 0; i < d.length; i += 4) if (d[i] !== d[0] || d[i + 1] !== d[1] || d[i + 2] !== d[2]) k++; return k; });
+    check(curveInk > 1000, `training curve drew (${curveInk} non-background pixels)`);
+    await page.locator("#snap").fill("12");
+    check((await lab("state")).snapshot?.step === snapshots[12].step, "dragging the slider picks that snapshot");
+    if (scheme === "light") {
+      await page.locator("#panel-replay summary").click();
+      await page.waitForFunction(() => document.getElementById("es-example").textContent.length > 0); // filled on the toggle event
+      const ex = await page.locator("#es-example").textContent();
+      check(ex.includes(`new value ${String(esExample.next).replace("-", "−")}`), `ES worked example ends at the trained value ${esExample.next}: "…${ex.slice(-80)}"`);
+    }
+    await lab("step", 150); // so the screenshot shows the replay tank partway through the first held-out test
+    await layout("Replay");
+    await shot("lab-400-replay");
     check(errors.length === 0, `${scheme}: no page errors ${errors.join(" | ")}`);
     await page.close();
   }

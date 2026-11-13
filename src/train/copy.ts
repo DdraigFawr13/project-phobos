@@ -164,18 +164,18 @@ export function trainCopy(opts: { steps?: number; data?: CopyData } = {}): { net
 }
 
 // File text: two-space JSON with number arrays kept on one line, so diffs stay readable.
-const fmt = (v: unknown) => JSON.stringify(v, null, 2).replace(/\[\s+(-?[\d.e+-]+(?:,\s+-?[\d.e+-]+)*)\s+\]/g, (_, xs: string) => `[${xs.split(/,\s+/).join(", ")}]`) + "\n";
-const layersJson = (layers: Layer[]): LayerJson[] => toWeightFile(layers, { trainer: "copy", seed: COPY.initSeed }).layers;
+export const fmt = (v: unknown) => JSON.stringify(v, null, 2).replace(/\[\s+(-?[\d.e+-]+(?:,\s+-?[\d.e+-]+)*)\s+\]/g, (_, xs: string) => `[${xs.split(/,\s+/).join(", ")}]`) + "\n";
+export const layersJson = (layers: Layer[]): LayerJson[] => toWeightFile(layers, { trainer: "copy", seed: COPY.initSeed }).layers;
 
-/** The four models/lab/ files `npm run train:lab` writes in S5, as text. weights.json is a copy of
- *  copy-weights.json until S6 replaces it with the ES result. Losses are kept to 6 significant digits. */
-export function copyFiles(): Record<"copy-weights.json" | "weights.json" | "log.json" | "snapshots.json", string> {
+/** The copy phase's share of models/lab/: copy-weights.json as text, and its log entries and snapshots for
+ *  log.json and snapshots.json (lab-files.ts adds the ES phase). Losses are kept to 6 significant digits. */
+export function copyFiles() {
   const { log, snapshots } = trainCopy();
-  const weights = fmt(toWeightFile(snapshots.at(-1)!.layers, { trainer: "copy", seed: COPY.initSeed }));
+  const layers = snapshots.at(-1)!.layers;
   return {
-    "copy-weights.json": weights,
-    "weights.json": weights,
-    "log.json": fmt({ version: 1, entries: log.map(e => ({ phase: "copy", step: e.step, loss: Number(e.loss.toPrecision(6)) })) }),
-    "snapshots.json": fmt({ version: 1, snapshots: snapshots.map(s => ({ phase: "copy", step: s.step, layers: layersJson(s.layers) })) }),
+    layers,
+    "copy-weights.json": fmt(toWeightFile(layers, { trainer: "copy", seed: COPY.initSeed })),
+    log: log.map(e => ({ phase: "copy" as const, step: e.step, loss: Number(e.loss.toPrecision(6)) })),
+    snapshots: snapshots.map(s => ({ phase: "copy" as const, step: s.step, layers: layersJson(s.layers) })),
   };
 }

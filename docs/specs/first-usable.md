@@ -157,7 +157,7 @@ The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y 
   - Loss is the MSE between the net valve and the fixed PI's valve.
   - Training: momentum SGD (v = 0.9·v + g; θ −= 0.01·v), batch 64, 2,000 steps. Weights are Xavier-uniform (seed 13), biases 0. A snapshot is saved every 200 steps and the loss logged every 10 steps. Then quantise and write `models/lab/copy-weights.json`. S5 also copies it to `weights.json`; S6 replaces `weights.json` with the ES result.
 - **ES phase:**
-  - Runs on the integer net, with shifts fixed from quantisation. Weights and biases are all perturbed, by ε ~ N(0, 1) from Box-Muller (rng seed 17), as round(64 × ε) LSB, saturated.
+  - Runs on the integer net, with shifts fixed from quantisation. Weights and biases are all perturbed, by ε ~ N(0, 1) from Box-Muller (rng seed 17), as round(64 × ε) LSB, saturated. S6 changed 64 to 32 and the step 512 to 128 (D-017).
   - 50 generations, population 32 (16 antithetic pairs).
   - Fitness is −(training-set total IAE).
   - Update: θ += round(512 × Σ_k r_k ε_k / 32) LSB, saturated. r_k is the centred rank of member k, in [−0.5, 0.5]. The step size is not measured; S6 measures it.
