@@ -14,7 +14,7 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 
 ## Local checks (run before pushing)
 
-- Every push: `npm run check` (type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 6.6 s on 2026-11-13 (88 tests, after D-018; `tests/es.test.ts` reruns 5 ES generations on 3 worker threads, about 4 s, and `tests/train.test.ts` retrains the copy phase, about 1 s); budget 10 s.
+- Every push: `npm run check` (Prettier check, type check, `node --test` unit and golden tests, test-traps, master drift check). Measured 8.2 to 8.9 s on 2026-11-13 in a 4-CPU cloud container (88 tests; Prettier about 0.5 s with its cache, 1.8 s without; `node --test` 6.5 to 7.0 s, of which `tests/es.test.ts` reruns 5 ES generations on 3 worker threads, about 4 s, and `tests/train.test.ts` retrains the copy phase, about 1 s); budget 10 s. `npm run format` rewrites files Prettier flags.
 - Lab changes: `npm run test:browser`, 5.6 to 6.0 s (builds `dist/lab.html`, runs `e2e/lab-smoke.mjs` in the container's Chromium at 400 px, light and dark, Live, Fixed test, Tables, Integer vs float, Net and Replay tabs; screenshots in `test-results/`). Put the 400 px screenshot in the PR.
 - Training: `npm run train:lab` rewrites `models/lab/*.json` (copy phase, then ES on worker threads, then the verdict; 41.1 s on 2026-11-13 with 3 workers); commit the files it changes, saying why (SIM-02).
 
@@ -25,7 +25,7 @@ Shared rules come from AI-Master-Instructions and load through CLAUDE.md (`.clau
 
 ## Project rules
 
-- Runtime maths is integers only: `+ - * /`, shifts and lookup tables; no float `Math` in the runtime path. One exception: `shr` in `src/num/fixed.ts` uses `Math.floor(x / 2 ** n)`, exact below 2^53 (`docs/NUMBERS.md`). Why: bit-identical results across browsers, Vulcan V-006, Silvanus integer sim (CONCEPT.md).
+- Runtime maths is integers only: `+ - * /`, shifts and lookup tables; no float `Math` in the runtime path: `src/runtime/`, `src/num/fixed.ts`, and the table lookups in `src/num/act.ts` and `src/num/tables.gen.ts`. One exception: `shr` in `src/num/fixed.ts` is a floor divide by a stored power of two, `Math.floor(x / POW2[n])`, exact below 2^53 (`docs/NUMBERS.md`). Offline code may use float `Math`: quantising (`src/num/quantise.ts`), table generation (`src/num/gen.ts`), table errors (`src/num/table-errors.ts`), the float reference `src/ref/` and training `src/train/`. Why: bit-identical results across browsers, Vulcan V-006, Silvanus integer sim (CONCEPT.md).
 - Every learned block ships with a plain baseline and a stated test it must beat on a fixed seed list, or it is dropped. Why: kill criteria in CONCEPT.md.
 - Integer layers have golden tests against a float reference within a stated error bound.
 - Never write code that implements a safety function or drives a live plant; exports target Controls-Simulator's simulator, with output clamps and a classic PID fallback. Why: CONCEPT.md "What it isn't".

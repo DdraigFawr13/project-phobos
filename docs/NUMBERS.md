@@ -6,7 +6,7 @@ How Phobos's integer runtime represents numbers. The rules are D-006 and D-007; 
 
 - Q12 int16: 1.0 = 4096, range [−8, 8). One LSB = 1/4096 ≈ 0.00024.
 - `sat16(x)` clamps to [−32768, 32767]. Saturate, never wrap.
-- `shr(x, n)` = `Math.floor(x / 2 ** n)`: a floor shift, exact for integers below 2^53 because a power-of-two divide is exact in doubles. JS `>>` wraps above 2^31, and Structured Text integer division truncates, so an exporter must emit a floor, not a divide (D-006).
+- `shr(x, n)` = `Math.floor(x / POW2[n])`, where `POW2[n]` is a stored 2^n (D-017): a floor shift, exact for integers below 2^53 because a power-of-two divide is exact in doubles. JS `>>` wraps above 2^31, and Structured Text integer division truncates, so an exporter must emit a floor, not a divide (D-006).
 
 ## Dense layer
 
