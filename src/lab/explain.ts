@@ -69,13 +69,14 @@ export const EXPLAIN: Record<string, Explain> = {
     ],
   },
   net: {
-    what: "A small neural net drives a second tank beside the PI's tank. Both tanks get the same setpoint and the same disturbance; each has its own sensor noise. This net learned only by copying the PI, so it should behave almost the same. A later step will try to tune it to do better.",
-    tryit: "Tap Net on, then tap Disturbance and compare the two tanks: how deep each dips and how fast each gets back. They should look nearly the same, because the net copied the PI. Then drag the setpoint and watch both levels follow.",
+    what: "A small neural net drives a second tank beside the PI's tank. Both tanks get the same setpoint and the same disturbance; each has its own sensor noise. The net first learned by copying the PI, then was tuned by trial and error to lower its error score (the Replay tab shows how). So it behaves much like the PI, but not exactly.",
+    tryit: "Tap Net on, then tap Disturbance and compare the two tanks: how deep each dips and how fast each gets back. Then drag the setpoint down to 0.25 m and back up, and watch which level arrives first.",
     deep: `<p><b>What the net sees.</b> Every 0.1 s it gets 4 numbers: the setpoint, the measured level, the error (setpoint minus level), and the error added up over time, divided by 32 to keep it small. The PI uses only the last two. The net gets all four, so later training could teach it to treat a low tank differently from a full one.</p>
       <p><b>Inside.</b> 16 neurons each multiply the 4 inputs by their own weights, add them up with a bias, and squash the total through tanh (see the Tables tab) into −1 to 1. One more neuron does the same with those 16 numbers. Its answer, from −1 to 1, becomes the valve: −1 is shut, 0 is half open, 1 is fully open. That is 97 numbers to learn: 64 + 16 in the first layer, 16 + 1 in the second.</p>
       <p><b>A worked example</b>, the net's sums for its tank right now:</p>
       <div class="now" id="net-now" aria-live="off"></div>
       <p><b>How it learned: copying.</b> <span id="net-train"></span></p>
+      <p><b>Then tuning.</b> The copied net was tuned for 50 rounds by evolution strategies, working on its whole numbers directly. The Replay tab explains it and shows whether it paid off.</p>
       <p><b>From decimals to whole numbers.</b> Training uses decimal maths. Afterwards each weight is stored as a whole number multiplied by 16,384 (so 0.5 is stored as 8192) and each bias multiplied by 4,096. The tank runs on those whole numbers only. <span id="net-ivf"></span></p>
       <p><b>The heat map</b> shows all 97 numbers. Each row of the top four is one input: how much it counts for each of the 16 neurons. The fifth row is each neuron's bias. The sixth row is how much each neuron counts towards the valve, and the single square under it is the valve neuron's bias. Purple squares are positive, grey squares negative, and a stronger square is a bigger number. A pattern you can read by eye is rare in nets; here, look for the error and error-so-far rows, the two inputs the PI uses.</p>`,
     words: [
@@ -87,6 +88,26 @@ export const EXPLAIN: Record<string, Explain> = {
     ],
   },
 };
+
+export const REPLAY_EXPLAIN: Explain = {
+  what: "How the net learned, snapshot by snapshot, and whether it beats the PI tuned once on five tests it never practised on. The curve's left half is copying the PI; the right half is tuning. The tank below replays those five tests with the snapshot you pick. The answer can be no: that is a useful result too.",
+  tryit: "Drag the snapshot slider from the first snapshot to the last and watch the dot move along the curve. On the first test, 0.75→0.15, compare how fast the level comes down at snapshot 1 and at snapshot 20. Then read the verdict: it never changes with the slider, because it judges the final net.",
+  deep: `<p><b>Phase 1, copy.</b> The net learns to give the same valve opening as the PI, in the situations the PI met (the Net tab explains it). The left half of the curve is the loss, on a log scale: how far the net's valve is from the PI's. Lower is closer. 10 snapshots were saved, one every 200 steps.</p>
+    <p><b>Phase 2, tuning by evolution strategies (ES).</b> Each round (a generation), Phobos makes 32 slightly changed copies of the net. Every one of the 97 whole numbers is nudged by a random amount, about 32 steps either way. Copies come in mirror pairs: if one adds 25 to a number, its twin takes 25 away. Each copy drives the tank through the five training tests on noise seeds 1 to 5, and gets their total error score (IAE). Then the copies are ranked: the best gets +0.5, the worst −0.5, and the rest are spread evenly between. Each number moves towards the nudges of the better copies and away from those of the worse: step = 128 × (sum of rank × nudge) ÷ 32, rounded to a whole number. Nobody computes a slope; the ranking does the work. 50 generations, a snapshot every 5. The right half of the curve is the net's training error score after each generation; the dashed line is the PI tuned once on the same tests.</p>
+    <p><b>A worked example</b>, from the training run itself: one number through generation 1. Here ε is the random nudge before it is multiplied by 32.</p>
+    <div class="now" id="es-example" aria-live="off"></div>
+    <p><b>Why ranks, not scores.</b> Ranks don't care how much better a copy is, only whether it is better. One copy that happens to crash the tank can't drag the step its way.</p>
+    <p><b>Why tune the whole numbers.</b> The copy phase trains in decimals and then rounds. ES scores the whole-number net that actually runs, so nothing is lost in rounding afterwards.</p>
+    <p><b>Held-out tests.</b> The verdict uses five other tests (other start levels and setpoints) and noise seeds 101 to 105. The net never trained on them. A net that only memorised its practice would fail here. The tank above replays them on seed 101.</p>
+    <p><b>The verdict</b> is yes only if all three hold: a lower total error score than the PI tuned once, no single test more than 5% worse, and valve movement at most twice the PI's. Valve movement includes the twitching caused by sensor noise, because that wears a real valve too.</p>`,
+  words: [
+    ["Snapshot", "a saved copy of the net partway through training"],
+    ["Generation", "one round of trying 32 changed copies and taking one step"],
+    ["Antithetic pair", "two copies with opposite nudges, which makes the step less noisy"],
+    ["Held-out", "kept back from training, so it can test what was learned"],
+  ],
+};
+EXPLAIN.replay = REPLAY_EXPLAIN;
 
 export function explainHtml(e: Explain): { what: string; after: string } {
   return {

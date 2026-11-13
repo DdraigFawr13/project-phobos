@@ -8,6 +8,7 @@ import { loadWeights } from "../src/model/weights.ts";
 import { SEGMENTS, SEEDS, runFixedTest } from "../src/sim/fixed-test.ts";
 import { makeNetController } from "../src/sim/net-controller.ts";
 import { runSegment } from "../src/sim/fixed-test.ts";
+import { createReplay } from "../src/sim/replay.ts";
 
 const read = (f: string) => JSON.parse(readFileSync(new URL(`../models/lab/${f}`, import.meta.url), "utf8"));
 const final = loadWeights(read("weights.json")).layers;
@@ -49,4 +50,22 @@ test("judge: each clause alone can turn the answer to no", () => {
   const twitchy = judge([row(9, 10, 21), row(9, 10, 20)]); // travel 41 against 2 × 20
   assert.deepEqual([twitchy.checks.travelWithin2x, twitchy.worthIt], [false, false]);
   assert.equal(judge([row(9, 10, 20), row(9, 10, 20)]).checks.travelWithin2x, true); // exactly 2× passes
+});
+
+test("Lab's Replay tank plays each held-out segment exactly as the verdict runs it on seed 101, then restarts", () => {
+  const rp = createReplay(final);
+  for (const [k, seg] of SEGMENTS.heldOut.entries()) {
+    assert.equal(rp.state.name, seg.name);
+    rp.step(299.9);
+    assert.equal(rp.state.history.length, 300); // 0 to 299 s
+    rp.step(0.1);
+    if (k < 4) assert.equal(rp.state.finished[k].iae, runSegment(seg, makeNetController(final), 101).iae, seg.name);
+  }
+  assert.deepEqual([rp.state.segment, rp.state.t, rp.state.finished], [0, 0, []]); // round again
+  rp.step(10);
+  const v = rp.state.valve;
+  rp.setLayers(loadWeights(read("copy-weights.json")).layers);
+  assert.deepEqual([rp.state.t, rp.state.segment], [0, 0]);
+  rp.step(10);
+  assert.notEqual(rp.state.valve, v, "another snapshot drives the valve differently from the same start");
 });

@@ -1,5 +1,5 @@
 // Lab: the Live tab (S1, the tank under the fixed PI), the Fixed test tab (S2), the Tables tab (S3) and the
-// Integer vs float tab (S4), and the Net tab (S5) when the build inlined models/lab/. Each view reads one model
+// Integer vs float tab (S4), and the Net (S5) and Replay (S6) tabs when the build inlined models/lab/. Each view reads one model
 // (live.state, fixedTest, the committed tables, the integer-vs-float comparison, the inlined weights) and nothing
 // else (SIM-01).
 import { createLive, SETPOINT, HISTORY_S, type Sample } from "../sim/live.ts";
@@ -14,9 +14,10 @@ import { forward } from "../runtime/net.ts";
 import { forwardRef } from "../ref/dense.ts";
 import { labShapedNet, valveOf, valveOfRef } from "../model/nets.ts";
 import { netPanel, type LabModels } from "./net-panel.ts";
+import { replayPanel, type ReplayModels } from "./replay-panel.ts";
 
 /** models/lab/*.json, inlined by scripts/build-lab.ts; null when the build had no models/lab/. */
-declare const __LAB_MODELS__: LabModels | null;
+declare const __LAB_MODELS__: (LabModels & ReplayModels) | null;
 
 const SPEED = 10; // simulated seconds per real second (spec "Lab")
 const MAX_SIM_S_PER_FRAME = 30; // cap catch-up after the tab was hidden
@@ -31,7 +32,9 @@ const tok = (n: string) => getComputedStyle(document.documentElement).getPropert
 // The Net tab exists only when models/lab/ was inlined; esbuild drops netPanel when __LAB_MODELS__ is null.
 const NET = __LAB_MODELS__ ? netPanel(__LAB_MODELS__, { live, $, tok }) : null;
 const TABS: (readonly [string, string])[] = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"], ["ivf", "Integer vs float"]];
+const REPLAY = __LAB_MODELS__ ? replayPanel(__LAB_MODELS__, { $, tok }) : null;
 if (NET) TABS.push(NET.tab);
+if (REPLAY) TABS.push(REPLAY.tab);
 type Tab = string;
 
 // The Fixed test model: idle, running (with progress) or done. The live tank keeps running meanwhile.
@@ -88,7 +91,7 @@ function mount() {
       <div class="key"><span><i class="k-sp"></i>valve, whole numbers</span><span><i class="k-valve"></i>valve, decimal maths (dashed)</span><span>1,000 situations across, valve opening up</span></div>
       <p class="status" id="ivf-status"></p>
       ${ix.after}
-    </section>${NET ? NET.html : ""}`;
+    </section>${NET ? NET.html : ""}${REPLAY ? REPLAY.html : ""}`;
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
   tabs.forEach((b, i) => {
     b.addEventListener("click", () => showTab(TABS[i][0]));
@@ -104,6 +107,7 @@ function mount() {
   sp.addEventListener("input", () => { live.setSetpoint(+sp.value); render(); });
   $("#dist").addEventListener("click", () => { live.disturb(); render(); });
   NET?.mount(render);
+  REPLAY?.mount(render);
 }
 
 function showTab(id: Tab) {
@@ -116,6 +120,7 @@ function showTab(id: Tab) {
   if (id === "tables") renderTables();
   if (id === "ivf") renderIvf();
   if (id === "net") NET?.fillSummary();
+  if (id === "replay") REPLAY?.opened();
   render();
 }
 
@@ -332,6 +337,7 @@ function render() {
   }
   drawChart($<HTMLCanvasElement>("#chart"), s.history, s, s.t);
   if (NET && !$("#panel-net").hidden) NET.render((c, two) => drawChart(c, s.history, s, s.t, two));
+  if (REPLAY && !$("#panel-replay").hidden) REPLAY.render();
 }
 
 let last = 0, carry = 0;
@@ -339,7 +345,7 @@ function frame(ms: number) {
   if (!paused && last) {
     carry = Math.min(carry + ((ms - last) / 1000) * SPEED, MAX_SIM_S_PER_FRAME);
     const whole = Math.floor(carry * 10) / 10;
-    if (whole > 0) { live.step(whole); carry -= whole; }
+    if (whole > 0) { live.step(whole); REPLAY?.step(whole); carry -= whole; }
   }
   last = ms;
   render();
@@ -352,13 +358,15 @@ window.__lab = {
   pause() { paused = true; render(); },
   state: () => ({
     t: live.state.t, level: live.state.level, setpoint: live.state.setpoint, valve: live.state.valve, disturbed: live.disturbed(),
-    net: live.state.net ? { level: live.state.net.level, valve: live.state.net.valve } : null, snapshot: null,
+    net: live.state.net ? { level: live.state.net.level, valve: live.state.net.valve } : null,
+    snapshot: null, replay: null, ...(REPLAY ? REPLAY.hooks.state() : {}),
   }),
-  step(seconds: number) { live.step(seconds); render(); },
+  step(seconds: number) { live.step(seconds); REPLAY?.step(seconds); render(); },
   setSetpoint(m: number) { live.setSetpoint(m); render(); },
   disturb() { live.disturb(); render(); },
   // present only when the build inlined models/lab/ (spec "Lab")
   ...(NET ? { setNet(on: boolean) { NET.hooks.setNet(on); render(); } } : {}),
+  ...(REPLAY ? { setSnapshot(i: number) { REPLAY.hooks.setSnapshot(i); render(); } } : {}),
 };
 
 mount();

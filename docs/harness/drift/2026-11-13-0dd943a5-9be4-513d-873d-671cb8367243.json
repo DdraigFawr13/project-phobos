@@ -1,1 +1,1 @@
-{"date":"2026-11-13","session":"0dd943a5-9be4-513d-873d-671cb8367243","commit_calls":1,"counts":{}}
+{"date":"2026-11-13","session":"0dd943a5-9be4-513d-873d-671cb8367243","commit_calls":2,"counts":{"edit.noop":1},"warnings":[{"ts":"2026-11-13T17:47:38.243Z","check":"edit.noop","outcome":"warn","detail":"`sed -i` changed none of `src/sim/replay.ts`: the pattern matched nothing. Check the pattern against the file before going on"}]}
