@@ -1,11 +1,17 @@
-// Lab: the Live tab (S1, the tank under the fixed PI), the Fixed test tab (S2) and the Tables tab (S3). Each view
-// reads one model (live.state, fixedTest, the committed tables) and nothing else (SIM-01).
+// Lab: the Live tab (S1, the tank under the fixed PI), the Fixed test tab (S2), the Tables tab (S3) and the
+// Integer vs float tab (S4). Each view reads one model (live.state, fixedTest, the committed tables, the
+// integer-vs-float comparison) and nothing else (SIM-01).
 import { createLive, SETPOINT, HISTORY_S, type Sample } from "../sim/live.ts";
 import { SEGMENTS, fixedTestRuns, type FixedTestResult, type Progress } from "../sim/fixed-test.ts";
 import { EXPLAIN, explainHtml } from "./explain.ts";
 import { TANH, EXP } from "../num/tables.gen.ts";
 import { tanhQ, expQ } from "../num/act.ts";
 import { tableErrors, type TableError } from "../num/table-errors.ts";
+import { checkStates } from "../sim/check-states.ts";
+import { compareNets, type Comparison } from "../ref/agreement.ts";
+import { forward } from "../runtime/net.ts";
+import { forwardRef } from "../ref/dense.ts";
+import { labShapedNet, valveOf, valveOfRef } from "../model/nets.ts";
 
 const SPEED = 10; // simulated seconds per real second (spec "Lab")
 const MAX_SIM_S_PER_FRAME = 30; // cap catch-up after the tab was hidden
@@ -16,7 +22,7 @@ let lastDisturbEnd: number | null = null;
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector(sel) as T;
 
-const TABS = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"]] as const;
+const TABS = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"], ["ivf", "Integer vs float"]] as const;
 type Tab = (typeof TABS)[number][0];
 
 // The Fixed test model: idle, running (with progress) or done. The live tank keeps running meanwhile.
@@ -25,7 +31,7 @@ let fixedTest: FixedTest = { phase: "idle" };
 const RUN_BUDGET_MS = 12; // runs per frame stop after this, so the page keeps drawing on a slow phone
 
 function mount() {
-  const ex = explainHtml(EXPLAIN.live), fx = explainHtml(EXPLAIN.fixed), tx = explainHtml(EXPLAIN.tables);
+  const ex = explainHtml(EXPLAIN.live), fx = explainHtml(EXPLAIN.fixed), tx = explainHtml(EXPLAIN.tables), ix = explainHtml(EXPLAIN.ivf);
   $("#app").innerHTML = `
     <div class="lhead"><h1>Phobos Lab</h1><span class="chip" id="chip"></span></div>
     <div class="tabs" role="tablist" aria-label="Lab tabs">${TABS.map(([id, name], i) =>
@@ -64,6 +70,15 @@ function mount() {
         <tr data-f="exp"><td>exp table</td><td class="num"></td><td class="num"></td><td></td></tr></table>
       <p class="status" id="t-status">A step is 1/4,096, the smallest change these whole numbers can make. A table passes if it never misses the exact curve by more than ${GAP_LIMIT} steps.</p>
       ${tx.after}
+    </section>
+    <section class="panel" id="panel-ivf" data-panel="ivf" role="tabpanel" aria-labelledby="tab-ivf" hidden>
+      ${ix.what}
+      <table id="ivf-checks"><tr><th>Check, 1,000 situations</th><th class="num">Result</th><th class="num">Limit</th><th></th></tr>${IVF_ROWS.map(r =>
+        `<tr data-c="${r.id}"><td>${r.label}</td><td class="num"></td><td class="num">${r.limit}</td><td></td></tr>`).join("")}</table>
+      <canvas id="ivfchart" role="img" aria-label="Lab-shaped net valve over the 1,000 situations, whole numbers drawn over decimal maths"></canvas>
+      <div class="key"><span><i class="k-sp"></i>valve, whole numbers</span><span><i class="k-valve"></i>valve, decimal maths (dashed)</span><span>1,000 situations across, valve opening up</span></div>
+      <p class="status" id="ivf-status"></p>
+      ${ix.after}
     </section>`;
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
   tabs.forEach((b, i) => {
@@ -89,6 +104,7 @@ function showTab(id: Tab) {
     $(`#panel-${t}`).hidden = !on;
   }
   if (id === "tables") renderTables();
+  if (id === "ivf") renderIvf();
   render();
 }
 
@@ -126,6 +142,56 @@ function renderTables() {
   g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = tok("--muted"); g.textBaseline = "middle";
   g.textAlign = "left"; g.fillText("tanh", X(3), Y(1) + 14); g.fillText("exp", X(-6), Y(0) - 14); g.fillText("−8", 10, mid + 12);
   g.textAlign = "right"; g.fillText("+8", W - 10, mid + 12);
+}
+
+// The Integer vs float model: the check states and both nets compared on them, computed once when the tab opens.
+type IvfRow = { id: string; label: string; limit: string; value: (c: Comparison) => number; text: (v: number) => string; pass: (v: number) => boolean };
+const pct = (d: number) => (v: number) => `${v.toFixed(d)}%`;
+const IVF_ROWS: IvfRow[] = [
+  { id: "t1", label: "Test net, layer 1 gap (4→16)", limit: "1%", value: c => c.testNet.layerGaps[0], text: pct(3), pass: v => v < 1 },
+  { id: "t2", label: "Test net, layer 2 gap (16→5)", limit: "1%", value: c => c.testNet.layerGaps[1], text: pct(3), pass: v => v < 1 },
+  { id: "same", label: "Test net, same choice of action", limit: "≥ 99%", value: c => c.testNet.samePct, text: pct(1), pass: v => v >= 99 },
+  { id: "l1", label: "Lab-shaped net, layer 1 gap (4→16)", limit: "1%", value: c => c.labNet.layerGaps[0], text: pct(3), pass: v => v < 1 },
+  { id: "l2", label: "Lab-shaped net, layer 2 gap (16→1)", limit: "1%", value: c => c.labNet.layerGaps[1], text: pct(3), pass: v => v < 1 },
+  { id: "valve", label: "Lab-shaped net, valve within 0.01", limit: "≥ 99%", value: c => c.labNet.withinPct, text: pct(1), pass: v => v >= 99 },
+];
+let ivf: { states: Int16Array[]; c: Comparison } | null = null;
+
+function renderIvf() {
+  if (!ivf) { const states = checkStates(); ivf = { states, c: compareNets(states) }; }
+  const { states, c } = ivf;
+  for (const r of IVF_ROWS) {
+    const v = r.value(c), ok = r.pass(v), td = document.querySelectorAll(`#ivf-checks [data-c="${r.id}"] td`);
+    td[1].textContent = r.text(v);
+    td[3].textContent = ok ? "pass" : "fail";
+    td[3].className = ok ? "pass" : "fail";
+  }
+  const vals = c.labNet.series.flat(), lo = Math.floor(Math.min(...vals) * 20) / 20, hi = Math.ceil(Math.max(...vals) * 20) / 20;
+  $("#ivf-status").textContent = `Biggest valve gap: ${c.labNet.maxGap.toFixed(4)} (allowed 0.01). The random net's valve stays between ${lo.toFixed(2)} and ${hi.toFixed(2)}, so the chart shows only that band.`;
+  const chosen = c.testNet.counts.map((n, a) => [a, n]).filter(([, n]) => n > 0).map(([a, n]) => `action ${a} in ${n}`);
+  $("#ivf-actions").textContent = `Here the whole-number test net picks ${chosen.join(" and ")} of the 1,000 situations.`;
+  // worked example: the first check state through the Lab-shaped net, both ways
+  const x = states[0], net = labShapedNet(), y = forward(net, x).at(-1)![0], yf = forwardRef(net, [...x].map(v => v / 4096)).at(-1)![0];
+  const vi = valveOf(y), vf = valveOfRef(yf), neg = (t: string) => t.replace("-", "−"), f3 = (v: number) => neg((v / 4096).toFixed(3));
+  $("#ivf-example").innerHTML = `situation: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${[...x].map(v => neg(String(v))).join(", ")}<br>whole numbers: output ${neg(String(y))}, valve = (${neg(String(y))} + 4096) ÷ 8192 = ${vi.toFixed(4)}<br>decimal maths: output ${neg(yf.toFixed(4))}, valve = (${neg(yf.toFixed(4))} + 1) ÷ 2 = ${vf.toFixed(4)}<br>gap ${Math.abs(vi - vf).toFixed(4)}, allowed 0.01`;
+  const cv = $<HTMLCanvasElement>("#ivfchart"), dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  if (!W || !H) return;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  const g = cv.getContext("2d")!;
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = tok("--panel"); g.fillRect(0, 0, W, H);
+  const n = c.labNet.series.length, x0 = 44, x1 = W - 8, y0 = 10, y1 = H - 10;
+  const X = (i: number) => x0 + ((x1 - x0) * i) / (n - 1), Y = (v: number) => y1 - ((y1 - y0) * (v - lo)) / (hi - lo);
+  g.strokeStyle = tok("--line"); g.lineWidth = 1;
+  for (let k = 0; k <= 5; k++) { const xx = X((k * (n - 1)) / 5); g.beginPath(); g.moveTo(xx, y0); g.lineTo(xx, y1); g.stroke(); }
+  g.font = "13px 'IBM Plex Mono', monospace"; g.fillStyle = tok("--muted"); g.textBaseline = "middle"; g.textAlign = "right";
+  g.fillText(hi.toFixed(2), x0 - 4, Y(hi)); g.fillText(lo.toFixed(2), x0 - 4, Y(lo));
+  const line = (k: 0 | 1, col: string, w: number, dash: number[] = []) => {
+    g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath();
+    c.labNet.series.forEach((p, i) => (i ? g.lineTo(X(i), Y(p[k])) : g.moveTo(X(i), Y(p[k]))));
+    g.stroke(); g.setLineDash([]);
+  };
+  line(0, tok("--ink"), 3); line(1, tok("--valve"), 1.25, [4, 3]);
 }
 
 function startFixedTest() {
@@ -272,4 +338,4 @@ mount();
 renderFixed();
 render();
 requestAnimationFrame(frame);
-document.fonts?.ready.then(() => { render(); if (!$("#panel-tables").hidden) renderTables(); });
+document.fonts?.ready.then(() => { render(); if (!$("#panel-tables").hidden) renderTables(); if (!$("#panel-ivf").hidden) renderIvf(); });

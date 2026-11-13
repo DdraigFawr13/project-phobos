@@ -14,6 +14,14 @@ How Phobos's integer runtime represents numbers. The rules are D-006 and D-007; 
 - Sums are plain JS numbers. `checkBound(layer, limit = 2 ** 53)` throws when the largest row sum Σ|w| × 32768 reaches `limit`.
 - At full scale a 4→16 layer reaches about 4.3 × 10^9 and a 16→1 layer about 1.7 × 10^10 (spec "Numbers"): far below 2^53 but above 2^31. A 32-bit PLC exporter will need smaller weights or wider sums (Later, D-004).
 
+## Runtime, mask and the float reference (S4)
+
+- `src/runtime/`: `dense(layer, x)` applies the layer's act; `forward(layers, x)` returns every layer's output; `mask(scores, allowed)` sets forbidden scores to −32768 and clamps allowed ones to ≥ −32767; `argmax(v)` skips −32768, the lowest index wins ties, and it returns −1 when every action is forbidden. No `Math.*` (a test greps for it).
+- `src/ref/`: the float reference, used by tests and Lab's Integer vs float tab only. Weights w / 2^shift, biases b / 4096, fed the integer inputs / 4096, no saturation; exp is exp(min(x, 0)), the function its table covers.
+- Layer gap: each layer gets the integer previous-layer output (dequantised) in both versions; range 2 for tanh, 1 for exp, and max(1, float max − min over all outputs and check states) for no activation.
+- Measured 2026-11-12 on the 1,000 check states (`tests/runtime.test.ts`): test net (seed 7) layer gaps 0.028% and 0.007%, same masked action 100.0% (actions 1 and 3 chosen, 200 and 800 times); Lab-shaped net (seed 8) layer gaps 0.026% and 0.026%, valve within 0.01 on 100.0%, largest valve gap 0.0005. Limits: 1% and 99% (D-007). Golden outputs: `tests/golden/runtime-testnet.json`.
+- Weight files (`src/model/weights.ts`): `loadWeights` also throws on an unknown `kind` or `act` and when a layer's `in` isn't the previous layer's `out`; both go beyond the spec's list.
+
 ## Quantising
 
 Outside the runtime only (`src/num/quantise.ts`), with `Math.round` then saturation: shift = the largest integer in [0, 14] with max|w| × 2^shift ≤ 32767; w = round(w × 2^shift); b = round(b × 4096).
