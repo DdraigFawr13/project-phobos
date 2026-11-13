@@ -37,7 +37,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Fix the M3 audit findings F1 to F8 (Morgan accepted all 8 on 2026-11-13; [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md)) on a new branch cut from `main`: F1 archive the pre-D-018 verdict lines, F2 re-time `check` and set its budget, F3 drop the CI comment's time, F4 cut the D-018 line to under 600 characters, F5 Lab version 10, F6 name the runtime path and `shr`'s divide in AGENTS.md and NUMBERS.md, F7 drop or explain `workflow_dispatch`, F8 decide on a formatter (ask Morgan: adding Prettier is a new dev dependency).
+1. Fix the M3 audit findings F1 to F8 (Morgan accepted all 8 on 2026-11-13; [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md)) on a new branch cut from `main`: F1 archive the pre-D-018 verdict lines, F2 re-time `check` and set its budget, F3 drop the CI comment's time, F4 cut the D-018 line to under 600 characters, F5 Lab version 10, F6 name the runtime path and `shr`'s divide in AGENTS.md and NUMBERS.md, F7 drop or explain `workflow_dispatch`, F8 adopt Prettier (Morgan approved the new dev dependency on 2026-11-13): pin it exactly, add it to D-012 and ATTRIBUTION.md, add its check to `npm run check`, keep synced files, archives and long-row tables in `.prettierignore` (WEB-03). Morgan asked for this in a new session.
 2. Then plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill; Morgan said one fix, then Vulcan either way. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9, S6). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
@@ -48,6 +48,7 @@ Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9,
 
 ## Decisions since the last plan update
 
+- 2026-11-13 Morgan accepted all 8 M3 audit findings and approved adopting Prettier (F8); the fix session writes it into D-012.
 - 2026-11-13 D-018 valve map reaches both ends at ±0.8. Morgan: try one shut-valve fix after the No. D-017 ES settings after the S6 re-check; D-011 kept (Morgan). D-016 copy data includes disturbances.
 - 2026-11-12 D-014 Lab look: Control room; D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
 - 2026-11-12 D-001 to D-010: harness, concept, round 1, plan, platforms, number spec, accuracy, training, pass mark, files and licence.
