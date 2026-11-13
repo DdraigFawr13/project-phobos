@@ -24,9 +24,10 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-12 S4 built: `src/runtime/{dense,select,net}.ts`, `src/ref/{dense,agreement}.ts`, `src/model/{random,nets,weights}.ts`, `src/sim/net-controller.ts`, Integer vs float tab with teaching text (worked example computed in the page), `tests/runtime.test.ts`, `tests/weights.test.ts`, golden `tests/golden/runtime-testnet.json`. Tests 60 (was 42); check 1.44 to 1.47 s; browser test 4.5 s. Tests failed first (modules missing); 14 planted bugs all caught. Measured: test net layer gaps 0.028% and 0.007%, same action 100.0% (actions 1 and 3 only: exactly the 2 distinct the spec asks for); Lab-shaped net gaps 0.026% and 0.026%, valve within 0.01 on 100.0%, largest gap 0.0005. Equal to the mock-up's script. Lab republished (version 6). Loader also rejects an unknown kind/act and a broken layer chain (beyond the spec's list; NUMBERS.md says so).
 
 - 2026-11-13 Morgan approved PR #5 and asked for S5 in a new session. Older entries: `docs/archive/handoff-2026-11.md`.
-- 2026-11-13 S5 built on branch `s5-copy-pi`: `src/train/copy.ts`, `scripts/train-lab.ts` (`npm run train:lab`), `models/lab/{copy-weights,weights,log,snapshots}.json`, `src/sim/live.ts` net tank (seed 2), Net tab `src/lab/net-panel.ts` (toggle, two tanks, heat map, teaching text with a live worked example), `scripts/build-lab.ts` exports `buildLabHtml` and inlines models via `__LAB_MODELS__`. Tests 70 (was 60); check 2.67 to 3.14 s; browser 4.1 to 4.5 s. Tests failed first (modules and files missing); 10 planted bugs all caught.
-- 2026-11-13 S5 measured: copy settings re-checked and kept as the spec states (no DECISIONS change). Training 1.26 s (`npm run train:lab`, D-008 limit 10 min). Loss 0.0669 → 0.00138 at step 200 → 0.00040 at 2,000. Mean |valve − PI valve| on the check states 0.0146 (limit 0.05); integer within 0.01 of float on 100.0% (D-007); J4 net tank 1.001 m after 300 s (limit ±0.05). Shifts 14 and 14.
+- 2026-11-13 S5 built on branch `s5-copy-pi`: `src/train/copy.ts`, `scripts/train-lab.ts` (`npm run train:lab`), `models/lab/{copy-weights,weights,log,snapshots}.json`, `src/sim/live.ts` net tank (seed 2), Net tab `src/lab/net-panel.ts` (toggle, two tanks, heat map, teaching text with a live worked example), `scripts/build-lab.ts` exports `buildLabHtml` and inlines models via `__LAB_MODELS__`. Tests 71 (was 60); check 3.40 to 3.48 s; browser 4.1 to 4.5 s. Tests failed first (modules and files missing); 10 planted bugs all caught.
+- 2026-11-13 S5 measured (after D-016): training 1.12 s (`npm run train:lab`, D-008 limit 10 min). Loss 0.0741 → 0.00209 at step 200 → 0.00074 at 2,000. Mean |valve − PI valve| on the check states 0.0170 (limit 0.05); integer within 0.01 of float on 100.0% (D-007); J4 net tank 1.003 m after 300 s. In control it holds 0.10 to 1.90 m within 0.009 m at 900 s (new test, limit 0.02). Shifts 14 and 14.
 - 2026-11-13 Choices beyond the spec: the data shuffle uses a fresh rng seed 11; batches are taken in order from the shuffled data, wrapping round; the log records full-data loss; weight meta `{ trainer: "copy", seed: 13 }`; the Net tab adds a setpoint slider (the mock-up had none); heat-map negatives are grey `--valve` (ink turned white in dark). Lab republished to the same link (version 7).
+- 2026-11-13 Morgan found on the phone that the net could not hold 0.10 m (settled near 0.20 m): it ignored its error-so-far input because the copy data had no disturbances. Fixed by D-016 (one 60 s disturbance per run), with a closed-loop test at 0.10 to 1.90 m; Lab republished.
 
 ## Next
 
@@ -42,7 +43,7 @@ Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 7,
 
 ## Decisions since the last plan update
 
-- None in S5 (copy settings re-checked, unchanged). None in S3.
+- 2026-11-13 D-016 copy data includes disturbances (Morgan, on PR #6). None in S3.
 - 2026-11-12 D-014 Lab look: Control room.
 - 2026-11-12 D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
 - 2026-11-12 D-001 harness; D-002 concept; D-003 round 1; D-004 plan approved; D-005 platforms; D-006 number spec; D-007 accuracy; D-008 training; D-009 Lab pass mark; D-010 files and licence.

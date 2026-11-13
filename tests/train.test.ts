@@ -132,3 +132,20 @@ test("J4 in Lab's live sim: the copied net holds its tank at the setpoint, and N
   b.setNet(null);
   assert.equal(b.state.net, null);
 });
+
+test("the copied net in control holds every level from 0.10 to 1.90 m within 0.02 m, after 900 s and still after 1,800 s", () => {
+  // Morgan saw the S5 net settle at 0.20 m for a 0.10 m setpoint: it ignored its error-so-far input, so it had no
+  // integral action. Open-loop closeness on the PI's own runs could not show that; only the net in control can.
+  for (const start of [1.0, null]) {
+    for (const sp of [0.1, 0.25, 0.5, 1.0, 1.5, 1.9]) {
+      const lv = createLive({ seed: 1, level: start ?? sp, setpoint: start ?? sp });
+      lv.setNet(committed);
+      lv.setSetpoint(sp);
+      for (const t of [900, 1800]) {
+        lv.step(900);
+        const h = lv.state.net!.level;
+        assert.ok(Math.abs(h - sp) < 0.02, `start ${start ?? sp} m, setpoint ${sp} m: net tank ${h.toFixed(3)} m at ${t} s`);
+      }
+    }
+  }
+});

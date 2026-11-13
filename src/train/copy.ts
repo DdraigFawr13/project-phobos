@@ -12,10 +12,12 @@ import type { Shape } from "../model/random.ts";
 import type { Layer } from "../num/layer.ts";
 import { TANK } from "../sim/plant.ts";
 
-/** The spec's copy-phase settings. Re-checked in S5 and kept unchanged: they pass J4 with room (docs/HANDOFF.md). */
+/** The spec's copy-phase settings, plus one 60 s disturbance per run (D-016: without it the net ignored its
+ *  error-so-far input and could not hold low levels). */
 export const COPY = {
   runs: 50, runS: 400, stepAtS: 200, sampleEveryS: 2, // 50 × 200 = 10,000 states
   levelRange: [0.1, 1.9] as const, // m, start level and both setpoints, uniform
+  disturbS: 60, // s, outflow × 1.2 once per run, starting at a uniform time in [0, 340] s (D-016)
   dataSeed: 11, noiseSeedBase: 1000, initSeed: 13,
   lr: 0.01, momentum: 0.9, batch: 64, steps: 2000,
   logEvery: 10, snapshotEvery: 200,
@@ -25,8 +27,9 @@ export type CopyData = { x: number[][]; y: number[] }; // inputs as Q12 / 4096; 
 /** A float net: every layer is dense + tanh (the Lab shape). w is row-major [out][in], like the integer Layer. */
 export type FloatNet = { in: number; out: number; w: Float64Array; b: Float64Array }[];
 
-/** 50 fixed-PI runs of 400 s. Each draws a start level and two setpoints from [0.1, 1.9] m (rng seed 11);
- *  the setpoint steps at 200 s; noise seed 1000 + run. The Lab net inputs are taken before the PI acts, every
+/** 50 fixed-PI runs of 400 s. Each draws a start level and two setpoints from [0.1, 1.9] m (rng seed 11),
+ *  then a disturbance start; the setpoint steps at 200 s; noise seed 1000 + run. The disturbance makes the
+ *  error so far differ from its steady value at each level, so the net must learn to use it (D-016). The Lab net inputs are taken before the PI acts, every
  *  2 s, with the integral's hold rule using the PI's valve (as for the check states). Shuffled with a fresh seed 11. */
 export function copyData(): CopyData {
   const r = makeRng(COPY.dataSeed), [lo, hi] = COPY.levelRange, draw = () => lo + (hi - lo) * r.uniform();
@@ -38,12 +41,13 @@ export function copyData(): CopyData {
     const pi = fixedPI(), inputs = makeNetInputs();
     pi.reset(start, sp1);
     inputs.reset(start);
+    const dSteps = Math.round(COPY.disturbS / TANK.dt), d0 = Math.floor(r.uniform() * (steps - dSteps)), d1 = d0 + dSteps;
     for (let n = 0; n < steps; n++) {
       const sp = n < stepAt ? sp1 : sp2, measured = plant.measure();
       const q = inputs.next(measured, sp), valve = pi.step(measured, sp);
       if (n % every === 0) { x.push([...q].map(v => v / 4096)); y.push(valve); }
       inputs.after(valve);
-      plant.step(valve, false);
+      plant.step(valve, n >= d0 && n < d1);
     }
   }
   const s = makeRng(COPY.dataSeed); // Fisher–Yates

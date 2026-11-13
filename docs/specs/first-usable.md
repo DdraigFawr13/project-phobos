@@ -153,7 +153,7 @@ The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y 
 **Trainer** (`src/train/`, float and Node only):
 
 - **Copy phase:**
-  - Data: 50 fixed-PI runs of 400 s. Each run uses a start level and two setpoints drawn uniformly from [0.1, 1.9] m (rng seed 11), with the setpoint stepping at 200 s, and noise seed 1000 + run. States are sampled every 2 s, giving 10,000 states, shuffled with seed 11.
+  - Data: 50 fixed-PI runs of 400 s. Each run uses a start level and two setpoints drawn uniformly from [0.1, 1.9] m (rng seed 11), with the setpoint stepping at 200 s, and noise seed 1000 + run. Each run also has one 60 s disturbance (k × 1.2), starting at a time drawn uniformly from [0, 340] s from the same rng, after the setpoints (D-016, added in S5). States are sampled every 2 s, giving 10,000 states, shuffled with seed 11.
   - Loss is the MSE between the net valve and the fixed PI's valve.
   - Training: momentum SGD (v = 0.9·v + g; θ −= 0.01·v), batch 64, 2,000 steps. Weights are Xavier-uniform (seed 13), biases 0. A snapshot is saved every 200 steps and the loss logged every 10 steps. Then quantise and write `models/lab/copy-weights.json`. S5 also copies it to `weights.json`; S6 replaces `weights.json` with the ES result.
 - **ES phase:**
