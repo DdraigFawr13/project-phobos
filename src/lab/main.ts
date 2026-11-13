@@ -189,7 +189,7 @@ function renderIvf() {
   // worked example: the first check state through the Lab-shaped net, both ways
   const x = states[0], net = labShapedNet(), y = forward(net, x).at(-1)![0], yf = forwardRef(net, [...x].map(v => v / 4096)).at(-1)![0];
   const vi = valveOf(y), vf = valveOfRef(yf), neg = (t: string) => t.replace("-", "−"), f3 = (v: number) => neg((v / 4096).toFixed(3));
-  $("#ivf-example").innerHTML = `situation: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${[...x].map(v => neg(String(v))).join(", ")}<br>whole numbers: output ${neg(String(y))}, valve = (${neg(String(y))} + 4096) ÷ 8192 = ${vi.toFixed(4)}<br>decimal maths: output ${neg(yf.toFixed(4))}, valve = (${neg(yf.toFixed(4))} + 1) ÷ 2 = ${vf.toFixed(4)}<br>gap ${Math.abs(vi - vf).toFixed(4)}, allowed 0.01`;
+  $("#ivf-example").innerHTML = `situation: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${[...x].map(v => neg(String(v))).join(", ")}<br>whole numbers: output ${neg(String(y))}, valve = (5 × ${neg(String(y))} + 16384) ÷ 32768 = ${vi.toFixed(4)}<br>decimal maths: output ${neg(yf.toFixed(4))}, valve = (1.25 × ${neg(yf.toFixed(4))} + 1) ÷ 2 = ${vf.toFixed(4)}<br>gap ${Math.abs(vi - vf).toFixed(4)}, allowed 0.01`;
   const cv = $<HTMLCanvasElement>("#ivfchart"), dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
   if (!W || !H) return;
   cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);

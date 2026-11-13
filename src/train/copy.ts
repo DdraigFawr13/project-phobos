@@ -7,7 +7,7 @@ import { fixedPI } from "../sim/fixed-test.ts";
 import { makeNetInputs } from "../sim/net-inputs.ts";
 import { quantise } from "../num/quantise.ts";
 import { toWeightFile, type LayerJson } from "../model/weights.ts";
-import { LAB_SHAPE } from "../model/nets.ts";
+import { LAB_SHAPE, VALVE_GAIN } from "../model/nets.ts";
 import type { Shape } from "../model/random.ts";
 import type { Layer } from "../num/layer.ts";
 import { TANK } from "../sim/plant.ts";
@@ -83,8 +83,9 @@ function forwardF(net: FloatNet, x: number[]): Float64Array[] {
   return acts;
 }
 
-/** The net's valve: (y + 1) / 2 from the tanh output in [−1, 1]. */
-export const valveF = (net: FloatNet, x: number[]) => (forwardF(net, x).at(-1)![0] + 1) / 2;
+/** The net's valve before clamping: (1.25·y + 1) / 2 from the tanh output in [−1, 1] (D-018). The loss uses it
+ *  unclamped, so a shut or fully open target pulls y to ∓0.8, where tanh still has slope. */
+export const valveF = (net: FloatNet, x: number[]) => (VALVE_GAIN * forwardF(net, x).at(-1)![0] + 1) / 2;
 
 /** Mean squared error between the net's valve and the PI's over the given samples, and its gradient. */
 export function lossAndGrad(net: FloatNet, data: CopyData, idx: number[]): { loss: number; grad: FloatNet } {
@@ -93,10 +94,10 @@ export function lossAndGrad(net: FloatNet, data: CopyData, idx: number[]): { los
   const n = idx.length;
   for (const j of idx) {
     const acts = forwardF(net, data.x[j]), y = acts.at(-1)!;
-    const err = (y[0] + 1) / 2 - data.y[j];
+    const err = (VALVE_GAIN * y[0] + 1) / 2 - data.y[j];
     loss += err * err;
-    // dL/dy = 2·err/n · dv/dy (½); through tanh: × (1 − y²)
-    let delta = Float64Array.of((err / n) * (1 - y[0] * y[0]));
+    // dL/dy = 2·err/n · dv/dy (1.25 / 2); through tanh: × (1 − y²)
+    let delta = Float64Array.of(((VALVE_GAIN * err) / n) * (1 - y[0] * y[0]));
     for (let k = net.length - 1; k >= 0; k--) {
       const L = net[k], a = acts[k], g = grad[k];
       const prev = new Float64Array(L.in);
@@ -129,7 +130,7 @@ export function datasetLoss(net: FloatNet, data: CopyData): number {
         z[o] = Math.tanh(t);
       }
     }
-    const e = (bufs[net.length][0] + 1) / 2 - data.y[j];
+    const e = (VALVE_GAIN * bufs[net.length][0] + 1) / 2 - data.y[j];
     s += e * e;
   }
   return s / data.x.length;

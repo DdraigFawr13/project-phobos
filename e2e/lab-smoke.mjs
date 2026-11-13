@@ -178,7 +178,7 @@ try {
       // the page's worked example ends in the valve the committed net gives for those inputs, worked out in Node
       const nums = /as whole numbers \(× 4,096\): ([−\d, ]+)16/.exec(sums)?.[1].replace(/−/g, "-").split(", ").map(Number);
       const want = nums ? valveOf(forward(committed, Int16Array.from(nums)).at(-1)[0]).toFixed(3) : "?";
-      check(nums?.length === 4 && sums.endsWith(`8192 = ${want}`), `Net worked example: "…${sums.slice(-40)}", Node ${want}`);
+      check(nums?.length === 4 && /32768 = [\d.]+( \(kept 0 to 1\))?$/.test(sums) && sums.includes(`32768 = ${want}`), `Net worked example: "…${sums.slice(-40)}", Node ${want}`);
       const train = await page.locator("#net-train").textContent();
       check(/from 0\.\d{4} to 0\.\d{5}\..*at 0\.0\d\d from the PI's/.test(train), `training summary: "${train.slice(-120)}"`);
     } else {
