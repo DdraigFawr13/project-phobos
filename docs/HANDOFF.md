@@ -18,12 +18,13 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S5 copy the PI (M3), PR #6.
 - ✔ S6 evolution strategies, replay and verdict (M3), PR #7.
 - ✔ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13): D-018, PR #8.
-- ▶ M3 audit (report written, Morgan's replies pending), then plan the Vulcan phase.
+- ✔ M3 audit: 8 findings, all accepted (Morgan, 2026-11-13), PR #9.
+- ▶ Fix the audit findings, then plan the Vulcan phase.
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
 
-- 2026-11-13 M3 audit (repo kind) written: two reviewer areas, 7 quotes verified, 4 findings dropped after checking; `npm run check` measured 10.1 to 11.4 s (budget 10 s, F2). Reader cost $0.32.
+- 2026-11-13 M3 audit (repo kind) written: two reviewer areas, 7 quotes verified, 4 findings dropped after checking; `npm run check` measured 10.1 to 11.4 s (budget 10 s, F2). Reader cost $0.32. Morgan accepted all 8 and approved PR #9; merged after approval.
 - 2026-11-13 Morgan approved PR #6 and asked for S6 in a new session. Older entries: `docs/archive/handoff-2026-11.md`.
 - 2026-11-13 Morgan approved PR #7 (S6) and asked to try the shut-valve fix. PR #7 merged (7087015) after its ready CI run passed; auto-merge was refused while the check was pending.
 - 2026-11-13 Shut-valve fix built on `valve-range` (D-018): valve = (1.25·y + 1) / 2, clamped, in copy loss and runtime map. Held-out total 63.49 → 55.21 m·s (fixed PI 58.89, retuned 55.52); 0.75→0.15 16.92 → 10.13 (PI 11.61). Still **No**: 1.40→1.90 6.65 vs 5.24 and dist@0.35 4.54 vs 2.96 are > 5% worse. Travel 39.25 vs 52.37. Training IAE after ES 47.84 (PI 50.94). In control within 0.0008 m. Tests 88 (2 new: the map, and the copied net reaching both valve ends, which the old net missed at 0.0546 against 0.03); check 6.6 s; `train:lab` 41.1 s. Lab republished (version 10). Morgan approved PR #8; merged (42a5234) after its ready CI run passed. Morgan asked for the M3 audit in a new session.
@@ -36,7 +37,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. M3 audit: [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md), 8 findings, none high, on branch `claude/m3-audit-g5wtpw`. Wait for Morgan to say "audit replies done" on the [audit page](https://claude.ai/artifact/LReALAkrkSJ5goxG6GzA7G), read collection `audit-2026-11-13`, fill Outcome, add accepted items here. Fixes go in a later PR on a new branch.
+1. Fix the M3 audit findings F1 to F8 (Morgan accepted all 8 on 2026-11-13; [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md)) on a new branch cut from `main`: F1 archive the pre-D-018 verdict lines, F2 re-time `check` and set its budget, F3 drop the CI comment's time, F4 cut the D-018 line to under 600 characters, F5 Lab version 10, F6 name the runtime path and `shr`'s divide in AGENTS.md and NUMBERS.md, F7 drop or explain `workflow_dispatch`, F8 decide on a formatter (ask Morgan: adding Prettier is a new dev dependency).
 2. Then plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill; Morgan said one fix, then Vulcan either way. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9, S6). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
