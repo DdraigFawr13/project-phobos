@@ -4,7 +4,7 @@ Updated: 2026-11-13. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S6 done (PRs #2 to #7 merged); S6 ended milestone M3 and the spec. The verdict was No. The shut-valve fix (D-018, PR #8 merged) left it No, but much closer. M3 audit done (PR #9); its fixes are in review. Next: the Vulcan phase.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S6 done (PRs #2 to #7 merged); S6 ended milestone M3 and the spec. The verdict was No. The shut-valve fix (D-018, PR #8 merged) left it No, but much closer. M3 audit done (PR #9) and its fixes merged (PR #10). Next: plan the Vulcan phase.
 
 ## Plan map
 
@@ -19,7 +19,8 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S6 evolution strategies, replay and verdict (M3), PR #7.
 - ✔ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13): D-018, PR #8.
 - ✔ M3 audit: 8 findings, all accepted (Morgan, 2026-11-13), PR #9.
-- ▶ Fix the audit findings, then plan the Vulcan phase.
+- ✔ Fix the audit findings F1 to F8 (Morgan approved, 2026-11-13), PR #10.
+- ▶ Plan the Vulcan phase.
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
@@ -30,8 +31,8 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan reviews draft [PR #10](https://github.com/DdraigFawr13/project-phobos/pull/10) (M3 audit fixes F1 to F8, [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md)); merge after approval (GIT-07, GIT-08).
-2. Then plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill; Morgan said one fix, then Vulcan either way. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
+1. Plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill, in a new session on a new branch cut from `main`.
+2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
@@ -41,6 +42,7 @@ Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10
 
 ## Decisions since the last plan update
 
+- 2026-11-13 Morgan approved PR #10 (audit fixes; Prettier print width 120, Markdown and the mock-up not formatted).
 - 2026-11-13 Morgan accepted all 8 M3 audit findings and approved adopting Prettier (F8); the fix session writes it into D-012.
 - 2026-11-13 D-018 valve map reaches both ends at ±0.8. Morgan: try one shut-valve fix after the No. D-017 ES settings after the S6 re-check; D-011 kept (Morgan). D-016 copy data includes disturbances.
 - 2026-11-12 D-014 Lab look: Control room; D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
