@@ -4,7 +4,7 @@ Updated: 2026-11-13. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S5 done (PRs #2 to #6 merged). S6 built on branch `s6-es-replay`, draft PR waiting for Morgan. S6 ends milestone M3 and the spec.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S5 done (PRs #2 to #6 merged). S6 built on branch `s6-es-replay`, [draft PR #7](https://github.com/DdraigFawr13/project-phobos/pull/7) waiting for Morgan. S6 ends milestone M3 and the spec.
 
 ## Plan map
 
@@ -16,7 +16,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S3 numbers and tables (M2), PR #4.
 - ✔ S4 dense, mask and float reference (M2), PR #5.
 - ✔ S5 copy the PI (M3), PR #6.
-- ▶ S6 evolution strategies, replay and verdict (M3), draft PR on `s6-es-replay`.
+- ▶ S6 evolution strategies, replay and verdict (M3), draft PR #7.
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
@@ -31,7 +31,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan reviews the S6 draft PR (Lab link below, Replay tab). On approval: merge per GIT-08, then offer an M3 audit (VER-09).
+1. Morgan reviews draft PR #7 (Lab link below, Replay tab). On approval: merge per GIT-08, then offer an M3 audit (VER-09).
 2. Then Morgan decides what the No means (open question below) before the Vulcan phase.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9, S6). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
