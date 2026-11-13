@@ -1,5 +1,6 @@
 // Weight file loader (docs/specs/first-usable.md "Weight file", D-010). S5 adds the committed models/lab/ file.
 import { test } from "node:test";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { loadWeights, toWeightFile } from "../src/model/weights.ts";
 import { labShapedNet } from "../src/model/nets.ts";
@@ -39,4 +40,24 @@ test("the loader throws on a bad format, version, length, value, shift or act, a
   }
   assert.doesNotThrow(() => loadWeights(good()));
   assert.throws(() => loadWeights(good(), { limit: 2 ** 20 }), /checkBound/);
+});
+
+test("the committed models/lab/ weight files load, and spoiling them throws (S5)", () => {
+  for (const name of ["copy-weights.json", "weights.json"]) {
+    const text = readFileSync(new URL(`../models/lab/${name}`, import.meta.url), "utf8");
+    const { layers, meta } = loadWeights(JSON.parse(text));
+    assert.deepEqual(layers.map(l => [l.in, l.out, l.act]), [[4, 16, "tanh"], [16, 1, "tanh"]], name);
+    assert.equal(meta.trainer, "copy", name);
+    const spoils: [string, (f: any) => void][] = [
+      ["version", f => { f.version = 2; }],
+      ["w length", f => { f.layers[0].w.pop(); }],
+      ["out of range", f => { f.layers[1].w[0] = 40000; }],
+      ["shift", f => { f.layers[0].shift = 15; }],
+    ];
+    for (const [what, spoil] of spoils) {
+      const f = JSON.parse(text);
+      spoil(f);
+      assert.throws(() => loadWeights(f), Error, `${name}: ${what}`);
+    }
+  }
 });

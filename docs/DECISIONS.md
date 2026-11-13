@@ -91,3 +91,9 @@ Settled rules for this project. Not a changelog: an entry stays while the rule i
 - **Status:** Accepted (2026-11-12, with the [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF))
 - **Decision:** Every Lab tab has a plain "What you're seeing" note, a "Try this" prompt, and a tap-to-open "How it works" section with the mechanism, equations and a word list. Rules: `docs/UI_STYLE.md` "Teaching layer".
 - **Why:** Morgan asked that Lab be "clearly readable for a beginner like me but still has the necessary depth for me to fully comprehend what is going on and learn about the topic". Plain text always visible and depth on a tap keeps the 400 px screen readable.
+
+## D-016 Copy data includes disturbances
+
+- **Status:** Accepted (2026-11-13, Morgan chose "Fix in PR #6")
+- **Decision:** Each of the copy phase's 50 PI runs has one 60 s disturbance (outflow × 1.2) starting at a uniform random time in [0, 340] s. A test runs the copied net in control at 0.10, 0.25, 0.50, 1.00, 1.50 and 1.90 m and requires it within 0.02 m after 900 s and 1,800 s.
+- **Why:** Morgan saw the first S5 net settle at about 0.20 m for a 0.10 m setpoint. Without disturbances the error-so-far input always matched the level, so the net ignored it and had no integral action (measured: that input from 0.20 to −1.80 moved the valve 0.198 → 0.231). With disturbances: 0.10 m → 0.109 m at 900 s, 0.102 m at 1,800 s. Open-loop mean gap to the PI rose 0.0146 → 0.0170 (limit 0.05).

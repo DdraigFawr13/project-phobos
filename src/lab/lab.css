@@ -72,3 +72,11 @@ details.deep summary { min-height: 44px; display: flex; align-items: center; fon
 .deepin .words { font-size: 13px; color: var(--muted); }
 .deepin .words b { color: var(--ink); }
 button:focus-visible, input:focus-visible, summary:focus-visible, .tab:focus-visible { outline: 3px solid var(--level); outline-offset: 2px; }
+/* Net tab (S5) */
+.rd.net b { color: var(--net); }
+.key .k-net { background: var(--net); }
+#netchart { height: 200px; }
+.heat { display: grid; grid-template-columns: 92px repeat(16, 1fr); gap: 2px; align-items: center; }
+.heat .hl { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.heat i { aspect-ratio: 1; display: block; }
+.heat i.pos { background: var(--net); } .heat i.neg { background: var(--valve); }
