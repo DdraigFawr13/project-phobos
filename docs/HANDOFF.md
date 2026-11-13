@@ -27,14 +27,14 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-13 S5 built on branch `s5-copy-pi`: `src/train/copy.ts`, `scripts/train-lab.ts` (`npm run train:lab`), `models/lab/{copy-weights,weights,log,snapshots}.json`, `src/sim/live.ts` net tank (seed 2), Net tab `src/lab/net-panel.ts` (toggle, two tanks, heat map, teaching text with a live worked example), `scripts/build-lab.ts` exports `buildLabHtml` and inlines models via `__LAB_MODELS__`. Tests 71 (was 60); check 3.40 to 3.48 s; browser 4.1 to 4.5 s. Tests failed first (modules and files missing); 10 planted bugs all caught.
 - 2026-11-13 S5 measured (after D-016): training 1.12 s (`npm run train:lab`, D-008 limit 10 min). Loss 0.0741 → 0.00209 at step 200 → 0.00074 at 2,000. Mean |valve − PI valve| on the check states 0.0170 (limit 0.05); integer within 0.01 of float on 100.0% (D-007); J4 net tank 1.003 m after 300 s. In control it holds 0.10 to 1.90 m within 0.009 m at 900 s (new test, limit 0.02). Shifts 14 and 14.
 - 2026-11-13 Choices beyond the spec: the data shuffle uses a fresh rng seed 11; batches are taken in order from the shuffled data, wrapping round; the log records full-data loss; weight meta `{ trainer: "copy", seed: 13 }`; the Net tab adds a setpoint slider (the mock-up had none); heat-map negatives are grey `--valve` (ink turned white in dark). Lab republished to the same link (version 7).
-- 2026-11-13 Morgan found on the phone that the net could not hold 0.10 m (settled near 0.20 m): it ignored its error-so-far input because the copy data had no disturbances. Fixed by D-016 (one 60 s disturbance per run), with a closed-loop test at 0.10 to 1.90 m; Lab republished.
+- 2026-11-13 Morgan found on the phone that the net could not hold 0.10 m (settled near 0.20 m): it ignored its error-so-far input because the copy data had no disturbances. Fixed by D-016 (one 60 s disturbance per run), with a closed-loop test at 0.10 to 1.90 m; Lab republished (version 8).
 
 ## Next
 
 1. Morgan reviews the S5 draft PR and the Net tab on the phone. On approval: HANDOFF merged state, mark ready, auto-merge (GIT-08).
 2. Then a new session for S6 (evolution strategies, Replay tab, verdict) per the spec. Raise the valve-travel question below first.
 
-Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 7, S5). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
+Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 8, S5 with D-016). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
 ## Open questions
 
