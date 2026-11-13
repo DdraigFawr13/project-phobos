@@ -9,7 +9,7 @@ import { checkStates } from "../src/sim/check-states.ts";
 import { forward } from "../src/runtime/net.ts";
 import { forwardRef } from "../src/ref/dense.ts";
 import { layerGaps } from "../src/ref/agreement.ts";
-import { valveOf, valveOfRef, LAB_SHAPE } from "../src/model/nets.ts";
+import { valveOf, valveOfRef, VALVE_GAIN, LAB_SHAPE } from "../src/model/nets.ts";
 import { makeRng } from "../src/rng.ts";
 import { createLive } from "../src/sim/live.ts";
 
@@ -147,5 +147,24 @@ test("the copied net in control holds every level from 0.10 to 1.90 m within 0.0
         assert.ok(Math.abs(h - sp) < 0.02, `start ${start ?? sp} m, setpoint ${sp} m: net tank ${h.toFixed(3)} m at ${t} s`);
       }
     }
+  }
+});
+
+test("valve mapping (D-018): y = 0 is half open, ±0.8 reaches shut and fully open, integer and float maps agree", () => {
+  assert.equal(VALVE_GAIN, 1.25);
+  assert.equal(valveOf(0), 0.5);
+  assert.equal(valveOf(-3277), 0); // −0.8 in Q12 (rounded away from 0), clamped
+  assert.equal(valveOf(3277), 1);
+  assert.ok(valveOf(-3276) > 0 && valveOf(3276) < 1, "just inside ±0.8 the valve is not yet at its end");
+  for (let y = -4096; y <= 4096; y++) assert.equal(valveOf(y), valveOfRef(y / Q), `y ${y}`);
+});
+
+test("the copied net reaches both ends of the valve: where the PI's valve is shut or fully open in the copy data, mean gap < 0.03", () => {
+  // S6 found the first nets never shut the valve (at least 0.06 open on 0.75→0.15): (y + 1) / 2 needed tanh to reach −1.
+  for (const end of [0, 1]) {
+    const gaps = data.x.flatMap((x, i) => (data.y[i] === end ? [Math.abs(valveOf(forward(committed, Int16Array.from(x, v => Math.round(v * Q))).at(-1)![0]) - end)] : []));
+    assert.ok(gaps.length >= 50, `${gaps.length} states with the PI's valve at ${end}`);
+    const mean = gaps.reduce((a, g) => a + g, 0) / gaps.length;
+    assert.ok(mean < 0.03, `PI valve ${end}: the net's mean gap ${mean.toFixed(4)} over ${gaps.length} states`);
   }
 });

@@ -144,7 +144,7 @@ Morgan wants "colonists [that] have goals that they work toward" in Project-Vulc
 3. Error, in m.
 4. Error integral ∫e dt / 32, clamped to ±7.99. It is kept in float by `src/sim/net-inputs.ts`, outside the integer runtime, and converted to Q12 with `Math.round` each step. It is held while the previous valve is ≤ 0.001 or ≥ 0.999. At reset it is preloaded to 20·√h0, the fixed PI's steady value. Steady values are about 6 to 28 m·s, so after /32 they are under 1.
 
-The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y + 4096) / 8192, clamped to [0, 1]. That makes 97 parameters.
+The net is dense 4→16 with tanh, then dense 16→1 with tanh. The valve is (y + 4096) / 8192, clamped to [0, 1]; D-018 (after S6) changed it to (5y + 16384) / 32768, so ±0.8 spans shut to open. That makes 97 parameters.
 
 **Test net** (S4 only): dense 4→16 tanh, then 16→5 with no activation, then mask (action 4 forbidden), then argmax. Weights and biases are (uniform() × 2 − 1) × 0.5 from rng seed 7, drawn layer by layer, w in row-major order then b, and quantised as above. The Lab-shaped net in S4 uses the same rule with seed 8. Both are fed the check states.
 

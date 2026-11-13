@@ -107,7 +107,7 @@ export function netPanel(models: LabModels, { live, $, tok }: Deps) {
       if (!n || !n.inputs) now.textContent = "Tap Net on to see the net's sums for its tank here.";
       else {
         const x = n.inputs, outs = forward(layers, x), y = outs.at(-1)![0], f3 = (v: number) => neg((v / 4096).toFixed(3));
-        now.innerHTML = `inputs: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${neg([...x].join(", "))}<br>16 neurons, each −1 to 1: ${neg([...outs[0]].map(v => (v / 4096).toFixed(2)).join(" "))}<br>valve neuron: ${neg(String(y))} (${f3(y)})<br>valve = (${neg(String(y))} + 4096) ÷ 8192 = ${valveOf(y).toFixed(3)}`;
+        now.innerHTML = `inputs: setpoint ${f3(x[0])} m, level ${f3(x[1])} m, error ${f3(x[2])} m, error so far ${f3(x[3])}<br>as whole numbers (× 4,096): ${neg([...x].join(", "))}<br>16 neurons, each −1 to 1: ${neg([...outs[0]].map(v => (v / 4096).toFixed(2)).join(" "))}<br>valve neuron: ${neg(String(y))} (${f3(y)})<br>valve = (5 × ${neg(String(y))} + 16384) ÷ 32768 = ${valveOf(y).toFixed(3)}${valveOf(y) === 0 || valveOf(y) === 1 ? " (kept 0 to 1)" : ""}`;
       }
     }
     drawChart($<HTMLCanvasElement>("#netchart"), !!n);

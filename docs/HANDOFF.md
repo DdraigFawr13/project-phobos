@@ -4,7 +4,7 @@ Updated: 2026-11-13. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S6 done (PRs #2 to #7 merged); S6 ended milestone M3 and the spec. The verdict was No. Next: one shut-valve fix, judged by the same verdict, then Vulcan.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S6 done (PRs #2 to #7 merged); S6 ended milestone M3 and the spec. The verdict was No. The shut-valve fix (D-018, PR #8 merged) left it No, but much closer. Next: M3 audit offer, then the Vulcan phase.
 
 ## Plan map
 
@@ -17,13 +17,15 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S4 dense, mask and float reference (M2), PR #5.
 - ✔ S5 copy the PI (M3), PR #6.
 - ✔ S6 evolution strategies, replay and verdict (M3), PR #7.
-- ▶ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13).
+- ✔ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13): D-018, PR #8.
+- ▶ M3 audit (offer), then plan the Vulcan phase.
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
 
 - 2026-11-13 Morgan approved PR #6 and asked for S6 in a new session. Older entries: `docs/archive/handoff-2026-11.md`.
-- 2026-11-13 Morgan approved PR #7 (S6) and asked to try the shut-valve fix.
+- 2026-11-13 Morgan approved PR #7 (S6) and asked to try the shut-valve fix. PR #7 merged (7087015) after its ready CI run passed; auto-merge was refused while the check was pending.
+- 2026-11-13 Shut-valve fix built on `valve-range` (D-018): valve = (1.25·y + 1) / 2, clamped, in copy loss and runtime map. Held-out total 63.49 → 55.21 m·s (fixed PI 58.89, retuned 55.52); 0.75→0.15 16.92 → 10.13 (PI 11.61). Still **No**: 1.40→1.90 6.65 vs 5.24 and dist@0.35 4.54 vs 2.96 are > 5% worse. Travel 39.25 vs 52.37. Training IAE after ES 47.84 (PI 50.94). In control within 0.0008 m. Tests 88 (2 new: the map, and the copied net reaching both valve ends, which the old net missed at 0.0546 against 0.03); check 6.6 s; `train:lab` 41.1 s. Lab republished (version 10). Morgan approved PR #8.
 - 2026-11-13 Valve travel: Morgan kept D-011 as written (noise included). Measured trial: fixed PI 52.37, ES net 37.07 held-out travel; noise off 3.84 and 3.52.
 - 2026-11-13 ES re-check (D-017): the spec's noise 64 / step 512 swung training IAE 54.6 to 58.3; 32/128 fell every generation, 57.18 → 53.49 m·s (fixed PI 50.94). `shr` now divides by a stored 2^n (same results, 7× faster).
 - 2026-11-13 S6 built: `src/train/{es,pool,lab-files}.ts`, `src/sim/{verdict,replay}.ts`, `scripts/train-lab.ts` (copy, ES on worker threads, verdict), `models/lab/` (weights.json is now ES; ES log, 10 ES snapshots, `esExample`, `verdict.json`), Replay tab `src/lab/replay-panel.ts` (curve, 20-snapshot slider, held-out replay tank on seed 101, verdict tables and checks, ES worked example from the real generation 1). Tests 86 (was 71); check 6.0 to 6.6 s; browser 5.6 to 6.0 s; `train:lab` 40.2 s (D-008 limit 10 min). Tests failed first; 9 planted bugs caught.
@@ -33,8 +35,8 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. New branch from `main`: try one fix for the net never shutting the valve (see Just done), retrain, and report the held-out verdict against the same D-011 rule. Record the fix in DECISIONS. Test in control across 0.10 to 1.90 m (LESSONS `train`).
-2. Then offer an M3 audit (VER-09) and move to the Vulcan phase whichever way the verdict goes.
+1. Offer Morgan an M3 audit with the `audit` skill (VER-09).
+2. Then plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill; Morgan said one fix, then Vulcan either way. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9, S6). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
@@ -44,6 +46,6 @@ Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9,
 
 ## Decisions since the last plan update
 
-- 2026-11-13 Morgan: try one shut-valve fix after the No. D-017 ES settings after the S6 re-check; D-011 kept (Morgan). D-016 copy data includes disturbances.
+- 2026-11-13 D-018 valve map reaches both ends at ±0.8. Morgan: try one shut-valve fix after the No. D-017 ES settings after the S6 re-check; D-011 kept (Morgan). D-016 copy data includes disturbances.
 - 2026-11-12 D-014 Lab look: Control room; D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
 - 2026-11-12 D-001 to D-010: harness, concept, round 1, plan, platforms, number spec, accuracy, training, pass mark, files and licence.
