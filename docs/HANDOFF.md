@@ -30,7 +30,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan reviews draft PR (M3 audit fixes F1 to F8, [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md)); merge after approval (GIT-07, GIT-08).
+1. Morgan reviews draft [PR #10](https://github.com/DdraigFawr13/project-phobos/pull/10) (M3 audit fixes F1 to F8, [`docs/audit/2026-11-13-repo.md`](audit/2026-11-13-repo.md)); merge after approval (GIT-07, GIT-08).
 2. Then plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill; Morgan said one fix, then Vulcan either way. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
