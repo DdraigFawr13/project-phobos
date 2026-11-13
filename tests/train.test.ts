@@ -30,9 +30,9 @@ test("copy data: 50 fixed-PI runs × 200 states (every 2 s of 400 s) = 10,000, Q
     assert.ok(data.y[i] >= 0 && data.y[i] <= 1, `state ${i}: valve ${data.y[i]}`);
   }
   // shuffled: the first 200 states are not one run's 200 states in time order (one run shares two setpoints)
-  assert.ok(new Set(data.x.slice(0, 200).map(x => x[0])).size > 2);
+  assert.ok(new Set(data.x.slice(0, 200).map((x) => x[0])).size > 2);
   // the PI spends time pinned, so the targets reach both ends
-  assert.ok(data.y.some(v => v === 0) && data.y.some(v => v === 1));
+  assert.ok(data.y.some((v) => v === 0) && data.y.some((v) => v === 1));
 });
 
 test("gradient check: backprop equals central finite differences, relative error < 1e-4 on 20 random parameters", () => {
@@ -42,17 +42,25 @@ test("gradient check: backprop equals central finite differences, relative error
   for (const L of net) for (let o = 0; o < L.b.length; o++) L.b[o] = (r.uniform() * 2 - 1) * 0.3;
   const idx = Array.from({ length: 64 }, (_, k) => k * 37);
   const { grad } = lossAndGrad(net, data, idx);
-  const params = net.flatMap((L, k) => [...[...L.w.keys()].map(i => ({ k, p: "w" as const, i })), ...[...L.b.keys()].map(i => ({ k, p: "b" as const, i }))]);
+  const params = net.flatMap((L, k) => [
+    ...[...L.w.keys()].map((i) => ({ k, p: "w" as const, i })),
+    ...[...L.b.keys()].map((i) => ({ k, p: "b" as const, i })),
+  ]);
   assert.equal(params.length, 97);
-  const pick = makeRng(5), h = 1e-6;
+  const pick = makeRng(5),
+    h = 1e-6;
   let worst = 0;
   for (let n = 0; n < 20; n++) {
     const { k, p, i } = params[Math.floor(pick.uniform() * params.length)];
-    const arr = net[k][p], keep = arr[i];
-    arr[i] = keep + h; const up = lossAndGrad(net, data, idx).loss;
-    arr[i] = keep - h; const down = lossAndGrad(net, data, idx).loss;
+    const arr = net[k][p],
+      keep = arr[i];
+    arr[i] = keep + h;
+    const up = lossAndGrad(net, data, idx).loss;
+    arr[i] = keep - h;
+    const down = lossAndGrad(net, data, idx).loss;
     arr[i] = keep;
-    const num = (up - down) / (2 * h), ana = grad[k][p][i];
+    const num = (up - down) / (2 * h),
+      ana = grad[k][p][i];
     const rel = Math.abs(ana - num) / Math.max(Math.abs(ana), Math.abs(num), 1e-12);
     assert.ok(Math.abs(ana) > 1e-8, `layer ${k} ${p}[${i}] has no gradient to check (${ana})`);
     worst = Math.max(worst, rel);
@@ -87,7 +95,12 @@ test("D-007 on the trained net: integer valve within 0.01 of its float valve on 
   let within = 0;
   for (const s of states) {
     const vi = valveOf(forward(committed, s).at(-1)![0]);
-    const vf = valveOfRef(forwardRef(committed, [...s].map(v => v / Q)).at(-1)![0]);
+    const vf = valveOfRef(
+      forwardRef(
+        committed,
+        [...s].map((v) => v / Q),
+      ).at(-1)![0],
+    );
     if (Math.abs(vi - vf) <= 0.01) within++;
   }
   assert.ok(within >= 990, `${within / 10}% within 0.01`);
@@ -95,15 +108,23 @@ test("D-007 on the trained net: integer valve within 0.01 of its float valve on 
 });
 
 test("log and snapshots: loss every 10 steps from 0 to 2,000; 10 quantised snapshots, every 200 steps, the last = copy-weights", () => {
-  const log = JSON.parse(readModel("log.json")), snaps = JSON.parse(readModel("snapshots.json"));
+  const log = JSON.parse(readModel("log.json")),
+    snaps = JSON.parse(readModel("snapshots.json"));
   assert.equal(log.version, 1);
   const copyLog = log.entries.filter((e: any) => e.phase === "copy");
-  assert.deepEqual(copyLog.map((e: any) => e.step), Array.from({ length: 201 }, (_, i) => i * 10));
+  assert.deepEqual(
+    copyLog.map((e: any) => e.step),
+    Array.from({ length: 201 }, (_, i) => i * 10),
+  );
   assert.ok(copyLog.every((e: any) => Number.isFinite(e.loss) && !("iae" in e)));
   assert.equal(snaps.version, 1);
   const copySnaps = snaps.snapshots.filter((s: any) => s.phase === "copy");
-  assert.deepEqual(copySnaps.map((s: any) => s.step), Array.from({ length: 10 }, (_, i) => (i + 1) * 200));
-  for (const s of copySnaps) assert.doesNotThrow(() => loadWeights({ format: "phobos-weights", version: 1, layers: s.layers, meta: {} }));
+  assert.deepEqual(
+    copySnaps.map((s: any) => s.step),
+    Array.from({ length: 10 }, (_, i) => (i + 1) * 200),
+  );
+  for (const s of copySnaps)
+    assert.doesNotThrow(() => loadWeights({ format: "phobos-weights", version: 1, layers: s.layers, meta: {} }));
   assert.deepEqual(copySnaps.at(-1).layers, JSON.parse(readModel("copy-weights.json")).layers);
   // S6 replaced weights.json with the ES result (tests/es.test.ts); the copy keeps its own file
   assert.notEqual(readModel("weights.json"), readModel("copy-weights.json"));
@@ -112,22 +133,38 @@ test("log and snapshots: loss every 10 steps from 0 to 2,000; 10 quantised snaps
 test("train:lab is reproducible: a fresh copy run writes exactly the committed copy-weights.json and copy-phase log and snapshots", () => {
   const files = copyFiles();
   assert.equal(files["copy-weights.json"], readModel("copy-weights.json"));
-  assert.deepEqual(files.log, JSON.parse(readModel("log.json")).entries.filter((e: any) => e.phase === "copy"));
-  assert.deepEqual(files.snapshots, JSON.parse(readModel("snapshots.json")).snapshots.filter((s: any) => s.phase === "copy"));
+  assert.deepEqual(
+    files.log,
+    JSON.parse(readModel("log.json")).entries.filter((e: any) => e.phase === "copy"),
+  );
+  assert.deepEqual(
+    files.snapshots,
+    JSON.parse(readModel("snapshots.json")).snapshots.filter((s: any) => s.phase === "copy"),
+  );
 });
 
 test("J4 in Lab's live sim: the copied net holds its tank at the setpoint, and Net on leaves the PI tank unchanged", () => {
-  const a = createLive({ seed: 1, level: 1.0, setpoint: 1.0 }), b = createLive({ seed: 1, level: 1.0, setpoint: 1.0 });
-  a.step(50); b.step(50);
+  const a = createLive({ seed: 1, level: 1.0, setpoint: 1.0 }),
+    b = createLive({ seed: 1, level: 1.0, setpoint: 1.0 });
+  a.step(50);
+  b.step(50);
   b.setNet(committed);
   assert.equal(b.state.net!.level, b.state.level);
   for (const sp of [1.0, 1.5, 0.3]) {
-    a.setSetpoint(sp); b.setSetpoint(sp);
-    a.step(300); b.step(300);
+    a.setSetpoint(sp);
+    b.setSetpoint(sp);
+    a.step(300);
+    b.step(300);
     assert.ok(Math.abs(b.state.net!.level - sp) < 0.05, `setpoint ${sp}: net tank ${b.state.net!.level}`);
   }
-  b.disturb(); a.disturb(); b.step(30); a.step(30);
-  assert.ok(b.state.history.at(-1)!.net! < b.state.history.at(-31)!.net! - 0.02, "the disturbance hits the net tank too");
+  b.disturb();
+  a.disturb();
+  b.step(30);
+  a.step(30);
+  assert.ok(
+    b.state.history.at(-1)!.net! < b.state.history.at(-31)!.net! - 0.02,
+    "the disturbance hits the net tank too",
+  );
   assert.equal(b.state.level, a.state.level); // same PI tank, bit for bit
   b.setNet(null);
   assert.equal(b.state.net, null);
@@ -144,7 +181,10 @@ test("the copied net in control holds every level from 0.10 to 1.90 m within 0.0
       for (const t of [900, 1800]) {
         lv.step(900);
         const h = lv.state.net!.level;
-        assert.ok(Math.abs(h - sp) < 0.02, `start ${start ?? sp} m, setpoint ${sp} m: net tank ${h.toFixed(3)} m at ${t} s`);
+        assert.ok(
+          Math.abs(h - sp) < 0.02,
+          `start ${start ?? sp} m, setpoint ${sp} m: net tank ${h.toFixed(3)} m at ${t} s`,
+        );
       }
     }
   }
@@ -162,7 +202,20 @@ test("valve mapping (D-018): y = 0 is half open, ±0.8 reaches shut and fully op
 test("the copied net reaches both ends of the valve: where the PI's valve is shut or fully open in the copy data, mean gap < 0.03", () => {
   // S6 found the first nets never shut the valve (at least 0.06 open on 0.75→0.15): (y + 1) / 2 needed tanh to reach −1.
   for (const end of [0, 1]) {
-    const gaps = data.x.flatMap((x, i) => (data.y[i] === end ? [Math.abs(valveOf(forward(committed, Int16Array.from(x, v => Math.round(v * Q))).at(-1)![0]) - end)] : []));
+    const gaps = data.x.flatMap((x, i) =>
+      data.y[i] === end
+        ? [
+            Math.abs(
+              valveOf(
+                forward(
+                  committed,
+                  Int16Array.from(x, (v) => Math.round(v * Q)),
+                ).at(-1)![0],
+              ) - end,
+            ),
+          ]
+        : [],
+    );
     assert.ok(gaps.length >= 50, `${gaps.length} states with the PI's valve at ${end}`);
     const mean = gaps.reduce((a, g) => a + g, 0) / gaps.length;
     assert.ok(mean < 0.03, `PI valve ${end}: the net's mean gap ${mean.toFixed(4)} over ${gaps.length} states`);

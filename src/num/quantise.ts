@@ -14,9 +14,13 @@ export function quantise(f: FloatLayer): Layer {
   let s = 14;
   while (s > 0 && max * 2 ** s > 32767) s--;
   return {
-    kind: "dense", in: f.in, out: f.out, shift: s, act: f.act,
-    w: Int16Array.from(f.w, v => sat16(Math.round(v * 2 ** s))),
-    b: Int16Array.from(f.b, v => sat16(Math.round(v * ONE))),
+    kind: "dense",
+    in: f.in,
+    out: f.out,
+    shift: s,
+    act: f.act,
+    w: Int16Array.from(f.w, (v) => sat16(Math.round(v * 2 ** s))),
+    b: Int16Array.from(f.b, (v) => sat16(Math.round(v * ONE))),
   };
 }
 

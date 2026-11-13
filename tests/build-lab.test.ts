@@ -20,7 +20,9 @@ test("Lab built with models/lab/ has the Net and Replay panels and the committed
     assert.match(withModels, /data-panel="replay"/);
     assert.doesNotMatch(without, /data-panel="replay"/);
     // the inlined weights are the committed file's numbers (first layer's first weights)
-    const w = JSON.parse(readFileSync(new URL("weights.json", MODELS), "utf8")).layers[0].w.slice(0, 8).join(",");
+    const w = JSON.parse(readFileSync(new URL("weights.json", MODELS), "utf8"))
+      .layers[0].w.slice(0, 8)
+      .join(",");
     assert.ok(withModels.includes(w), "weights inlined");
     assert.ok(!without.includes("phobos-weights"), "no weights without models/lab/");
     // both pages still carry the earlier tabs

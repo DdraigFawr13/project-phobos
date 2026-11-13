@@ -41,7 +41,8 @@ test("disturbance drains faster: the level falls under the steady valve", () => 
 });
 
 test("measure() adds at most ±0.005 m of noise and draws exactly one uniform", () => {
-  const a = makeRng(5), b = makeRng(5);
+  const a = makeRng(5),
+    b = makeRng(5);
   const plant = makePlant({ level: 1.0, rng: a });
   for (let i = 0; i < 1000; i++) {
     const m = plant.measure();
@@ -63,9 +64,11 @@ test("PI holds its integral while the valve is pinned (conditional integration)"
 });
 
 test("plant clamps the valve to [0, 1] and the level at 0 m", () => {
-  const a = makePlant({ level: 1.0 }), b = makePlant({ level: 1.0 });
+  const a = makePlant({ level: 1.0 }),
+    b = makePlant({ level: 1.0 });
   for (let n = 0; n < 50; n++) assert.equal(a.step(5, false), b.step(1, false));
-  const c = makePlant({ level: 0.01 }), d = makePlant({ level: 0.01 });
+  const c = makePlant({ level: 0.01 }),
+    d = makePlant({ level: 0.01 });
   for (let n = 0; n < 50; n++) assert.equal(c.step(-3, false), d.step(0, false));
   const e = makePlant({ level: 0.001 });
   for (let n = 0; n < 2000; n++) e.step(0, true);
@@ -79,7 +82,10 @@ test("a disturbance lasts exactly 60 s of steps whenever it is tapped", async ()
     live.step(at);
     live.disturb();
     let steps = 0;
-    while (live.disturbed()) { live.step(0.1); steps++; }
+    while (live.disturbed()) {
+      live.step(0.1);
+      steps++;
+    }
     assert.equal(steps, 600, `tapped at ${at} s`);
   }
 });
@@ -91,7 +97,10 @@ test("rng: xorshift32 known value (13, 17, 5 shifts): seed 1 gives 270369 first"
 });
 
 test("rng: seed 0 behaves as seed 1; same seed, same sequence; uniform in [0, 1)", () => {
-  const z = makeRng(0), o = makeRng(1), o2 = makeRng(1), d = makeRng(2);
+  const z = makeRng(0),
+    o = makeRng(1),
+    o2 = makeRng(1),
+    d = makeRng(2);
   let differs = false;
   for (let i = 0; i < 1000; i++) {
     const x = o.uniform();

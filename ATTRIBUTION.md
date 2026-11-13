@@ -12,4 +12,4 @@ Code and assets this project uses or ports, with their licences (SAFE-05, AGENTS
 
 ## Tools (dev dependencies, not shipped)
 
-- TypeScript 7.0.2 (Apache-2.0), esbuild 0.28.2 (MIT), @types/node 22.20.5 (MIT). D-012.
+- TypeScript 7.0.2 (Apache-2.0), esbuild 0.28.2 (MIT), @types/node 22.20.5 (MIT), Prettier 3.9.10 (MIT). D-012.

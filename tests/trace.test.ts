@@ -37,11 +37,15 @@ test("the trace is repeatable and seed 2 differs", () => {
 });
 
 test("the trace shows the scenario, checked against the physics, not the golden", () => {
-  const tr = trace(1), at = (t: number) => tr.find(p => p.t === t)!;
+  const tr = trace(1),
+    at = (t: number) => tr.find((p) => p.t === t)!;
   assert.deepEqual(at(0), { t: 0, level: 1, valve: 0.5 }); // steady start: valve 0.5·√1.0
   assert.ok(Math.abs(at(190).level - 1.5) < 0.005, `190 s: ${at(190).level}`);
   assert.ok(at(230).level < at(190).level - 0.02, `230 s: ${at(230).level}`);
   assert.ok(at(230).valve > at(190).valve + 0.05, `PI opens the valve against the disturbance: ${at(230).valve}`);
   assert.ok(Math.abs(at(600).level - 1.5) < 0.005, `600 s: ${at(600).level}`);
-  assert.ok(Math.abs(at(600).valve - steadyValve(1.5)) < 0.01, `600 s valve ${at(600).valve} vs steady ${steadyValve(1.5)}`);
+  assert.ok(
+    Math.abs(at(600).valve - steadyValve(1.5)) < 0.01,
+    `600 s valve ${at(600).valve} vs steady ${steadyValve(1.5)}`,
+  );
 });

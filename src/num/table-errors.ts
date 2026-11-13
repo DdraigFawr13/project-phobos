@@ -7,15 +7,19 @@ export type TableError = { lsb: number; at: number; pct: number };
  * (8,192 LSB for tanh, 4,096 for exp). exp's reference uses min(x, 0), as its input is clamped to ≤ 0. */
 export function tableErrors(): { tanh: TableError; exp: TableError } {
   const worst = (q: (x: number) => number, ref: (x: number) => number, range: number): TableError => {
-    let lsb = 0, at = 0;
+    let lsb = 0,
+      at = 0;
     for (let x = -32768; x <= 32767; x++) {
       const d = Math.abs(q(x) - Math.round(4096 * ref(x / 4096)));
-      if (d > lsb) { lsb = d; at = x; }
+      if (d > lsb) {
+        lsb = d;
+        at = x;
+      }
     }
     return { lsb, at, pct: (100 * lsb) / range };
   };
   return {
     tanh: worst(tanhQ, Math.tanh, 8192),
-    exp: worst(expQ, x => Math.exp(Math.min(x, 0)), 4096),
+    exp: worst(expQ, (x) => Math.exp(Math.min(x, 0)), 4096),
   };
 }

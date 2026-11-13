@@ -4,9 +4,11 @@ export type Rng = { next(): number; uniform(): number };
 export function makeRng(seed = 1): Rng {
   let x = seed >>> 0 || 1;
   const next = () => {
-    x ^= x << 13; x >>>= 0;
+    x ^= x << 13;
+    x >>>= 0;
     x ^= x >>> 17;
-    x ^= x << 5; x >>>= 0;
+    x ^= x << 5;
+    x >>>= 0;
     return x;
   };
   return { next, uniform: () => next() / 2 ** 32 };

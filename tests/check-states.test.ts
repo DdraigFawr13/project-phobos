@@ -21,7 +21,7 @@ test("each segment's first state is the steady start: integral preloaded to 20·
     const [sp, m, e, integ] = states[i * perSeg];
     assert.equal(sp, Math.round(seg.setpoint * Q), seg.name);
     assert.ok(Math.abs(m - seg.start * Q) <= Math.ceil(0.005 * Q), `${seg.name} measured ${m}`);
-    assert.equal(integ, Math.round((20 * Math.sqrt(seg.start)) / INTEGRAL_DIV * Q), seg.name);
+    assert.equal(integ, Math.round(((20 * Math.sqrt(seg.start)) / INTEGRAL_DIV) * Q), seg.name);
     assert.ok(Math.abs(e - (sp - m)) <= 1, `${seg.name} error ${e}`);
   }
 });
@@ -40,7 +40,7 @@ test("the integral input tracks the fixed PI's integral (I = ∫e / 40) across t
   // about 2 steps the input holds, and a 0.00258 offset stays for the rest of the segment.
   const { piI } = checkStates({ withPI: true });
   for (const [i, s] of states.entries()) {
-    const fromInput = (s[3] / Q) * INTEGRAL_DIV / 40;
+    const fromInput = ((s[3] / Q) * INTEGRAL_DIV) / 40;
     const seg = SEGMENTS.training[Math.floor(i / perSeg)].name;
     const limit = seg === "1.00→1.75" ? 0.003 : 0.0002;
     assert.ok(Math.abs(fromInput - piI[i]) < limit, `state ${i} (${seg}): input ${fromInput} PI ${piI[i]}`);
@@ -60,6 +60,9 @@ test("net inputs hold the integral while the previous valve is pinned and satura
   const c = n.next(0.5, 1.0);
   assert.equal(c[3], Math.round(((20 + 0.05) / INTEGRAL_DIV) * Q));
   // a huge error drives the integral to the ±7.99 clamp
-  for (let i = 0; i < 100000; i++) { n.next(-1.9, 2.0); n.after(0.5); }
+  for (let i = 0; i < 100000; i++) {
+    n.next(-1.9, 2.0);
+    n.after(0.5);
+  }
   assert.equal(n.next(0, 0)[3], Math.round(7.99 * Q));
 });

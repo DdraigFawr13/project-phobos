@@ -4,7 +4,8 @@ import { shr } from "./fixed.ts";
 
 // Entry i covers input i × 32 (i / 128 in real units); the 5 low bits interpolate between entries.
 function lookup(t: Int16Array, a: number): number {
-  const i = a >> 5, f = a & 31;
+  const i = a >> 5,
+    f = a & 31;
   return t[i] + shr((t[i + 1] - t[i]) * f, 5);
 }
 

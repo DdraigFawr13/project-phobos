@@ -6,12 +6,21 @@ import { EXPLAIN } from "../src/lab/explain.ts";
 
 const noisy = runFixedTest(SEGMENTS.training);
 const quiet = runFixedTest(SEGMENTS.training, { noise: false });
-const row = (r: FixedTestResult, name: string) => r.rows.find(x => x.name === name)!;
+const row = (r: FixedTestResult, name: string) => r.rows.find((x) => x.name === name)!;
 
 test("training and held-out sets have the spec's five segments each", () => {
-  assert.deepEqual(SEGMENTS.training.map(s => s.name), ["0.50→0.25", "0.25→1.00", "1.00→1.75", "1.75→0.50", "dist@1.00"]);
-  assert.deepEqual(SEGMENTS.heldOut.map(s => s.name), ["0.75→0.15", "0.15→1.40", "1.40→1.90", "1.90→0.75", "dist@0.35"]);
-  assert.deepEqual(noisy.rows.map(r => r.name), SEGMENTS.training.map(s => s.name));
+  assert.deepEqual(
+    SEGMENTS.training.map((s) => s.name),
+    ["0.50→0.25", "0.25→1.00", "1.00→1.75", "1.75→0.50", "dist@1.00"],
+  );
+  assert.deepEqual(
+    SEGMENTS.heldOut.map((s) => s.name),
+    ["0.75→0.15", "0.15→1.40", "1.40→1.90", "1.90→0.75", "dist@0.35"],
+  );
+  assert.deepEqual(
+    noisy.rows.map((r) => r.name),
+    SEGMENTS.training.map((s) => s.name),
+  );
 });
 
 test("retuned IAE < 0.8 × fixed IAE on 0.50→0.25", () => {
@@ -26,7 +35,7 @@ test("retuned equals fixed on dist@1.00 (same Ti at 1.0 m)", () => {
 });
 
 test("IAE is on the true level: noise changes it by under 0.2 m·s per segment", () => {
-  for (const name of noisy.rows.map(r => r.name)) {
+  for (const name of noisy.rows.map((r) => r.name)) {
     for (const pi of ["fixed", "retuned"] as const) {
       const d = Math.abs(row(noisy, name)[pi].iae - row(quiet, name)[pi].iae);
       assert.ok(d < 0.2, `${name} ${pi}: ${d}`);
@@ -58,7 +67,7 @@ test("same seeds, same result; other seeds differ", () => {
 
 test("formatTable prints name, fixed IAE and retuned IAE to 2 decimals, one row per segment", () => {
   const lines = formatTable(noisy).trim().split("\n");
-  const body = lines.filter(l => noisy.rows.some(r => l.startsWith(r.name)));
+  const body = lines.filter((l) => noisy.rows.some((r) => l.startsWith(r.name)));
   assert.equal(body.length, 5);
   for (const [i, r] of noisy.rows.entries()) {
     assert.deepEqual(body[i].trim().split(/\s+/), [r.name, r.fixed.iae.toFixed(2), r.retuned.iae.toFixed(2)]);
@@ -72,6 +81,10 @@ test("Lab's Fixed test teaching text quotes the numbers this test measures", () 
   assert.ok(r.retuned.iae > r.fixed.iae, "the text says retuned is worse on 1.00→1.75");
   // "with the noise switched off, each test's travel is under 1.3 instead of about 10"
   assert.ok(text.includes("under 1.3 instead of about 10"));
-  for (const x of quiet.rows) for (const pi of ["fixed", "retuned"] as const) assert.ok(x[pi].travel < 1.3, `${x.name} quiet travel ${x[pi].travel}`);
-  for (const x of noisy.rows) for (const pi of ["fixed", "retuned"] as const) assert.ok(x[pi].travel > 9.5 && x[pi].travel < 11.5, `${x.name} travel ${x[pi].travel}`);
+  for (const x of quiet.rows)
+    for (const pi of ["fixed", "retuned"] as const)
+      assert.ok(x[pi].travel < 1.3, `${x.name} quiet travel ${x[pi].travel}`);
+  for (const x of noisy.rows)
+    for (const pi of ["fixed", "retuned"] as const)
+      assert.ok(x[pi].travel > 9.5 && x[pi].travel < 11.5, `${x.name} travel ${x[pi].travel}`);
 });

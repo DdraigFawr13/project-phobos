@@ -10,8 +10,13 @@ export function makeNetController(layers: Layer[]): Controller & { readonly last
   const inputs = makeNetInputs();
   let last: Int16Array | null = null;
   return {
-    get last() { return last; },
-    reset(level) { inputs.reset(level); last = null; },
+    get last() {
+      return last;
+    },
+    reset(level) {
+      inputs.reset(level);
+      last = null;
+    },
     step(measured, setpoint) {
       last = inputs.next(measured, setpoint);
       const valve = valveOf(forward(layers, last).at(-1)![0]);
