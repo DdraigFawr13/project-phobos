@@ -17,7 +17,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S4 dense, mask and float reference (M2), PR #5.
 - ✔ S5 copy the PI (M3), PR #6.
 - ✔ S6 evolution strategies, replay and verdict (M3), PR #7.
-- ▶ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13): D-018, draft PR on `valve-range`.
+- ▶ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13): D-018, [draft PR #8](https://github.com/DdraigFawr13/project-phobos/pull/8).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
@@ -34,7 +34,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Morgan reviews the `valve-range` draft PR. On approval: merge per GIT-08.
+1. Morgan reviews draft PR #8. On approval: merge per GIT-08.
 2. Then offer an M3 audit (VER-09) and move to the Vulcan phase (Morgan said one fix, then Vulcan either way). Don't tune further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 9, S6). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
