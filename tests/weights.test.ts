@@ -42,12 +42,12 @@ test("the loader throws on a bad format, version, length, value, shift or act, a
   assert.throws(() => loadWeights(good(), { limit: 2 ** 20 }), /checkBound/);
 });
 
-test("the committed models/lab/ weight files load, and spoiling them throws (S5)", () => {
-  for (const name of ["copy-weights.json", "weights.json"]) {
+test("the committed models/lab/ weight files load, and spoiling them throws (S5, S6)", () => {
+  for (const [name, trainer] of [["copy-weights.json", "copy"], ["weights.json", "es"]]) {
     const text = readFileSync(new URL(`../models/lab/${name}`, import.meta.url), "utf8");
     const { layers, meta } = loadWeights(JSON.parse(text));
     assert.deepEqual(layers.map(l => [l.in, l.out, l.act]), [[4, 16, "tanh"], [16, 1, "tanh"]], name);
-    assert.equal(meta.trainer, "copy", name);
+    assert.equal(meta.trainer, trainer, name); // S6: weights.json is the ES result
     const spoils: [string, (f: any) => void][] = [
       ["version", f => { f.version = 2; }],
       ["w length", f => { f.layers[0].w.pop(); }],

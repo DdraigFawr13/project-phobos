@@ -11,7 +11,10 @@ export function sat16(x: number): number {
   return x > INT16_MAX ? INT16_MAX : x < INT16_MIN ? INT16_MIN : x;
 }
 
+/** 2^n for n in [0, 52], worked out once: `2 ** n` on every call made shr the runtime's slowest line (S6). */
+const POW2 = Array.from({ length: 53 }, (_, n) => 2 ** n);
+
 /** Arithmetic shift right that floors, exact for integers below 2^53 (JS `>>` would wrap above 2^31). */
 export function shr(x: number, n: number): number {
-  return Math.floor(x / 2 ** n);
+  return Math.floor(x / POW2[n]);
 }

@@ -97,3 +97,9 @@ Settled rules for this project. Not a changelog: an entry stays while the rule i
 - **Status:** Accepted (2026-11-13, Morgan chose "Fix in PR #6")
 - **Decision:** Each of the copy phase's 50 PI runs has one 60 s disturbance (outflow × 1.2) starting at a uniform random time in [0, 340] s. A test runs the copied net in control at 0.10, 0.25, 0.50, 1.00, 1.50 and 1.90 m and requires it within 0.02 m after 900 s and 1,800 s.
 - **Why:** Morgan saw the first S5 net settle at about 0.20 m for a 0.10 m setpoint. Without disturbances the error-so-far input always matched the level, so the net ignored it and had no integral action (measured: that input from 0.20 to −1.80 moved the valve 0.198 → 0.231). With disturbances: 0.10 m → 0.109 m at 900 s, 0.102 m at 1,800 s. Open-loop mean gap to the PI rose 0.0146 → 0.0170 (limit 0.05).
+
+## D-017 ES settings after the S6 re-check
+
+- **Status:** Accepted (2026-11-13, S6 re-check the spec asked for; D-011 unchanged, Morgan kept noise in valve travel)
+- **Decision:** ES noise 32 LSB (was 64) and step 128 (was 512); 50 generations of 32 (16 antithetic pairs), rng seed 17, Box-Muller, centred ranks, unchanged. Training IAE is logged at generation 0 (the copied net) and after every generation. Members are scored on worker threads; scores return in order, so the files don't depend on the number of workers. `shr` divides by a stored 2^n instead of computing `2 ** n` per call (same results, about 7× faster on 15 M inputs).
+- **Why:** measured from the copied net (training IAE 57.18 m·s; fixed PI 50.94): at 64/512 training IAE swung 54.6 to 58.3 between generations and ended at 55.93; 64/128 ended at 54.11; 128/256 at 54.21; 32/128 at 53.49, falling every generation. Picked on training IAE only, never held-out (the verdict's set). Valve travel: Morgan chose to keep D-011 as written (noise included), because twitching at noise wears a real valve and the clause catches a net that buys IAE with gain.
