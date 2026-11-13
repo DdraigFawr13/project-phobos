@@ -1,14 +1,18 @@
-// Lab's live simulation: one tank under the fixed PI. Lab and tests/trace.test.ts both drive this,
-// so the golden trace locks exactly what Lab runs (SIM-01, SIM-02).
+// Lab's live simulation: one tank under the fixed PI and, while Net is on, a second tank under a net (S5).
+// Lab and tests/trace.test.ts both drive this, so the golden trace locks exactly what Lab runs (SIM-01, SIM-02).
 import { makeRng } from "../rng.ts";
 import { makePlant, steadyValve, TANK } from "./plant.ts";
 import { makePI, FIXED_PI } from "./pi.ts";
+import { makeNetController } from "./net-controller.ts";
+import type { Layer } from "../num/layer.ts";
 
 export const HISTORY_S = 600; // s of history kept for the chart
 export const DISTURB_S = 60; // s a disturbance lasts
+export const NET_SEED = 2; // the net tank's own sensor noise (spec "Lab")
 export const SETPOINT = { min: 0.1, max: 1.9, step: 0.05 } as const; // m, the slider
 
-export type Sample = { t: number; level: number; setpoint: number; valve: number; disturbed: boolean };
+export type Sample = { t: number; level: number; setpoint: number; valve: number; disturbed: boolean; net: number | null /* net tank level, m */ };
+export type NetTank = { level: number; measured: number; valve: number; inputs: Int16Array | null };
 export type LiveState = {
   t: number; // s
   level: number; // m, true level
@@ -18,7 +22,7 @@ export type LiveState = {
   pTerm: number; // Kp·error, last step (for the teaching layer)
   iTerm: number; // the PI's integral part, last step
   disturbedUntil: number; // s, for display; the step count below decides
-  net: null; // M3
+  net: NetTank | null; // the net tank while Net is on
   history: Sample[]; // one sample per second, oldest first, at most HISTORY_S + 1
 };
 
@@ -37,10 +41,11 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
     disturbedUntil: 0, net: null, history: [],
   };
   const record = () => {
-    state.history.push({ t: state.t, level: state.level, setpoint: state.setpoint, valve: state.valve, disturbed: n < disturbEndStep });
+    state.history.push({ t: state.t, level: state.level, setpoint: state.setpoint, valve: state.valve, disturbed: n < disturbEndStep, net: state.net?.level ?? null });
     if (state.history.length > HISTORY_S + 1) state.history.shift();
   };
   record();
+  let net: { plant: ReturnType<typeof makePlant>; ctrl: ReturnType<typeof makeNetController> } | null = null;
 
   function tick() {
     const disturbed = n < disturbEndStep;
@@ -50,6 +55,13 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
     state.pTerm = pi.Kp * (state.setpoint - state.measured);
     state.iTerm = iBefore; // the I that went into this step's valve: valve = clamp(pTerm + iTerm)
     state.level = plant.step(state.valve, disturbed);
+    if (net && state.net) {
+      const m = net.plant.measure();
+      state.net.measured = m;
+      state.net.valve = net.ctrl.step(m, state.setpoint);
+      state.net.inputs = net.ctrl.last;
+      state.net.level = net.plant.step(state.net.valve, disturbed); // disturb() hits both tanks
+    }
     n++;
     state.t = n * TANK.dt;
     if (n % STEPS_PER_S === 0) record();
@@ -69,6 +81,15 @@ export function createLive(opts: { seed?: number; level?: number; setpoint?: num
     /** Outflow × 1.2 for the next 60 s; tapping again restarts the 60 s. */
     disturb() { disturbEndStep = n + DISTURB_S * STEPS_PER_S; state.disturbedUntil = disturbEndStep * TANK.dt; },
     disturbed: () => n < disturbEndStep,
+    /** Net on: a second tank, reset to steady state at the PI tank's true level, with its own noise (seed 2).
+     *  null turns it off. */
+    setNet(layers: Layer[] | null) {
+      if (!layers) { net = null; state.net = null; return; }
+      const h = state.level;
+      net = { plant: makePlant({ level: h, rng: makeRng(NET_SEED) }), ctrl: makeNetController(layers) };
+      net.ctrl.reset(h, state.setpoint);
+      state.net = { level: h, measured: h, valve: steadyValve(h), inputs: null };
+    },
   };
 }
 export type Live = ReturnType<typeof createLive>;

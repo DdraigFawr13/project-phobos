@@ -1,4 +1,4 @@
-// J1, J2, the S3 Tables tab and the S4 Integer vs float tab browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
+// J1, J2, the S3 Tables tab, the S4 Integer vs float tab and J4 (S5 Net tab) browser smoke test (docs/specs/first-usable.md). Run: npm run test:browser
 // Uses the container's Playwright and Chromium (WEB-05); not a dependency. Local only, not in CI.
 // dist/lab.html is a fragment, so it is wrapped the way the Artifact host wraps it before loading.
 import { createRequire } from "node:module";
@@ -10,6 +10,11 @@ import { TANH, EXP } from "../src/num/tables.gen.ts";
 import { tableErrors } from "../src/num/table-errors.ts";
 import { compareNets } from "../src/ref/agreement.ts";
 import { checkStates } from "../src/sim/check-states.ts";
+import { loadWeights } from "../src/model/weights.ts";
+import { forward } from "../src/runtime/net.ts";
+import { valveOf } from "../src/model/nets.ts";
+
+const committed = loadWeights(JSON.parse(readFileSync(new URL("../models/lab/weights.json", import.meta.url), "utf8"))).layers;
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -84,7 +89,7 @@ try {
 
     // J2: the Fixed test tab runs the training set and prints the same numbers as Node
     const tabs = await page.locator('[role="tab"]').allTextContents();
-    check(tabs.join("|") === "Live|Fixed test|Tables|Integer vs float", `tab row: ${tabs.join(", ")}`);
+    check(tabs.join("|") === "Live|Fixed test|Tables|Integer vs float|Net", `tab row: ${tabs.join(", ")}`);
     await page.locator('[role="tab"]', { hasText: "Fixed test" }).click();
     check(await page.locator("#panel-live").isHidden(), "Live panel hidden on the Fixed test tab");
     await page.locator("#ft-run").click();
@@ -142,6 +147,46 @@ try {
     }
     await layout("Integer vs float");
     await shot("lab-400-ivf");
+
+    // J4: Net on runs the committed net on a second tank; it holds 1.0 m
+    await page.locator('[role="tab"]', { hasText: "Net" }).click();
+    check(await page.locator("#panel-ivf").isHidden(), "Integer vs float panel hidden on the Net tab");
+    let n = await lab("state");
+    check(n.net === null, "Net starts off");
+    check(/Net off\./.test(await page.locator("#net-status").textContent()), "status says Net off");
+    await lab("pause");
+    await lab("setNet", true);
+    await lab("setSetpoint", 1.0);
+    n = await lab("state");
+    check(n.net && n.net.level === n.level, `Net on: net tank starts at the PI tank's level (${n.net?.level})`);
+    await lab("step", 300);
+    n = await lab("state");
+    check(n.net && Math.abs(n.net.level - 1.0) < 0.05, `J4: net tank level ${n.net?.level.toFixed(3)} m after 300 s at setpoint 1.0`);
+    check(n.net && n.net.valve > 0 && n.net.valve < 1, `state().net.valve ${n.net?.valve}`);
+    const reads = await page.evaluate(() => [document.getElementById("n-net").textContent, document.getElementById("net-on").textContent, document.getElementById("net-on").getAttribute("aria-pressed")]);
+    check(reads[0] === `${n.net.level.toFixed(2)} m` && reads[1] === "Net off" && reads[2] === "true", `net readout and toggle: ${reads.join(" / ")}`);
+    const cells = await page.locator("#heat i").count();
+    check(cells === 97, `heat map has 97 squares (${cells})`);
+    const netInk = await page.evaluate(() => { const c = document.getElementById("netchart"); const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let k = 0; for (let i = 0; i < d.length; i += 4) if (d[i] !== d[0] || d[i + 1] !== d[1] || d[i + 2] !== d[2]) k++; return k; });
+    check(netInk > 1000, `net chart drew (${netInk} non-background pixels)`);
+    if (scheme === "light") {
+      await page.locator("#panel-net summary").click();
+      await lab("step", 1);
+      const sums = await page.locator("#net-now").textContent();
+      // the page's worked example ends in the valve the committed net gives for those inputs, worked out in Node
+      const nums = /as whole numbers \(× 4,096\): ([−\d, ]+)16/.exec(sums)?.[1].replace(/−/g, "-").split(", ").map(Number);
+      const want = nums ? valveOf(forward(committed, Int16Array.from(nums)).at(-1)[0]).toFixed(3) : "?";
+      check(nums?.length === 4 && sums.endsWith(`8192 = ${want}`), `Net worked example: "…${sums.slice(-40)}", Node ${want}`);
+      const train = await page.locator("#net-train").textContent();
+      check(/from 0\.\d{4} to 0\.\d{5}\..*at 0\.0\d\d from the PI's/.test(train), `training summary: "${train.slice(-120)}"`);
+    } else {
+      await lab("disturb"); await lab("step", 20);
+      check(/Disturbance on for both tanks/.test(await page.locator("#net-status").textContent()), "status shows the disturbance on both tanks");
+    }
+    await layout("Net");
+    await shot("lab-400-net");
+    await page.locator("#net-on").click();
+    check((await lab("state")).net === null, "tapping Net off turns the net tank off");
     check(errors.length === 0, `${scheme}: no page errors ${errors.join(" | ")}`);
     await page.close();
   }

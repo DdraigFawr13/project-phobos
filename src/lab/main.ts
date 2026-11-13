@@ -1,6 +1,7 @@
 // Lab: the Live tab (S1, the tank under the fixed PI), the Fixed test tab (S2), the Tables tab (S3) and the
-// Integer vs float tab (S4). Each view reads one model (live.state, fixedTest, the committed tables, the
-// integer-vs-float comparison) and nothing else (SIM-01).
+// Integer vs float tab (S4), and the Net tab (S5) when the build inlined models/lab/. Each view reads one model
+// (live.state, fixedTest, the committed tables, the integer-vs-float comparison, the inlined weights) and nothing
+// else (SIM-01).
 import { createLive, SETPOINT, HISTORY_S, type Sample } from "../sim/live.ts";
 import { SEGMENTS, fixedTestRuns, type FixedTestResult, type Progress } from "../sim/fixed-test.ts";
 import { EXPLAIN, explainHtml } from "./explain.ts";
@@ -12,6 +13,10 @@ import { compareNets, type Comparison } from "../ref/agreement.ts";
 import { forward } from "../runtime/net.ts";
 import { forwardRef } from "../ref/dense.ts";
 import { labShapedNet, valveOf, valveOfRef } from "../model/nets.ts";
+import { netPanel, type LabModels } from "./net-panel.ts";
+
+/** models/lab/*.json, inlined by scripts/build-lab.ts; null when the build had no models/lab/. */
+declare const __LAB_MODELS__: LabModels | null;
 
 const SPEED = 10; // simulated seconds per real second (spec "Lab")
 const MAX_SIM_S_PER_FRAME = 30; // cap catch-up after the tab was hidden
@@ -21,9 +26,13 @@ let paused = false;
 let lastDisturbEnd: number | null = null;
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector(sel) as T;
+const tok = (n: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
-const TABS = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"], ["ivf", "Integer vs float"]] as const;
-type Tab = (typeof TABS)[number][0];
+// The Net tab exists only when models/lab/ was inlined; esbuild drops netPanel when __LAB_MODELS__ is null.
+const NET = __LAB_MODELS__ ? netPanel(__LAB_MODELS__, { live, $, tok }) : null;
+const TABS: (readonly [string, string])[] = [["live", "Live"], ["fixed", "Fixed test"], ["tables", "Tables"], ["ivf", "Integer vs float"]];
+if (NET) TABS.push(NET.tab);
+type Tab = string;
 
 // The Fixed test model: idle, running (with progress) or done. The live tank keeps running meanwhile.
 type FixedTest = { phase: "idle" } | { phase: "running"; at: Progress } | { phase: "done"; result: FixedTestResult };
@@ -79,7 +88,7 @@ function mount() {
       <div class="key"><span><i class="k-sp"></i>valve, whole numbers</span><span><i class="k-valve"></i>valve, decimal maths (dashed)</span><span>1,000 situations across, valve opening up</span></div>
       <p class="status" id="ivf-status"></p>
       ${ix.after}
-    </section>`;
+    </section>${NET ? NET.html : ""}`;
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
   tabs.forEach((b, i) => {
     b.addEventListener("click", () => showTab(TABS[i][0]));
@@ -94,6 +103,7 @@ function mount() {
   const sp = $<HTMLInputElement>("#sp");
   sp.addEventListener("input", () => { live.setSetpoint(+sp.value); render(); });
   $("#dist").addEventListener("click", () => { live.disturb(); render(); });
+  NET?.mount(render);
 }
 
 function showTab(id: Tab) {
@@ -105,6 +115,7 @@ function showTab(id: Tab) {
   }
   if (id === "tables") renderTables();
   if (id === "ivf") renderIvf();
+  if (id === "net") NET?.fillSummary();
   render();
 }
 
@@ -247,9 +258,8 @@ function renderFixed() {
   st.textContent = `Total error score: tuned once ${total.fixed.iae.toFixed(2)} m·s, retuned ${total.retuned.iae.toFixed(2)} m·s.`;
 }
 
-const tok = (n: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-
-function drawChart(c: HTMLCanvasElement, hist: Sample[], now: { level: number; setpoint: number }, t: number) {
+/** The live chart; two = draw the net tank beside the PI tank and the net tank's level line (Net tab). */
+function drawChart(c: HTMLCanvasElement, hist: Sample[], now: { level: number; setpoint: number; net: { level: number } | null }, t: number, two = false) {
   const dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
   if (!W || !H) return;
   if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
@@ -276,12 +286,23 @@ function drawChart(c: HTMLCanvasElement, hist: Sample[], now: { level: number; s
     hist.forEach((p, i) => (i ? g.lineTo(X(p.t), Y(f(p))) : g.moveTo(X(p.t), Y(f(p)))));
     g.stroke(); g.setLineDash([]);
   };
-  if (hist.length > 1) { line(p => p.valve * 2, tok("--valve"), 1.5); line(p => p.setpoint, tok("--ink"), 1.5, [5, 4]); line(p => p.level, tok("--level"), 2.25); }
-  // the tank
-  const tx = 4, tw = 36;
-  g.fillStyle = tok("--water"); g.fillRect(tx, Y(now.level), tw, y1 - Y(now.level));
-  g.strokeStyle = tok("--ink"); g.lineWidth = 2; g.strokeRect(tx, y0, tw, y1 - y0);
-  g.setLineDash([4, 3]); g.beginPath(); g.moveTo(tx - 2, Y(now.setpoint)); g.lineTo(tx + tw + 2, Y(now.setpoint)); g.stroke(); g.setLineDash([]);
+  if (hist.length > 1) {
+    line(p => p.valve * 2, tok("--valve"), 1.5); line(p => p.setpoint, tok("--ink"), 1.5, [5, 4]); line(p => p.level, tok("--level"), 2.25);
+    if (two) {
+      g.strokeStyle = tok("--net"); g.lineWidth = 2.25; g.setLineDash([2, 3]); g.beginPath();
+      let pen = false; // the net line starts where Net was turned on
+      for (const p of hist) { if (p.net === null) { pen = false; continue; } pen ? g.lineTo(X(p.t), Y(p.net)) : g.moveTo(X(p.t), Y(p.net)); pen = true; }
+      g.stroke(); g.setLineDash([]);
+    }
+  }
+  // the tank, or the PI tank (left) and net tank (right)
+  const tank = (tx: number, tw: number, h: number, fill: string) => {
+    g.fillStyle = fill; g.fillRect(tx, Y(h), tw, y1 - Y(h));
+    g.strokeStyle = tok("--ink"); g.lineWidth = 2; g.strokeRect(tx, y0, tw, y1 - y0);
+    g.setLineDash([4, 3]); g.beginPath(); g.moveTo(tx - 2, Y(now.setpoint)); g.lineTo(tx + tw + 2, Y(now.setpoint)); g.stroke(); g.setLineDash([]);
+  };
+  if (two) { tank(4, 16, now.level, tok("--water")); if (now.net) tank(26, 16, now.net.level, tok("--net")); else { g.strokeStyle = tok("--control"); g.lineWidth = 1; g.strokeRect(26, y0, 16, y1 - y0); } }
+  else tank(4, 36, now.level, tok("--water"));
   g.textAlign = "left"; g.fillStyle = tok("--muted"); g.fillText("m", 4, y1 + 12);
 }
 
@@ -310,6 +331,7 @@ function render() {
     now.innerHTML = `error = ${s.setpoint.toFixed(2)} − ${s.measured.toFixed(3)} = ${e.toFixed(3)} m<br>P = 1.0 × ${e.toFixed(3)} = ${s.pTerm.toFixed(3)}<br>I = ${s.iTerm.toFixed(3)}<br>valve = P + I = ${(s.pTerm + s.iTerm).toFixed(3)} → ${s.valve.toFixed(3)} (kept 0 to 1)`;
   }
   drawChart($<HTMLCanvasElement>("#chart"), s.history, s, s.t);
+  if (NET && !$("#panel-net").hidden) NET.render((c, two) => drawChart(c, s.history, s, s.t, two));
 }
 
 let last = 0, carry = 0;
@@ -328,10 +350,15 @@ declare global { interface Window { __lab: unknown } }
 window.__lab = {
   /** Stop the live clock; step() is then the only clock. */
   pause() { paused = true; render(); },
-  state: () => ({ t: live.state.t, level: live.state.level, setpoint: live.state.setpoint, valve: live.state.valve, disturbed: live.disturbed(), net: null, snapshot: null }),
+  state: () => ({
+    t: live.state.t, level: live.state.level, setpoint: live.state.setpoint, valve: live.state.valve, disturbed: live.disturbed(),
+    net: live.state.net ? { level: live.state.net.level, valve: live.state.net.valve } : null, snapshot: null,
+  }),
   step(seconds: number) { live.step(seconds); render(); },
   setSetpoint(m: number) { live.setSetpoint(m); render(); },
   disturb() { live.disturb(); render(); },
+  // present only when the build inlined models/lab/ (spec "Lab")
+  ...(NET ? { setNet(on: boolean) { NET.hooks.setNet(on); render(); } } : {}),
 };
 
 mount();

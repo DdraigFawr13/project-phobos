@@ -14,7 +14,8 @@
     "build:lab": "node scripts/build-lab.ts",
     "test:browser": "npm run build:lab && node e2e/lab-smoke.mjs",
     "fixed-test": "node scripts/fixed-test.ts",
-    "gen-tables": "node scripts/gen-tables.ts"
+    "gen-tables": "node scripts/gen-tables.ts",
+    "train:lab": "node scripts/train-lab.ts"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

@@ -1,0 +1,1010 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "phase": "copy",
+      "step": 0,
+      "loss": 0.0668472
+    },
+    {
+      "phase": "copy",
+      "step": 10,
+      "loss": 0.0296988
+    },
+    {
+      "phase": "copy",
+      "step": 20,
+      "loss": 0.025025
+    },
+    {
+      "phase": "copy",
+      "step": 30,
+      "loss": 0.0149278
+    },
+    {
+      "phase": "copy",
+      "step": 40,
+      "loss": 0.00979861
+    },
+    {
+      "phase": "copy",
+      "step": 50,
+      "loss": 0.00689176
+    },
+    {
+      "phase": "copy",
+      "step": 60,
+      "loss": 0.00498569
+    },
+    {
+      "phase": "copy",
+      "step": 70,
+      "loss": 0.00377221
+    },
+    {
+      "phase": "copy",
+      "step": 80,
+      "loss": 0.00308121
+    },
+    {
+      "phase": "copy",
+      "step": 90,
+      "loss": 0.00264339
+    },
+    {
+      "phase": "copy",
+      "step": 100,
+      "loss": 0.00225299
+    },
+    {
+      "phase": "copy",
+      "step": 110,
+      "loss": 0.00206258
+    },
+    {
+      "phase": "copy",
+      "step": 120,
+      "loss": 0.00189577
+    },
+    {
+      "phase": "copy",
+      "step": 130,
+      "loss": 0.0017841
+    },
+    {
+      "phase": "copy",
+      "step": 140,
+      "loss": 0.0017033
+    },
+    {
+      "phase": "copy",
+      "step": 150,
+      "loss": 0.00164353
+    },
+    {
+      "phase": "copy",
+      "step": 160,
+      "loss": 0.00158672
+    },
+    {
+      "phase": "copy",
+      "step": 170,
+      "loss": 0.0015227
+    },
+    {
+      "phase": "copy",
+      "step": 180,
+      "loss": 0.00146441
+    },
+    {
+      "phase": "copy",
+      "step": 190,
+      "loss": 0.00141005
+    },
+    {
+      "phase": "copy",
+      "step": 200,
+      "loss": 0.00137521
+    },
+    {
+      "phase": "copy",
+      "step": 210,
+      "loss": 0.00130828
+    },
+    {
+      "phase": "copy",
+      "step": 220,
+      "loss": 0.00128384
+    },
+    {
+      "phase": "copy",
+      "step": 230,
+      "loss": 0.00124012
+    },
+    {
+      "phase": "copy",
+      "step": 240,
+      "loss": 0.0012085
+    },
+    {
+      "phase": "copy",
+      "step": 250,
+      "loss": 0.00118923
+    },
+    {
+      "phase": "copy",
+      "step": 260,
+      "loss": 0.00114948
+    },
+    {
+      "phase": "copy",
+      "step": 270,
+      "loss": 0.00111679
+    },
+    {
+      "phase": "copy",
+      "step": 280,
+      "loss": 0.00109254
+    },
+    {
+      "phase": "copy",
+      "step": 290,
+      "loss": 0.00107176
+    },
+    {
+      "phase": "copy",
+      "step": 300,
+      "loss": 0.00105397
+    },
+    {
+      "phase": "copy",
+      "step": 310,
+      "loss": 0.00103232
+    },
+    {
+      "phase": "copy",
+      "step": 320,
+      "loss": 0.00101585
+    },
+    {
+      "phase": "copy",
+      "step": 330,
+      "loss": 0.000988326
+    },
+    {
+      "phase": "copy",
+      "step": 340,
+      "loss": 0.000967012
+    },
+    {
+      "phase": "copy",
+      "step": 350,
+      "loss": 0.000948126
+    },
+    {
+      "phase": "copy",
+      "step": 360,
+      "loss": 0.000925058
+    },
+    {
+      "phase": "copy",
+      "step": 370,
+      "loss": 0.000903834
+    },
+    {
+      "phase": "copy",
+      "step": 380,
+      "loss": 0.000885374
+    },
+    {
+      "phase": "copy",
+      "step": 390,
+      "loss": 0.000870179
+    },
+    {
+      "phase": "copy",
+      "step": 400,
+      "loss": 0.000864426
+    },
+    {
+      "phase": "copy",
+      "step": 410,
+      "loss": 0.000838956
+    },
+    {
+      "phase": "copy",
+      "step": 420,
+      "loss": 0.000827406
+    },
+    {
+      "phase": "copy",
+      "step": 430,
+      "loss": 0.000810793
+    },
+    {
+      "phase": "copy",
+      "step": 440,
+      "loss": 0.000803749
+    },
+    {
+      "phase": "copy",
+      "step": 450,
+      "loss": 0.000789002
+    },
+    {
+      "phase": "copy",
+      "step": 460,
+      "loss": 0.000779838
+    },
+    {
+      "phase": "copy",
+      "step": 470,
+      "loss": 0.00076862
+    },
+    {
+      "phase": "copy",
+      "step": 480,
+      "loss": 0.000760072
+    },
+    {
+      "phase": "copy",
+      "step": 490,
+      "loss": 0.000746764
+    },
+    {
+      "phase": "copy",
+      "step": 500,
+      "loss": 0.000735189
+    },
+    {
+      "phase": "copy",
+      "step": 510,
+      "loss": 0.000728667
+    },
+    {
+      "phase": "copy",
+      "step": 520,
+      "loss": 0.000711088
+    },
+    {
+      "phase": "copy",
+      "step": 530,
+      "loss": 0.000705058
+    },
+    {
+      "phase": "copy",
+      "step": 540,
+      "loss": 0.000691548
+    },
+    {
+      "phase": "copy",
+      "step": 550,
+      "loss": 0.000684095
+    },
+    {
+      "phase": "copy",
+      "step": 560,
+      "loss": 0.000682716
+    },
+    {
+      "phase": "copy",
+      "step": 570,
+      "loss": 0.000668918
+    },
+    {
+      "phase": "copy",
+      "step": 580,
+      "loss": 0.00065964
+    },
+    {
+      "phase": "copy",
+      "step": 590,
+      "loss": 0.000652019
+    },
+    {
+      "phase": "copy",
+      "step": 600,
+      "loss": 0.000647236
+    },
+    {
+      "phase": "copy",
+      "step": 610,
+      "loss": 0.000641828
+    },
+    {
+      "phase": "copy",
+      "step": 620,
+      "loss": 0.000635151
+    },
+    {
+      "phase": "copy",
+      "step": 630,
+      "loss": 0.000629876
+    },
+    {
+      "phase": "copy",
+      "step": 640,
+      "loss": 0.000622537
+    },
+    {
+      "phase": "copy",
+      "step": 650,
+      "loss": 0.000616685
+    },
+    {
+      "phase": "copy",
+      "step": 660,
+      "loss": 0.000610946
+    },
+    {
+      "phase": "copy",
+      "step": 670,
+      "loss": 0.000604826
+    },
+    {
+      "phase": "copy",
+      "step": 680,
+      "loss": 0.00059542
+    },
+    {
+      "phase": "copy",
+      "step": 690,
+      "loss": 0.000593016
+    },
+    {
+      "phase": "copy",
+      "step": 700,
+      "loss": 0.000584925
+    },
+    {
+      "phase": "copy",
+      "step": 710,
+      "loss": 0.000582527
+    },
+    {
+      "phase": "copy",
+      "step": 720,
+      "loss": 0.000576618
+    },
+    {
+      "phase": "copy",
+      "step": 730,
+      "loss": 0.000571945
+    },
+    {
+      "phase": "copy",
+      "step": 740,
+      "loss": 0.000565612
+    },
+    {
+      "phase": "copy",
+      "step": 750,
+      "loss": 0.000563843
+    },
+    {
+      "phase": "copy",
+      "step": 760,
+      "loss": 0.000558274
+    },
+    {
+      "phase": "copy",
+      "step": 770,
+      "loss": 0.000555385
+    },
+    {
+      "phase": "copy",
+      "step": 780,
+      "loss": 0.000551651
+    },
+    {
+      "phase": "copy",
+      "step": 790,
+      "loss": 0.000550426
+    },
+    {
+      "phase": "copy",
+      "step": 800,
+      "loss": 0.000543728
+    },
+    {
+      "phase": "copy",
+      "step": 810,
+      "loss": 0.000540048
+    },
+    {
+      "phase": "copy",
+      "step": 820,
+      "loss": 0.00053725
+    },
+    {
+      "phase": "copy",
+      "step": 830,
+      "loss": 0.000531273
+    },
+    {
+      "phase": "copy",
+      "step": 840,
+      "loss": 0.000527561
+    },
+    {
+      "phase": "copy",
+      "step": 850,
+      "loss": 0.00052464
+    },
+    {
+      "phase": "copy",
+      "step": 860,
+      "loss": 0.00052084
+    },
+    {
+      "phase": "copy",
+      "step": 870,
+      "loss": 0.000523026
+    },
+    {
+      "phase": "copy",
+      "step": 880,
+      "loss": 0.000514898
+    },
+    {
+      "phase": "copy",
+      "step": 890,
+      "loss": 0.000511866
+    },
+    {
+      "phase": "copy",
+      "step": 900,
+      "loss": 0.00050867
+    },
+    {
+      "phase": "copy",
+      "step": 910,
+      "loss": 0.000508664
+    },
+    {
+      "phase": "copy",
+      "step": 920,
+      "loss": 0.000504772
+    },
+    {
+      "phase": "copy",
+      "step": 930,
+      "loss": 0.000502354
+    },
+    {
+      "phase": "copy",
+      "step": 940,
+      "loss": 0.000499972
+    },
+    {
+      "phase": "copy",
+      "step": 950,
+      "loss": 0.000498631
+    },
+    {
+      "phase": "copy",
+      "step": 960,
+      "loss": 0.000495588
+    },
+    {
+      "phase": "copy",
+      "step": 970,
+      "loss": 0.000493069
+    },
+    {
+      "phase": "copy",
+      "step": 980,
+      "loss": 0.000491062
+    },
+    {
+      "phase": "copy",
+      "step": 990,
+      "loss": 0.000486507
+    },
+    {
+      "phase": "copy",
+      "step": 1000,
+      "loss": 0.000485723
+    },
+    {
+      "phase": "copy",
+      "step": 1010,
+      "loss": 0.000481941
+    },
+    {
+      "phase": "copy",
+      "step": 1020,
+      "loss": 0.000480776
+    },
+    {
+      "phase": "copy",
+      "step": 1030,
+      "loss": 0.000479754
+    },
+    {
+      "phase": "copy",
+      "step": 1040,
+      "loss": 0.00047779
+    },
+    {
+      "phase": "copy",
+      "step": 1050,
+      "loss": 0.000473992
+    },
+    {
+      "phase": "copy",
+      "step": 1060,
+      "loss": 0.000472643
+    },
+    {
+      "phase": "copy",
+      "step": 1070,
+      "loss": 0.000471051
+    },
+    {
+      "phase": "copy",
+      "step": 1080,
+      "loss": 0.00047005
+    },
+    {
+      "phase": "copy",
+      "step": 1090,
+      "loss": 0.000468152
+    },
+    {
+      "phase": "copy",
+      "step": 1100,
+      "loss": 0.000467586
+    },
+    {
+      "phase": "copy",
+      "step": 1110,
+      "loss": 0.000464751
+    },
+    {
+      "phase": "copy",
+      "step": 1120,
+      "loss": 0.000463478
+    },
+    {
+      "phase": "copy",
+      "step": 1130,
+      "loss": 0.000463366
+    },
+    {
+      "phase": "copy",
+      "step": 1140,
+      "loss": 0.000459285
+    },
+    {
+      "phase": "copy",
+      "step": 1150,
+      "loss": 0.000457202
+    },
+    {
+      "phase": "copy",
+      "step": 1160,
+      "loss": 0.000457166
+    },
+    {
+      "phase": "copy",
+      "step": 1170,
+      "loss": 0.000454667
+    },
+    {
+      "phase": "copy",
+      "step": 1180,
+      "loss": 0.000455212
+    },
+    {
+      "phase": "copy",
+      "step": 1190,
+      "loss": 0.000451678
+    },
+    {
+      "phase": "copy",
+      "step": 1200,
+      "loss": 0.000450674
+    },
+    {
+      "phase": "copy",
+      "step": 1210,
+      "loss": 0.000449043
+    },
+    {
+      "phase": "copy",
+      "step": 1220,
+      "loss": 0.000450096
+    },
+    {
+      "phase": "copy",
+      "step": 1230,
+      "loss": 0.0004469
+    },
+    {
+      "phase": "copy",
+      "step": 1240,
+      "loss": 0.000445954
+    },
+    {
+      "phase": "copy",
+      "step": 1250,
+      "loss": 0.000444998
+    },
+    {
+      "phase": "copy",
+      "step": 1260,
+      "loss": 0.000445713
+    },
+    {
+      "phase": "copy",
+      "step": 1270,
+      "loss": 0.000442493
+    },
+    {
+      "phase": "copy",
+      "step": 1280,
+      "loss": 0.000441764
+    },
+    {
+      "phase": "copy",
+      "step": 1290,
+      "loss": 0.000440981
+    },
+    {
+      "phase": "copy",
+      "step": 1300,
+      "loss": 0.00043833
+    },
+    {
+      "phase": "copy",
+      "step": 1310,
+      "loss": 0.000437154
+    },
+    {
+      "phase": "copy",
+      "step": 1320,
+      "loss": 0.000436768
+    },
+    {
+      "phase": "copy",
+      "step": 1330,
+      "loss": 0.000435243
+    },
+    {
+      "phase": "copy",
+      "step": 1340,
+      "loss": 0.000436582
+    },
+    {
+      "phase": "copy",
+      "step": 1350,
+      "loss": 0.000433888
+    },
+    {
+      "phase": "copy",
+      "step": 1360,
+      "loss": 0.000432115
+    },
+    {
+      "phase": "copy",
+      "step": 1370,
+      "loss": 0.000431161
+    },
+    {
+      "phase": "copy",
+      "step": 1380,
+      "loss": 0.000431219
+    },
+    {
+      "phase": "copy",
+      "step": 1390,
+      "loss": 0.000430561
+    },
+    {
+      "phase": "copy",
+      "step": 1400,
+      "loss": 0.000429176
+    },
+    {
+      "phase": "copy",
+      "step": 1410,
+      "loss": 0.000428442
+    },
+    {
+      "phase": "copy",
+      "step": 1420,
+      "loss": 0.000427892
+    },
+    {
+      "phase": "copy",
+      "step": 1430,
+      "loss": 0.000427155
+    },
+    {
+      "phase": "copy",
+      "step": 1440,
+      "loss": 0.000427122
+    },
+    {
+      "phase": "copy",
+      "step": 1450,
+      "loss": 0.00042513
+    },
+    {
+      "phase": "copy",
+      "step": 1460,
+      "loss": 0.000423552
+    },
+    {
+      "phase": "copy",
+      "step": 1470,
+      "loss": 0.00042364
+    },
+    {
+      "phase": "copy",
+      "step": 1480,
+      "loss": 0.000422123
+    },
+    {
+      "phase": "copy",
+      "step": 1490,
+      "loss": 0.000421991
+    },
+    {
+      "phase": "copy",
+      "step": 1500,
+      "loss": 0.000420931
+    },
+    {
+      "phase": "copy",
+      "step": 1510,
+      "loss": 0.000420676
+    },
+    {
+      "phase": "copy",
+      "step": 1520,
+      "loss": 0.000419109
+    },
+    {
+      "phase": "copy",
+      "step": 1530,
+      "loss": 0.000419429
+    },
+    {
+      "phase": "copy",
+      "step": 1540,
+      "loss": 0.00041777
+    },
+    {
+      "phase": "copy",
+      "step": 1550,
+      "loss": 0.000417305
+    },
+    {
+      "phase": "copy",
+      "step": 1560,
+      "loss": 0.000416885
+    },
+    {
+      "phase": "copy",
+      "step": 1570,
+      "loss": 0.000417774
+    },
+    {
+      "phase": "copy",
+      "step": 1580,
+      "loss": 0.000415433
+    },
+    {
+      "phase": "copy",
+      "step": 1590,
+      "loss": 0.000415299
+    },
+    {
+      "phase": "copy",
+      "step": 1600,
+      "loss": 0.000415222
+    },
+    {
+      "phase": "copy",
+      "step": 1610,
+      "loss": 0.00041306
+    },
+    {
+      "phase": "copy",
+      "step": 1620,
+      "loss": 0.000412353
+    },
+    {
+      "phase": "copy",
+      "step": 1630,
+      "loss": 0.000412968
+    },
+    {
+      "phase": "copy",
+      "step": 1640,
+      "loss": 0.000411803
+    },
+    {
+      "phase": "copy",
+      "step": 1650,
+      "loss": 0.000412749
+    },
+    {
+      "phase": "copy",
+      "step": 1660,
+      "loss": 0.000410339
+    },
+    {
+      "phase": "copy",
+      "step": 1670,
+      "loss": 0.000409562
+    },
+    {
+      "phase": "copy",
+      "step": 1680,
+      "loss": 0.000409003
+    },
+    {
+      "phase": "copy",
+      "step": 1690,
+      "loss": 0.000410095
+    },
+    {
+      "phase": "copy",
+      "step": 1700,
+      "loss": 0.000408325
+    },
+    {
+      "phase": "copy",
+      "step": 1710,
+      "loss": 0.000407804
+    },
+    {
+      "phase": "copy",
+      "step": 1720,
+      "loss": 0.00040721
+    },
+    {
+      "phase": "copy",
+      "step": 1730,
+      "loss": 0.000407855
+    },
+    {
+      "phase": "copy",
+      "step": 1740,
+      "loss": 0.000406301
+    },
+    {
+      "phase": "copy",
+      "step": 1750,
+      "loss": 0.000406228
+    },
+    {
+      "phase": "copy",
+      "step": 1760,
+      "loss": 0.00040574
+    },
+    {
+      "phase": "copy",
+      "step": 1770,
+      "loss": 0.000404282
+    },
+    {
+      "phase": "copy",
+      "step": 1780,
+      "loss": 0.000403765
+    },
+    {
+      "phase": "copy",
+      "step": 1790,
+      "loss": 0.000403643
+    },
+    {
+      "phase": "copy",
+      "step": 1800,
+      "loss": 0.00040313
+    },
+    {
+      "phase": "copy",
+      "step": 1810,
+      "loss": 0.000403146
+    },
+    {
+      "phase": "copy",
+      "step": 1820,
+      "loss": 0.000402917
+    },
+    {
+      "phase": "copy",
+      "step": 1830,
+      "loss": 0.000401399
+    },
+    {
+      "phase": "copy",
+      "step": 1840,
+      "loss": 0.00040099
+    },
+    {
+      "phase": "copy",
+      "step": 1850,
+      "loss": 0.000400689
+    },
+    {
+      "phase": "copy",
+      "step": 1860,
+      "loss": 0.000400644
+    },
+    {
+      "phase": "copy",
+      "step": 1870,
+      "loss": 0.000399934
+    },
+    {
+      "phase": "copy",
+      "step": 1880,
+      "loss": 0.000399823
+    },
+    {
+      "phase": "copy",
+      "step": 1890,
+      "loss": 0.000399202
+    },
+    {
+      "phase": "copy",
+      "step": 1900,
+      "loss": 0.000399279
+    },
+    {
+      "phase": "copy",
+      "step": 1910,
+      "loss": 0.00040008
+    },
+    {
+      "phase": "copy",
+      "step": 1920,
+      "loss": 0.000397575
+    },
+    {
+      "phase": "copy",
+      "step": 1930,
+      "loss": 0.000397118
+    },
+    {
+      "phase": "copy",
+      "step": 1940,
+      "loss": 0.000397533
+    },
+    {
+      "phase": "copy",
+      "step": 1950,
+      "loss": 0.000397139
+    },
+    {
+      "phase": "copy",
+      "step": 1960,
+      "loss": 0.000396666
+    },
+    {
+      "phase": "copy",
+      "step": 1970,
+      "loss": 0.00039553
+    },
+    {
+      "phase": "copy",
+      "step": 1980,
+      "loss": 0.000395449
+    },
+    {
+      "phase": "copy",
+      "step": 1990,
+      "loss": 0.000394796
+    },
+    {
+      "phase": "copy",
+      "step": 2000,
+      "loss": 0.000395876
+    }
+  ]
+}

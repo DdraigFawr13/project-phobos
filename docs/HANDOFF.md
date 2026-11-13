@@ -4,7 +4,7 @@ Updated: 2026-11-13. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 done (PR #4 merged). S4 done (PR #5 merged). Next slice: S5.
+Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 done (PR #2 merged). S2 done (PR #3 merged). S3 done (PR #4 merged). S4 done (PR #5 merged). S5 built, in review (draft PR). Next slice after approval: S6.
 
 ## Plan map
 
@@ -15,32 +15,25 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ S2 gap per level (M1), PR #3.
 - ✔ S3 numbers and tables (M2), PR #4.
 - ✔ S4 dense, mask and float reference (M2), PR #5.
-- ▶ S5 copy the PI (M3).
+- ▶ S5 copy the PI (M3), draft PR in review.
 - ○ S6 evolution strategies, replay and verdict (M3).
 - ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
 
 ## Just done
 
-- 2026-11-12 S1 on branch `ccr-e4e66c33-7nff0t`, draft PR #2. Taste board ([Lab look](https://claude.ai/artifact/8tCyT6ng1CGE4dkkCo9NCR)): Morgan kept A Control room, 13 px text, 44 px taps, light and dark. `docs/UI_STYLE.md` and D-014 written.
-- 2026-11-12 Whole-Lab mock-up `mockups/lab.html`, published as [Lab mock-up](https://claude.ai/artifact/GNXTPDEiPJ1WgamL8ZwjtF) (published copy adds 3 screenshots). Fact check (37 facts), lint 0 warnings, one fresh check (12 findings, all fixed).
-- 2026-11-12 Morgan asked for a beginner-readable Lab with full depth: teaching layer added to the mock-up (What you're seeing, Try this, How it works on every tab); rules in UI_STYLE "Teaching layer"; D-015 Proposed until mock-up approval. Second fresh check: 22 findings, 21 fixed. Facts checked now 49.
-- 2026-11-12 Mock-up approved; D-015 Accepted. S1 built: `src/rng.ts`, `src/sim/{plant,pi,live}.ts`, `src/lab/*`, `scripts/build-lab.ts`, tests (11, plus `e2e/lab-smoke.mjs`), golden `tests/golden/trace-seed1.json`, CI runs `npm run check` (1.2 s). Lab published: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb). Fresh code review: 11 findings, 6 acted on (RNG known value, disturbance counted in steps, tighter trace checks, pinned-shut PI and plant clamps tested, npm 10.9.9 in CI); tests now 14. `__lab.setNet`/`setSnapshot` are absent until M3 on purpose.
-- 2026-11-12 Morgan checked Lab on the phone ("it works great") and approved PR #2. Tabs stay hidden until built (UI_STYLE rule kept; Morgan asked how to reach other pages, answered that they arrive with S2 to S6).
-
-- 2026-11-12 S2 built: `src/sim/{fixed-test,net-inputs,check-states}.ts`, `scripts/fixed-test.ts` (`npm run fixed-test`), Lab tab row and Fixed test tab with teaching text, tests 28 (was 14), e2e compares the page's bars with Node's numbers. Repo numbers equal the mock-up's throwaway script: totals fixed 50.94, retuned 47.58 m·s. 6 planted bugs all caught (VER-10). Lab republished to the same link. Morgan approved PR #3 on 2026-11-12 and asked for a new session for S3.
-
-- 2026-11-12 S3 built: `src/num/{fixed,layer,act,quantise,gen,table-errors}.ts`, `scripts/gen-tables.ts` (`npm run gen-tables`), committed `src/num/tables.gen.ts`, Tables tab with teaching text, `docs/NUMBERS.md`, `shr` exception in AGENTS.md. Tests 42 (was 28); check 1.27 to 1.31 s. Tests failed first (modules missing); 12 planted bugs all caught after adding an exact-32767 quantise case. Measured largest gap over all 65,536 inputs: 1 LSB for tanh (0.012%) and exp (0.024%), limit 2; equal to the mock-up's script. Regeneration is byte-identical. e2e compares the page's entries and gaps with Node's.
-- 2026-11-12 Morgan found the Tables tab hard to follow; text rewritten plainer (chart axes, worked example at input 1, Input column, plain table headings). Morgan approved PR #4 the same day.
-
 - 2026-11-12 S4 built: `src/runtime/{dense,select,net}.ts`, `src/ref/{dense,agreement}.ts`, `src/model/{random,nets,weights}.ts`, `src/sim/net-controller.ts`, Integer vs float tab with teaching text (worked example computed in the page), `tests/runtime.test.ts`, `tests/weights.test.ts`, golden `tests/golden/runtime-testnet.json`. Tests 60 (was 42); check 1.44 to 1.47 s; browser test 4.5 s. Tests failed first (modules missing); 14 planted bugs all caught. Measured: test net layer gaps 0.028% and 0.007%, same action 100.0% (actions 1 and 3 only: exactly the 2 distinct the spec asks for); Lab-shaped net gaps 0.026% and 0.026%, valve within 0.01 on 100.0%, largest gap 0.0005. Equal to the mock-up's script. Lab republished (version 6). Loader also rejects an unknown kind/act and a broken layer chain (beyond the spec's list; NUMBERS.md says so).
 
-- 2026-11-13 Morgan approved PR #5 and asked for S5 in a new session.
+- 2026-11-13 Morgan approved PR #5 and asked for S5 in a new session. Older entries: `docs/archive/handoff-2026-11.md`.
+- 2026-11-13 S5 built on branch `s5-copy-pi`: `src/train/copy.ts`, `scripts/train-lab.ts` (`npm run train:lab`), `models/lab/{copy-weights,weights,log,snapshots}.json`, `src/sim/live.ts` net tank (seed 2), Net tab `src/lab/net-panel.ts` (toggle, two tanks, heat map, teaching text with a live worked example), `scripts/build-lab.ts` exports `buildLabHtml` and inlines models via `__LAB_MODELS__`. Tests 70 (was 60); check 2.67 to 3.14 s; browser 4.1 to 4.5 s. Tests failed first (modules and files missing); 10 planted bugs all caught.
+- 2026-11-13 S5 measured: copy settings re-checked and kept as the spec states (no DECISIONS change). Training 1.26 s (`npm run train:lab`, D-008 limit 10 min). Loss 0.0669 → 0.00138 at step 200 → 0.00040 at 2,000. Mean |valve − PI valve| on the check states 0.0146 (limit 0.05); integer within 0.01 of float on 100.0% (D-007); J4 net tank 1.001 m after 300 s (limit ±0.05). Shifts 14 and 14.
+- 2026-11-13 Choices beyond the spec: the data shuffle uses a fresh rng seed 11; batches are taken in order from the shuffled data, wrapping round; the log records full-data loss; weight meta `{ trainer: "copy", seed: 13 }`; the Net tab adds a setpoint slider (the mock-up had none); heat-map negatives are grey `--valve` (ink turned white in dark). Lab republished to the same link (version 7).
 
 ## Next
 
-1. New session, new branch from `main`: build S5 (copy the PI) per the spec: `src/train/copy.ts`, `scripts/train-lab.ts` (`npm run train:lab`), `models/lab/{copy-weights,weights,log,snapshots}.json`, Net toggle and heat map in Lab, `tests/train.test.ts`, `tests/build-lab.test.ts`, and the committed-file case in the existing `tests/weights.test.ts`. Re-check the copy-phase settings before building (spec "Trainer"); record any change in DECISIONS. Report the measured training time (D-008's 10-minute rule). Write the checks first and see them fail (VER-10). Keep the teaching text plain, with a worked example. Republish Lab to the same link.
+1. Morgan reviews the S5 draft PR and the Net tab on the phone. On approval: HANDOFF merged state, mark ready, auto-merge (GIT-08).
+2. Then a new session for S6 (evolution strategies, Replay tab, verdict) per the spec. Raise the valve-travel question below first.
 
-Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
+Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 7, S5). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
 ## Open questions
 
@@ -49,7 +42,7 @@ Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](
 
 ## Decisions since the last plan update
 
-- None in S3.
+- None in S5 (copy settings re-checked, unchanged). None in S3.
 - 2026-11-12 D-014 Lab look: Control room.
 - 2026-11-12 D-011 verdict rule (a); D-012 dev dependencies; D-013 spec additions.
 - 2026-11-12 D-001 harness; D-002 concept; D-003 round 1; D-004 plan approved; D-005 platforms; D-006 number spec; D-007 accuracy; D-008 training; D-009 Lab pass mark; D-010 files and licence.

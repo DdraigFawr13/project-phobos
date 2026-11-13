@@ -68,6 +68,24 @@ export const EXPLAIN: Record<string, Explain> = {
       ["Mask", "a rule that forbids some actions"],
     ],
   },
+  net: {
+    what: "A small neural net drives a second tank beside the PI's tank. Both tanks get the same setpoint and the same disturbance; each has its own sensor noise. This net learned only by copying the PI, so it should behave almost the same. A later step will try to tune it to do better.",
+    tryit: "Tap Net on, then tap Disturbance and compare the two tanks: how deep each dips and how fast each gets back. They should look nearly the same, because the net copied the PI. Then drag the setpoint and watch both levels follow.",
+    deep: `<p><b>What the net sees.</b> Every 0.1 s it gets 4 numbers: the setpoint, the measured level, the error (setpoint minus level), and the error added up over time, divided by 32 to keep it small. The PI uses only the last two. The net gets all four, so later training could teach it to treat a low tank differently from a full one.</p>
+      <p><b>Inside.</b> 16 neurons each multiply the 4 inputs by their own weights, add them up with a bias, and squash the total through tanh (see the Tables tab) into −1 to 1. One more neuron does the same with those 16 numbers. Its answer, from −1 to 1, becomes the valve: −1 is shut, 0 is half open, 1 is fully open. That is 97 numbers to learn: 64 + 16 in the first layer, 16 + 1 in the second.</p>
+      <p><b>A worked example</b>, the net's sums for its tank right now:</p>
+      <div class="now" id="net-now" aria-live="off"></div>
+      <p><b>How it learned: copying.</b> <span id="net-train"></span></p>
+      <p><b>From decimals to whole numbers.</b> Training uses decimal maths. Afterwards each weight is stored as a whole number multiplied by 16,384 (so 0.5 is stored as 8192) and each bias multiplied by 4,096. The tank runs on those whole numbers only. <span id="net-ivf"></span></p>
+      <p><b>The heat map</b> shows all 97 numbers. Each row of the top four is one input: how much it counts for each of the 16 neurons. The fifth row is each neuron's bias. The sixth row is how much each neuron counts towards the valve, and the single square under it is the valve neuron's bias. Purple squares are positive, grey squares negative, and a stronger square is a bigger number. A pattern you can read by eye is rare in nets; here, look for the error and error-so-far rows, the two inputs the PI uses.</p>`,
+    words: [
+      ["Neuron", "one weighted sum plus a squash"],
+      ["Weight", "how much one input counts towards a neuron"],
+      ["Bias", "a number a neuron adds before the squash"],
+      ["Loss", "the training score: how far the net's valve is from the PI's, squared and averaged. Lower is closer"],
+      ["Training step", "one small change to all 97 numbers to lower the loss on 64 situations"],
+    ],
+  },
 };
 
 export function explainHtml(e: Explain): { what: string; after: string } {
