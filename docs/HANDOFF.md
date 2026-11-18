@@ -34,7 +34,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Write `docs/specs/vulcan-bench.md` with `write-spec` from step 3 (D-019, D-020 are the input), check it with fresh agents, get Morgan's approval, then build V1.
+1. Spec draft written: [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) (R1 to R8 are differences from D-019/D-020 for Morgan). Next: sort the three fresh checks (paraphrase, critic, zero decisions), then Morgan's approval, then S1 (Vulcan hook).
 2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
