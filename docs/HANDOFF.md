@@ -4,7 +4,7 @@ Updated: 2026-11-18. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021). S1 merged (Vulcan PR #103); S2 merged (PR #13). Now: S3 on branch `claude/vulcan-bench-s3`, **stopped at the sigma check** (spec stop condition): waiting for the coordinator's call.
+First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021). S1 merged (Vulcan PR #103); S2 merged (PR #13). Now: S3 on branch `claude/vulcan-bench-s3`, rerunning the sigma check under D-023 (coordinator's call after the first stop).
 
 Coordinator mode: Morgan, 2026-11-18, asked the coordinator to run S1 to S4 with recommended options approved and merge each slice when ready.
 
@@ -34,11 +34,10 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - 2026-11-18 S3 stopped at the sigma check. Built and tested: inputs, lines (hourly cache, warm freeze), R10 table, ES loop with tied ranks and R4 score, worker pool, shadow log with cause lines, S3 page module (J3, J4 and `tests/vulcan-lines.test.ts` seen failing on planted bugs). Measured (`models/vulcan/chance.json`, `sigma-net.json`): chance (a) spread 3000 (a one-day nudge changes a 2-window score by up to 3 crisis days, mostly downward); every net setting differs from today at gen 1 (97 to 100%); no setting beats chance in a majority of its 5 generations (best: 1 of 5 at sigma 256 and 1024). Cause: in 3 of the 5 shared draws today's score is ≤ 3001, so no member can lead by more than 3000. Table sigma check, full runs and shadow years not run. A month window takes 8 to 10 s mid-year (spec estimate 4.56 s); a generation 78 to 160 s on 4 workers.
 - 2026-11-18 S2 built: `vulcan.pin` (ee016ed), `src/vulcan/` engine, measure, bench, clone, scales, page; `npm run bench:vulcan`, `npm run test:vulcan` (4 tests, J2 plus noise-nudge and clone checks; seen failing first). Anvil equals Vulcan balance at the pin (5, 11, 202, 166, 483, 30, 97, 110). 25 seed-years on 3 threads: 492 s; one anvil year alone 45 s. Noise band and R9 reading: D-022. Page: [today's numbers](https://claude.ai/artifact/R3sL3NbtmcQRNu1St5A17n). Cloud install: `docs/vulcan-setup.md`.
 - 2026-11-18 Spec approved by Morgan, all R-items yes (D-021); PR #12 merged.
-- 2026-11-18 Spec written and checked (paraphrase, critic, zero-decision; critic and zero-decision rerun twice). Measured: Vulcan seed-year 54.7 s (anvil, b08ffba); mid-year `structuredClone` continues identically. Vulcan installed here via a local story-generator archive (codeload 403).
 
 ## Next
 
-1. Coordinator (with Morgan if needed) decides the way on for S3's score: recommended, draw windows only where today's rule has crisis days and use 4 windows per generation, then re-measure chance on 4-window sets before rerunning the sigma check (about 2× the time per generation, estimate). Then: table sigma check, full runs (`npm run train:vulcan -- --model net|table`), shadow years (`--shadow`), page (`--html`).
+1. Sigma check under D-023 running detached (`nohup`; log in the session scratchpad; files `models/vulcan/chance.json`, `sigma-net.json`, then `sigma-table.json`). Chance on 4-window sets: spread 32001 crisis-hour points; 24 of 60 windows eligible. If a setting passes: estimate full-run time (cut generations if net plus table > 6 h), run both, then `--shadow`, `--html`, page. If none passes: stop and report to the coordinator for Morgan.
 2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
@@ -52,6 +51,7 @@ Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10
 
 ## Decisions since the last plan update
 
+- 2026-11-18 D-023 training score in crisis hours, 4 windows per generation from windows with a crisis hour (coordinator, Morgan's pre-approval).
 - 2026-11-18 D-022 noise band measured; R9 reading (a miss counts only beyond 5% and beyond the band's worst change).
 - 2026-11-18 D-021 spec approved with R1 to R10 (amends D-019 and D-020's floor).
 - 2026-11-18 D-019 Vulcan bench plan, D-020 Vulcan verdict (Morgan, all recommended). Story Generator on the Later list.
