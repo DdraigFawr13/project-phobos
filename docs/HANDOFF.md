@@ -1,10 +1,10 @@
 # Handoff
 
-Updated: 2026-11-13. A fresh session must be able to continue from this file alone. Keep it to 60 lines; move finished entries to `docs/archive/handoff-YYYY-MM.md`.
+Updated: 2026-11-18. A fresh session must be able to continue from this file alone. Keep it to 60 lines; move finished entries to `docs/archive/handoff-YYYY-MM.md`.
 
 ## Phase
 
-Building the first usable version: [`docs/specs/first-usable.md`](specs/first-usable.md), approved 2026-11-12. S1 to S6 done (PRs #2 to #7 merged); S6 ended milestone M3 and the spec. The verdict was No. The shut-valve fix (D-018, PR #8 merged) left it No, but much closer. M3 audit done (PR #9) and its fixes merged (PR #10). Next: plan the Vulcan phase.
+First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021), PR #12 merged. Next: slice S1, the Vulcan line hook.
 
 ## Plan map
 
@@ -20,28 +20,38 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ Shut-valve fix, judged by the same verdict (Morgan, 2026-11-13): D-018, PR #8.
 - ✔ M3 audit: 8 findings, all accepted (Morgan, 2026-11-13), PR #9.
 - ✔ Fix the audit findings F1 to F8 (Morgan approved, 2026-11-13), PR #10.
-- ▶ Plan the Vulcan phase.
-- ○ Vulcan test bench, then Vulcan brain; Later list in D-004.
+- ✔ Plan the Vulcan bench: round 1, review, final (Morgan approved 2026-11-18), D-019, D-020.
+- ✔ Vulcan bench spec approved with R1 to R10 (Morgan, 2026-11-18): D-021, PR #12.
+- ▶ S1 Vulcan line hook (Vulcan PR, new session).
+- ○ S2 bench runner, S3 net and training (plus R10 table), S4 blind pairs and verdict. Limit 8 sessions to the verdict (session 1 of 8: planning and spec).
+- ○ Soon: in-game switch, ambitions test (Vulcan P6.4), work-order swap, Silvanus. Later: Structured Text exporter, Story Generator.
 
 ## Just done
 
+- 2026-11-18 Spec approved by Morgan, all R-items yes (D-021); PR #12 merged.
+- 2026-11-18 Spec written and checked (paraphrase, critic, zero-decision; critic and zero-decision rerun twice). Measured: Vulcan seed-year 54.7 s (anvil, b08ffba); mid-year `structuredClone` continues identically. Vulcan installed here via a local story-generator archive (codeload 403).
+- 2026-11-18 Vulcan bench planned (`planning-interview`): [round 1](https://claude.ai/artifact/33G7tNCHcqECgiVCBYNsPz), [review](https://claude.ai/artifact/GUsAa8KHHKnxJFgd7BA73x) (10 findings, adversarial reviewer), [final](https://claude.ai/artifact/NXn8YwE3MfCwxHPPjPvcJt). Morgan approved all recommended options: D-019, D-020.
 - 2026-11-13 M3 audit (repo kind) written: two reviewer areas, 7 quotes verified, 4 findings dropped after checking; `npm run check` measured 10.1 to 11.4 s (budget 10 s, F2). Reader cost $0.32. Morgan accepted all 8 and approved PR #9; merged after approval.
 - 2026-11-13 M3 audit fixes F1 to F8 on branch `claude/m3-audit-findings-231x7p`: Prettier 3.9.10 added (D-012) and the code reformatted once (print width 120; tests 88 pass, `train:lab` rewrote `models/lab/` byte-identical, browser test passes); `check` re-timed (AGENTS.md); runtime path named in AGENTS.md and NUMBERS.md; `workflow_dispatch` dropped from CI; S6-era entries archived.
 - 2026-11-13 Shut-valve fix [D-018](DECISIONS.md), PR #8 merged (42a5234). Held-out total 55.21 m·s against fixed PI 58.89 (retuned 55.52). Still **No**: 1.40→1.90 6.65 vs 5.24 and dist@0.35 4.54 vs 2.96 are > 5% worse. Lab republished (version 10). ES settings: [D-017](DECISIONS.md).
 
 ## Next
 
-1. Plan the Vulcan phase (test bench, then brain) with the `planning-interview` skill, in a new session on a new branch cut from `main`.
+1. Build S1 in Vulcan (`DdraigFawr13/Project-Vulcan`), on a branch cut from Vulcan `main`, as the spec says: J1 checks first (they must fail), then the hook, then Vulcan `npm run check`; draft PR; Morgan plays a game and approves. Then S2 here with `vulcan.pin` at S1's merge commit. Before each slice, rerun the zero-decision check on its sections (write-spec step 8).
 2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
 
 ## Open questions
 
+- This cloud container gets 403 from codeload.github.com, so `npm ci` fails in Vulcan (its story-generator tarball) and the bench's Vulcan pin will too. Ask to allow that host (environment tools) when V1 starts.
+- Not checked: restoring a Vulcan game mid-year headless for month windows (saves are in Vulcan `src/ui/saves.ts`); Vulcan's seed-year time after Phase 5B (20 s measured 2026-10-19).
 - For S4 (minor, follows the spec): the net's integral input holds when the valve is ≥ 0.999 or ≤ 0.001, the PI when u leaves [0, 1]. On `1.00→1.75` that leaves a constant 0.0026 offset in I-equivalent. Locked in `tests/check-states.test.ts`.
 
 ## Decisions since the last plan update
 
+- 2026-11-18 D-021 spec approved with R1 to R10 (amends D-019 and D-020's floor).
+- 2026-11-18 D-019 Vulcan bench plan, D-020 Vulcan verdict (Morgan, all recommended). Story Generator on the Later list.
 - 2026-11-13 Morgan approved PR #10 (audit fixes; Prettier print width 120, Markdown and the mock-up not formatted).
 - 2026-11-13 Morgan accepted all 8 M3 audit findings and approved adopting Prettier (F8); the fix session writes it into D-012.
 - 2026-11-13 D-018 valve map reaches both ends at ±0.8. Morgan: try one shut-valve fix after the No. D-017 ES settings after the S6 re-check; D-011 kept (Morgan). D-016 copy data includes disturbances.
