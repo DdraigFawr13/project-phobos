@@ -46,7 +46,7 @@ export const VULCAN_ES = {
 /** The sigma check's picks per model (D-023); 0 until the check has run. */
 export const VULCAN_PICK: Record<Kind, { sigma: number; alpha: number }> = {
   net: { sigma: 1024, alpha: 128 },
-  table: { sigma: 0, alpha: 0 },
+  table: { sigma: 64, alpha: 128 },
 };
 
 /** What a window run gives: crisis person-hours (D-023), food in store at the end, work person-hours, and a world hash. */
