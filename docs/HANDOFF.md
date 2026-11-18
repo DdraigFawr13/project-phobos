@@ -21,12 +21,13 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ M3 audit: 8 findings, all accepted (Morgan, 2026-11-13), PR #9.
 - ✔ Fix the audit findings F1 to F8 (Morgan approved, 2026-11-13), PR #10.
 - ✔ Plan the Vulcan bench: round 1, review, final (Morgan approved 2026-11-18), D-019, D-020.
-- ▶ Spec for the Vulcan bench (`write-spec`), `docs/specs/vulcan-bench.md`.
+- ▶ Spec for the Vulcan bench (`write-spec`), `docs/specs/vulcan-bench.md`: written and checked, awaiting approval.
 - ○ V1 Vulcan hook (Vulcan PR), V2 bench runner, V3 copy and evolve, V4 report and blind verdict. Limit 8 sessions.
 - ○ Soon: in-game switch, ambitions test (Vulcan P6.4), work-order swap, Silvanus. Later: Structured Text exporter, Story Generator.
 
 ## Just done
 
+- 2026-11-18 Spec written and checked (paraphrase, critic, zero-decision; critic and zero-decision rerun twice). Measured: Vulcan seed-year 54.7 s (anvil, b08ffba); mid-year `structuredClone` continues identically. Vulcan installed here via a local story-generator archive (codeload 403).
 - 2026-11-18 Vulcan bench planned (`planning-interview`): [round 1](https://claude.ai/artifact/33G7tNCHcqECgiVCBYNsPz), [review](https://claude.ai/artifact/GUsAa8KHHKnxJFgd7BA73x) (10 findings, adversarial reviewer), [final](https://claude.ai/artifact/NXn8YwE3MfCwxHPPjPvcJt). Morgan approved all recommended options: D-019, D-020.
 - 2026-11-13 M3 audit (repo kind) written: two reviewer areas, 7 quotes verified, 4 findings dropped after checking; `npm run check` measured 10.1 to 11.4 s (budget 10 s, F2). Reader cost $0.32. Morgan accepted all 8 and approved PR #9; merged after approval.
 - 2026-11-13 M3 audit fixes F1 to F8 on branch `claude/m3-audit-findings-231x7p`: Prettier 3.9.10 added (D-012) and the code reformatted once (print width 120; tests 88 pass, `train:lab` rewrote `models/lab/` byte-identical, browser test passes); `check` re-timed (AGENTS.md); runtime path named in AGENTS.md and NUMBERS.md; `workflow_dispatch` dropped from CI; S6-era entries archived.
@@ -34,7 +35,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Spec draft written: [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) (R1 to R8 are differences from D-019/D-020 for Morgan). Next: sort the three fresh checks (paraphrase, critic, zero decisions), then Morgan's approval, then S1 (Vulcan hook).
+1. Spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) checked by 3 fresh agents plus 2 recheck rounds, all findings fixed; waiting on Morgan's [spec approval page](https://claude.ai/artifact/RdcHFgUYYEeYiudpe247nY) (R1 to R10). After approval: Status Approved, R-items into DECISIONS, then S1 (Vulcan hook) on a Vulcan branch.
 2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
