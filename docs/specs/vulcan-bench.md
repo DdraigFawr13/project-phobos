@@ -1,7 +1,7 @@
 # Vulcan bench: a net that moves each colonist's needs-ladder lines
 
-- **Status:** Draft
-- **Planned in:** [round 1](https://claude.ai/artifact/33G7tNCHcqECgiVCBYNsPz), [review](https://claude.ai/artifact/GUsAa8KHHKnxJFgd7BA73x), [final](https://claude.ai/artifact/NXn8YwE3MfCwxHPPjPvcJt), 2026-11-18. **Decisions:** D-019, D-020; D-006 (numbers), D-011 (5% rule), D-013 (local-only browser tests), D-017 (ES settings). Vulcan ids (V-xxx) are in Vulcan's `docs/DECISIONS.md`.
+- **Status:** Approved 2026-11-18 ([approval page](https://claude.ai/artifact/RdcHFgUYYEeYiudpe247nY); R1 to R10 approved as written, D-021)
+- **Planned in:** [round 1](https://claude.ai/artifact/33G7tNCHcqECgiVCBYNsPz), [review](https://claude.ai/artifact/GUsAa8KHHKnxJFgd7BA73x), [final](https://claude.ai/artifact/NXn8YwE3MfCwxHPPjPvcJt), 2026-11-18. **Decisions:** D-019, D-020, D-021; D-006 (numbers), D-011 (5% rule), D-013 (local-only browser tests), D-017 (ES settings). Vulcan ids (V-xxx) are in Vulcan's `docs/DECISIONS.md`.
 
 Facts below were measured on 2026-11-18 against Vulcan `b08ffba` (Vulcan `main`) under Node 22.23.5 and 24.19.0, unless marked.
 
@@ -75,7 +75,7 @@ Morgan wants Vulcan colonists with "more organic responses and proactive behavio
 - One shared net moves five lines per person from traits and state; danger and the rung order are untouched (D-019).
 - Verdict: 16 of 24 blind pairs and the 5% floor, both (D-020).
 - Hard limit 8 sessions to the first verdict (D-019).
-- Proposed here for Morgan: R1 to R10 below.
+- R1 to R10 below, approved (D-021).
 
 ## Alternatives rejected
 
@@ -164,7 +164,7 @@ Morgan wants Vulcan colonists with "more organic responses and proactive behavio
 - Vulcan-dependent: `npm run test:vulcan` before a PR is marked ready, Vulcan at the pin (local only, like D-013).
 - End to end: Morgan's picks and `npm run verdict:vulcan`.
 
-## Reconcile with D-019 and D-020 (Morgan decides each)
+## Reconcile with D-019 and D-020 (all approved 2026-11-18, D-021)
 
 - **R1 Copy:** "copy today's lines" becomes a zero output layer: exact, no copy training.
 - **R2 Warning lines:** "never past a warning line" can't hold for rest (line 2500, already under its warning line 3000). Instead: each line moves at most 1000 either way (symmetric, so the blind pairs have no tell); food and water then stay above 3000.
