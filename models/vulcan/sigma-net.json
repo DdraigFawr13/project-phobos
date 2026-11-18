@@ -1,0 +1,129 @@
+{
+ "vulcan": "ee016ed3db2dab5f87a4cedcdc825cc8e0d409df",
+ "model": "net",
+ "runs": [
+  {
+   "sigma": 64,
+   "alpha": 128,
+   "log": [
+    {
+     "generation": 1,
+     "windows": [
+      0,
+      14,
+      49,
+      26
+     ],
+     "today": 18001,
+     "theta": {
+      "crisis": 18,
+      "r": 999,
+      "raw": 18001,
+      "penalised": false
+     },
+     "mean": 14134.9375,
+     "best": 1,
+     "differ": 1,
+     "seconds": 185.9
+    },
+    {
+     "generation": 2,
+     "windows": [
+      12,
+      22,
+      1,
+      35
+     ],
+     "today": 190001,
+     "theta": {
+      "crisis": 172,
+      "r": 999,
+      "raw": 172001,
+      "penalised": false
+     },
+     "mean": 216852.09375,
+     "best": 160001,
+     "differ": 1,
+     "seconds": 200.1
+    },
+    {
+     "generation": 3,
+     "windows": [
+      22,
+      48,
+      14,
+      46
+     ],
+     "today": 246001,
+     "theta": {
+      "crisis": 304,
+      "r": 940,
+      "raw": 304060,
+      "penalised": true
+     },
+     "mean": 362713.4375,
+     "best": 216004,
+     "differ": 1,
+     "seconds": 209.4
+    },
+    {
+     "generation": 4,
+     "windows": [
+      59,
+      39,
+      23,
+      29
+     ],
+     "today": 55001,
+     "theta": {
+      "crisis": 24,
+      "r": 999,
+      "raw": 24001,
+      "penalised": false
+     },
+     "mean": 25190.3125,
+     "best": 8001,
+     "differ": 1,
+     "seconds": 279.8
+    },
+    {
+     "generation": 5,
+     "windows": [
+      34,
+      9,
+      22,
+      21
+     ],
+     "today": 203001,
+     "theta": {
+      "crisis": 165,
+      "r": 954,
+      "raw": 165046,
+      "penalised": false
+     },
+     "mean": 222071.375,
+     "best": 181025,
+     "differ": 1,
+     "seconds": 272.5
+    },
+    {
+     "generation": 6,
+     "windows": [
+      35,
+      11,
+      23,
+      39
+     ],
+     "today": 57001,
+     "theta": {
+      "crisis": 65,
+      "r": 999,
+      "raw": 65001,
+      "penalised": false
+     },
+     "seconds": 22.9
+    }
+   ]
+  }
+ ]
+}
