@@ -112,6 +112,117 @@
      "seconds": 13.6
     }
    ]
+  },
+  {
+   "sigma": 64,
+   "alpha": 512,
+   "log": [
+    {
+     "generation": 1,
+     "windows": [
+      0,
+      17
+     ],
+     "today": 3001,
+     "theta": {
+      "crisis": 3,
+      "r": 999,
+      "raw": 3001,
+      "penalised": false
+     },
+     "mean": 788.46875,
+     "best": 1,
+     "differ": 0.96875,
+     "seconds": 128.7
+    },
+    {
+     "generation": 2,
+     "windows": [
+      52,
+      25
+     ],
+     "today": 1,
+     "theta": {
+      "crisis": 2,
+      "r": 989,
+      "raw": 2011,
+      "penalised": false
+     },
+     "mean": 1633,
+     "best": 1,
+     "differ": 0.96875,
+     "seconds": 109.6
+    },
+    {
+     "generation": 3,
+     "windows": [
+      16,
+      21
+     ],
+     "today": 5001,
+     "theta": {
+      "crisis": 1,
+      "r": 998,
+      "raw": 1002,
+      "penalised": false
+     },
+     "mean": 5272.1875,
+     "best": 2002,
+     "differ": 1,
+     "seconds": 153.2
+    },
+    {
+     "generation": 4,
+     "windows": [
+      3,
+      35
+     ],
+     "today": 1001,
+     "theta": {
+      "crisis": 1,
+      "r": 991,
+      "raw": 1009,
+      "penalised": false
+     },
+     "mean": 1128.1875,
+     "best": 1001,
+     "differ": 1,
+     "seconds": 88.3
+    },
+    {
+     "generation": 5,
+     "windows": [
+      24,
+      50
+     ],
+     "today": 1,
+     "theta": {
+      "crisis": 0,
+      "r": 999,
+      "raw": 1,
+      "penalised": false
+     },
+     "mean": 1.8125,
+     "best": 1,
+     "differ": 1,
+     "seconds": 77.7
+    },
+    {
+     "generation": 6,
+     "windows": [
+      21,
+      50
+     ],
+     "today": 5001,
+     "theta": {
+      "crisis": 3,
+      "r": 998,
+      "raw": 3002,
+      "penalised": false
+     },
+     "seconds": 14
+    }
+   ]
   }
  ]
 }
