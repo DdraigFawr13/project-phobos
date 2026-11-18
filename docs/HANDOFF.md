@@ -37,7 +37,7 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 
 ## Next
 
-1. Sigma check under D-023 running detached (`nohup`; log in the session scratchpad; files `models/vulcan/chance.json`, `sigma-net.json`, then `sigma-table.json`). Chance on 4-window sets: spread 32001 crisis-hour points; 24 of 60 windows eligible. If a setting passes: estimate full-run time (cut generations if net plus table > 6 h), run both, then `--shadow`, `--html`, page. If none passes: stop and report to the coordinator for Morgan.
+1. Sigma check under D-023 done (D-023): net 1024/128, table 64/128; chance spread 32001 on 4-window sets, 24 of 60 windows eligible. Running detached (`nohup`, log in the session scratchpad): net full run 45 generations from 22:34 UTC (about 2.8 h, estimate), then table 45 generations, then `--shadow` for both. A crash resumes by rerunning the same command (snapshot every 5 generations). Then: moment count against the stop rule, `--html`, page, commit `models/vulcan/*.json`.
 2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).
