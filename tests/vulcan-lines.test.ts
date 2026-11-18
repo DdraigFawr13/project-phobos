@@ -9,6 +9,7 @@ import { makeHook, netPolicy, type Cache, type LineEnv, type Policy } from "../s
 import {
   centredRanksTied,
   drawWindows,
+  eligibleWindows,
   generationScores,
   pickSetting,
   scoreOf,
@@ -225,8 +226,8 @@ test("centredRanksTied: lowest score +0.5, highest −0.5, equal scores share th
 
 test("drawWindows: distinct windows, fixed by the seed", () => {
   const a = drawWindows(makeRng(18), 60);
-  assert.equal(a.length, 2);
-  assert.notEqual(a[0], a[1]);
+  assert.equal(a.length, 4); // D-023: 4 windows per generation
+  assert.equal(new Set(a).size, 4);
   assert.deepEqual(drawWindows(makeRng(18), 60), a);
   const ten = drawWindows(makeRng(20), 60, 10);
   assert.equal(new Set(ten).size, 10);
@@ -282,4 +283,8 @@ test("quotaCheck: 5, 5, 5, 5, 4 and 24 in all; a short seed passes the rest of i
   assert.equal(quotaCheck([3, 6, 5, 5, 5]).ok, true); // anvil's 2 short pass on until bryn's spare covers them
   assert.equal(quotaCheck([40, 0, 0, 0, 0]).ok, false);
   assert.equal(quotaCheck([5, 5, 5, 5, 3]).ok, false);
+});
+
+test("eligibleWindows: only windows where today's rule has a crisis hour (D-023)", () => {
+  assert.deepEqual(eligibleWindows([wr(0, 9, 9), wr(3, 9, 9), wr(0, 0, 0), wr(1, 0, 0)]), [1, 3]);
 });

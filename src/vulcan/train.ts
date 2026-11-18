@@ -38,7 +38,7 @@ export const VULCAN_ES = {
   population: 32,
   gaussSeed: 17,
   windowSeed: 18,
-  windowsPerGeneration: 2,
+  windowsPerGeneration: 4,
   snapshotEvery: 5,
   windowDays: 28,
 } as const;
@@ -49,7 +49,7 @@ export const VULCAN_PICK: Record<Kind, { sigma: number; alpha: number }> = {
   table: { sigma: 0, alpha: 0 },
 };
 
-/** What a window run gives: crisis person-days, food in store at the end, work person-hours, and a world hash. */
+/** What a window run gives: crisis person-hours (D-023), food in store at the end, work person-hours, and a world hash. */
 export interface WindowResult {
   crisis: number;
   food: number;
@@ -71,7 +71,7 @@ export const foodInStore = (engine: Engine, w: World) => {
 export function runWindow(engine: Engine, world: World, hook: LineHook | undefined, days: number): WindowResult {
   const sim = engine.createSim(engine.content);
   if (hook) engine.setLineHook(sim, hook);
-  const crisis = new Set<string>();
+  let crisis = 0;
   let work = 0;
   for (let d = 0; d < days; d++)
     for (let h = 0; h < 24; h++) {
@@ -82,11 +82,10 @@ export function runWindow(engine: Engine, world: World, hook: LineHook | undefin
           alive.add(p.id);
           if (p.doing === "work") work += 1;
         }
-      for (const n of world.entities.need)
-        if (n.low && CRISIS_NEEDS.has(n.need) && alive.has(n.person)) crisis.add(`${n.need}/${n.person}/${d}`);
+      for (const n of world.entities.need) if (n.low && CRISIS_NEEDS.has(n.need) && alive.has(n.person)) crisis += 1;
     }
   return {
-    crisis: crisis.size,
+    crisis,
     food: foodInStore(engine, world),
     work,
     hash: createHash("sha256").update(JSON.stringify(world)).digest("hex"),
@@ -163,6 +162,9 @@ export function centredRanksTied(scores: number[]): number[] {
   return r;
 }
 
+/** D-023: the windows where today's rule has at least one crisis hour; only these are drawn for training. */
+export const eligibleWindows = (today: WindowResult[]) => today.flatMap((t, i) => (t.crisis > 0 ? [i] : []));
+
 /** `count` distinct window indices out of `n` (with repeats only when n < count). */
 export function drawWindows(rng: Rng, n: number, count: number = VULCAN_ES.windowsPerGeneration): number[] {
   const out: number[] = [];
@@ -210,8 +212,8 @@ export interface TrainOpts {
   alpha: number;
   generations?: number;
   population?: number;
-  /** Number of windows in the run's list. */
-  nWindows: number;
+  /** The window indices generations draw from (D-023: those where today's rule has a crisis hour). */
+  pool: number[];
   /** Today's result per window index. */
   today: WindowResult[];
   evaluate: EvaluateWindows;
@@ -237,7 +239,7 @@ export async function trainVulcan(o: TrainOpts): Promise<Snapshot> {
         e.map((x) => -x),
       );
     }
-    return { windows: drawWindows(wrng, o.nWindows), eps };
+    return { windows: drawWindows(wrng, o.pool.length).map((i) => o.pool[i]), eps };
   };
   const done = o.resume?.done ?? 0;
   for (let g = 1; g <= done; g++) draw(); // replay the draws of the generations already done

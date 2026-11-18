@@ -145,7 +145,7 @@ function chart(logs: TrainPageData["logs"]): string {
       const dots = pts
         .map(
           (p) =>
-            `<circle cx="${x(p.step).toFixed(1)}" cy="${y(p.d).toFixed(1)}" r="6" fill="transparent"><title>${NAME[m]}, after ${p.step} generations: ${p.e.theta.raw} (today ${p.e.today}, ${p.e.theta.crisis} crisis days)</title></circle>`,
+            `<circle cx="${x(p.step).toFixed(1)}" cy="${y(p.d).toFixed(1)}" r="6" fill="transparent"><title>${NAME[m]}, after ${p.step} generations: ${p.e.theta.raw} (today ${p.e.today}, ${p.e.theta.crisis} crisis hours)</title></circle>`,
         )
         .join("");
       const last = pts[pts.length - 1];
@@ -225,22 +225,22 @@ export function trainPage(d: TrainPageData): string {
 <main class="vb">
 <h1>Training the line net</h1>
 <p class="sub">Vulcan <span class="mono">${esc(vulcan.slice(0, 7))}</span> · Phobos bench S3</p>
-<p><strong>What you're seeing.</strong> A small net learned when each colonist should start eating, drinking, sleeping, relaxing or warming up, by moving their personal lines up or down. A plain table that moves lines only by season and trait learned the same way, as a rival. Each was scored on month-long stretches of the 5 training maps: fewer days spent hungry, tired or cold is better, as long as food and work stay at 95% of today's. Then the net watched a year on each of the 5 held-out maps and we counted the moments it would have done something different.</p>
+<p><strong>What you're seeing.</strong> A small net learned when each colonist should start eating, drinking, sleeping, relaxing or warming up, by moving their personal lines up or down. A plain table that moves lines only by season and trait learned the same way, as a rival. Each was scored on month-long stretches of the 5 training maps: fewer hours spent hungry, tired or cold is better, as long as food and work stay at 95% of today's. Then the net watched a year on each of the 5 held-out maps and we counted the moments it would have done something different.</p>
 <div class="reads">
 <div class="read net"><div class="k">net, final</div><div class="val">${ln ? ln.theta.raw : "–"}</div></div>
 <div class="read"><div class="k">table, final</div><div class="val">${lt ? lt.theta.raw : "–"}</div></div>
 <div class="read"><div class="k">today, same</div><div class="val">${ln ? ln.today : lt ? lt.today : "–"}</div></div>
 </div>
-<p class="note">Final score: the trained rule on one more pair of month windows, the same pair for both; today's rule on that pair beside it. Lower is better: 1000 per crisis day, plus up to 1000 when food or work fall behind today.</p>
+<p class="note">Final score: the trained rule on one more set of 4 month windows, the same set for both; today's rule on that set beside it. Lower is better: 1000 per crisis hour (a person under a warning line at an hour's end), plus up to 1000 when food or work fall behind today.</p>
 <h2>Score per generation</h2>
-<p class="note">Each generation is scored on a new pair of windows, so the chart shows the score minus today's score on the same pair. Below the line is better than today.</p>
+<p class="note">Each generation is scored on a new pair of windows, so the chart shows the score minus today's score on the same windows. Below the line is better than today.</p>
 ${chart(d.logs)}
 <h2>Moments on the held-out maps</h2>
 <p class="note">A moment is a minute where the net's lines would have made a colonist do something else than today's rule does. S4 turns ${QUOTAS.join(", ")} of them per map into blind pairs.</p>
 ${momentsTable(d.moments)}
 ${ex.length ? `<h2>Three moments</h2><p class="note">The cause line is the net's own reading: the two inputs that move this line most when set to nothing. It is not Vulcan's explanation.</p>${ex.map(momentCard).join("")}` : ""}
 <h2>Settings picked</h2>
-<p class="note">Before the full run, each rule tried 3 noise sizes and 2 step sizes for 5 generations. Chance alone (one colonist nudged for a day) moved a pair's score by up to <span class="mono">${d.chance ? d.chance.spread : "–"}</span>. The pick is the smallest noise where at least half the tries play out differently from today and the best try beats chance in most generations.</p>
+<p class="note">Before the full run, each rule tried 3 noise sizes and 2 step sizes for 5 generations. Chance alone (one colonist nudged for a day) moved a 4-window set's score by up to <span class="mono">${d.chance ? d.chance.spread : "–"}</span>. The pick is the smallest noise where at least half the tries play out differently from today and the best try beats chance in most generations.</p>
 ${sigmaTable("net", d.sigma.net)}
 ${sigmaTable("table", d.sigma.table)}
 <details><summary>Every generation</summary><div>${(["net", "table"] as const)
@@ -257,9 +257,9 @@ ${sigmaTable("table", d.sigma.table)}
     .join("")}</div></details>
 <details><summary>How it works</summary><div>
 <p>The net reads 26 numbers per colonist once per game hour: five needs, what they are doing, the hour and whether it is inside work hours, the season, food and firewood in store per person, and ten traits. It has 16 hidden units and 5 outputs, all in integer maths. Each output moves one line by at most 1000 of 10,000 either way (food's line is 5200 today, water 5500, rest 2500, recreation 3500; warmth depends on the person). It started with its last layer at zero, which is exactly today's rule.</p>
-<p>Training is an evolution strategy: each generation makes 16 pairs of opposite random changes, runs each on the same 2 month windows (28 game days, cloned from today's years on ledger, gwerin, harrow, cairn and ashford), ranks them and steps toward the better ones. Score = 1000 × crisis days (person-days with food, rest or warmth under its warning line) + (1000 − r), where r is the lower of food in store and hours worked as per mille of today's, at most 999. Under 950 it is penalised past every unharmful try. The table has 70 numbers (a line offset per season and per trait, for each of the 5 lines) and was trained by the same loop.</p>
+<p>Training is an evolution strategy: each generation makes 16 pairs of opposite random changes, runs each on the same 4 month windows (28 game days, cloned from today's years on ledger, gwerin, harrow, cairn and ashford, only those where today's rule has a crisis hour), ranks them and steps toward the better ones. Score = 1000 × crisis hours (person-hours with food, rest or warmth under its warning line at the hour's end) + (1000 − r), where r is the lower of food in store and hours worked as per mille of today's, at most 999. Under 950 it is penalised past every unharmful try. The table has 70 numbers (a line offset per season and per trait, for each of the 5 lines) and was trained by the same loop.</p>
 <p>Runs: net ${net ? `noise ${net.sigma}, step ${net.alpha}, ${net.log.length - 1} generations, ${mins(net)} on ${net.workers} threads` : "not run"}; table ${table ? `noise ${table.sigma}, step ${table.alpha}, ${table.log.length - 1} generations, ${mins(table)} on ${table.workers} threads` : "not run"}. Shadow years: ${d.moments.net ? `${Math.round(d.moments.net.seconds / 60)} min for 5 maps` : "not run"}${counts.length ? ` (${counts.join(", ")} moments)` : ""}.</p>
-<p class="words">Words used here: line, the need level under which a colonist acts on it; window, 28 game days from a month start; crisis day, a person-day spent under a warning line; held out, maps kept back to judge the net, never trained on; shadow year, a year under today's rule where the net only watches.</p>
+<p class="words">Words used here: line, the need level under which a colonist acts on it; window, 28 game days from a month start; crisis hour, a person-hour ending under a warning line; held out, maps kept back to judge the net, never trained on; shadow year, a year under today's rule where the net only watches.</p>
 </div></details>
 </main>
 `;

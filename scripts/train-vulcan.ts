@@ -20,6 +20,7 @@ import {
   VULCAN_PICK,
   chanceSpread,
   drawWindows,
+  eligibleWindows,
   pickSetting,
   trainVulcan,
   zeroLineNet,
@@ -78,15 +79,15 @@ if (stage !== "html") {
     process.exit(1);
   }
   const { commit } = await loadVulcan(dir);
-  const pool = await openPool(jobs, dir);
-  log(`vulcan ${commit}; ${jobs} workers started in ${pool.startSeconds.toFixed(1)} s`);
+  const workers = await openPool(jobs, dir);
+  log(`vulcan ${commit}; ${jobs} workers started in ${workers.startSeconds.toFixed(1)} s`);
   try {
     if (stage === "shadow") {
       const trained = model === "net" ? readJson("lines.json") : readJson("table.json");
       if (!trained) throw new Error(`no trained ${model}; run the full stage first`);
       const theta = model === "net" ? trained.layers.flatMap((l: any) => [...l.w, ...l.b]) : trained.params;
       const t0 = performance.now();
-      const res = await pool.shadow([...HELD_OUT_SEEDS], model, theta);
+      const res = await workers.shadow([...HELD_OUT_SEEDS], model, theta);
       for (const r of res)
         log(`${r.seed}: ${r.moments.length} moments of ${r.candidates} candidates, ${r.seconds.toFixed(0)} s`);
       writeJson(`moments-${model}.json`, {
@@ -96,14 +97,17 @@ if (stage !== "html") {
         seeds: res,
       });
     } else {
-      const { worlds, today } = await windows(pool, commit);
+      const { worlds, today } = await windows(workers, commit);
+      const pool = eligibleWindows(today);
+      log(`${pool.length} of ${today.length} windows have a crisis hour under today's rule (D-023)`);
       if (stage === "chance") {
-        const idx = drawWindows(makeRng(20), worlds.length, 10);
-        const pairs = [0, 2, 4, 6, 8].map((i) => [idx[i], idx[i + 1]]);
+        const per = VULCAN_ES.windowsPerGeneration;
+        const idx = drawWindows(makeRng(20), pool.length, 5 * per).map((i) => pool[i]);
+        const pairs = [0, 1, 2, 3, 4].map((k) => idx.slice(k * per, (k + 1) * per));
         const nudged: WindowResult[][][] = [];
         const t0 = performance.now();
         for (const p of pairs) {
-          const runs = await pool.nudged(
+          const runs = await workers.nudged(
             p.map((i) => worlds[i]),
             [0, 1, 2],
             VULCAN_ES.windowDays,
@@ -133,9 +137,9 @@ if (stage !== "html") {
               sigma,
               alpha,
               generations: 5,
-              nWindows: worlds.length,
+              pool,
               today,
-              evaluate: pool.evaluator(model, worlds, VULCAN_ES.windowDays),
+              evaluate: workers.evaluator(model, worlds, VULCAN_ES.windowDays),
               onGeneration: (e) => log(line(e)),
             });
             out.runs.push({ sigma, alpha, log: snap.log });
@@ -166,10 +170,10 @@ if (stage !== "html") {
           kind: model,
           sigma,
           alpha,
-          nWindows: worlds.length,
+          pool,
           today,
           resume,
-          evaluate: pool.evaluator(model, worlds, VULCAN_ES.windowDays, (s) => (posts += s)),
+          evaluate: workers.evaluator(model, worlds, VULCAN_ES.windowDays, (s) => (posts += s)),
           onGeneration: (e, s) => {
             log(line(e));
             if (s.done % VULCAN_ES.snapshotEvery === 0) writeJson(snapName, s);
@@ -184,7 +188,7 @@ if (stage !== "html") {
           sigma,
           alpha,
           workers: jobs,
-          startSeconds: Math.round(pool.startSeconds * 10) / 10,
+          startSeconds: Math.round(workers.startSeconds * 10) / 10,
           postSeconds: Math.round(posts * 10) / 10,
           seconds: Math.round((performance.now() - t0) / 1000),
           resumedFrom: resume?.done ?? 0,
@@ -196,7 +200,7 @@ if (stage !== "html") {
       }
     }
   } finally {
-    await pool.close();
+    await workers.close();
   }
 }
 
@@ -221,22 +225,27 @@ function line(e: LogEntry) {
     : `gen ${e.generation}: today ${e.today}, ${t}, mean ${e.mean!.toFixed(1)}, best ${e.best}, differ ${e.differ!.toFixed(2)}, windows ${e.windows.join(",")}, ${e.seconds} s`;
 }
 
-/** The 60 window worlds (training seeds × month starts 0 to 11) and today's result on each, cached per commit. */
-async function windows(pool: Awaited<ReturnType<typeof openPool>>, commit: string) {
+/** The 60 window worlds (training seeds × month starts 0 to 11) and today's result on each, cached per commit.
+ *  Today's results are recomputed when the cached ones predate crisis person-hours (D-023). */
+async function windows(w: Awaited<ReturnType<typeof openPool>>, commit: string) {
   const cache = resolve(ROOT, `.cache/vulcan/windows-${commit.slice(0, 12)}-${VULCAN_ES.windowDays}d.bin`);
+  let worlds: World[] | null = null;
   if (existsSync(cache)) {
-    const v = deserialize(readFileSync(cache)) as { worlds: World[]; today: WindowResult[] };
+    const v = deserialize(readFileSync(cache)) as { worlds: World[]; today: WindowResult[]; unit?: string };
     log(`window worlds from ${cache}`);
-    return v;
+    if (v.unit === "person-hours") return v;
+    worlds = v.worlds;
   }
-  const months = Array.from({ length: 12 }, (_, m) => m);
   let t = performance.now();
-  const worlds = (await pool.years([...TRAINING_SEEDS], months)).flat();
-  log(`${worlds.length} window worlds in ${((performance.now() - t) / 1000).toFixed(0)} s`);
+  if (!worlds) {
+    const months = Array.from({ length: 12 }, (_, m) => m);
+    worlds = (await w.years([...TRAINING_SEEDS], months)).flat();
+    log(`${worlds.length} window worlds in ${((performance.now() - t) / 1000).toFixed(0)} s`);
+  }
   t = performance.now();
-  const today = await pool.today(worlds, VULCAN_ES.windowDays);
+  const today = await w.today(worlds, VULCAN_ES.windowDays);
   log(`today's ${today.length} windows in ${((performance.now() - t) / 1000).toFixed(0)} s`);
   mkdirSync(dirname(cache), { recursive: true });
-  writeFileSync(cache, serialize({ worlds, today }));
+  writeFileSync(cache, serialize({ worlds, today, unit: "person-hours" }));
   return { worlds, today };
 }

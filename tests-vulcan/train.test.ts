@@ -22,7 +22,7 @@ test("train-gen0-is-today: 1 generation of 2 members on 2-day windows; generatio
         alpha: 512,
         generations: 1,
         population: 2,
-        nWindows: worlds.length,
+        pool: [0, 1],
         today,
         evaluate: async (windows, thetas) => {
           const r = await evaluate(windows, thetas);
