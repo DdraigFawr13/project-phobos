@@ -10,5 +10,5 @@
     "lib": ["es2022", "dom"],
     "types": ["node"]
   },
-  "include": ["src", "scripts", "tests"]
+  "include": ["src", "scripts", "tests", "tests-vulcan"]
 }
