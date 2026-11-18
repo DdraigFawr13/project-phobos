@@ -445,6 +445,322 @@
      "seconds": 13.7
     }
    ]
+  },
+  {
+   "sigma": 1024,
+   "alpha": 128,
+   "log": [
+    {
+     "generation": 1,
+     "windows": [
+      0,
+      17
+     ],
+     "today": 3001,
+     "theta": {
+      "crisis": 3,
+      "r": 999,
+      "raw": 3001,
+      "penalised": false
+     },
+     "mean": 631.46875,
+     "best": 1,
+     "differ": 1,
+     "seconds": 128.9
+    },
+    {
+     "generation": 2,
+     "windows": [
+      52,
+      25
+     ],
+     "today": 1,
+     "theta": {
+      "crisis": 1,
+      "r": 998,
+      "raw": 1002,
+      "penalised": false
+     },
+     "mean": 912.40625,
+     "best": 1,
+     "differ": 1,
+     "seconds": 110.4
+    },
+    {
+     "generation": 3,
+     "windows": [
+      16,
+      21
+     ],
+     "today": 5001,
+     "theta": {
+      "crisis": 3,
+      "r": 999,
+      "raw": 3001,
+      "penalised": false
+     },
+     "mean": 6460.375,
+     "best": 3015,
+     "differ": 1,
+     "seconds": 152.6
+    },
+    {
+     "generation": 4,
+     "windows": [
+      3,
+      35
+     ],
+     "today": 1001,
+     "theta": {
+      "crisis": 1,
+      "r": 999,
+      "raw": 1001,
+      "penalised": false
+     },
+     "mean": 1598.71875,
+     "best": 13,
+     "differ": 1,
+     "seconds": 85.7
+    },
+    {
+     "generation": 5,
+     "windows": [
+      24,
+      50
+     ],
+     "today": 1,
+     "theta": {
+      "crisis": 0,
+      "r": 996,
+      "raw": 4,
+      "penalised": false
+     },
+     "mean": 190.15625,
+     "best": 1,
+     "differ": 1,
+     "seconds": 78.3
+    },
+    {
+     "generation": 6,
+     "windows": [
+      21,
+      50
+     ],
+     "today": 5001,
+     "theta": {
+      "crisis": 4,
+      "r": 999,
+      "raw": 4001,
+      "penalised": false
+     },
+     "seconds": 13.9
+    }
+   ]
+  },
+  {
+   "sigma": 1024,
+   "alpha": 512,
+   "log": [
+    {
+     "generation": 1,
+     "windows": [
+      0,
+      17
+     ],
+     "today": 3001,
+     "theta": {
+      "crisis": 3,
+      "r": 999,
+      "raw": 3001,
+      "penalised": false
+     },
+     "mean": 631.46875,
+     "best": 1,
+     "differ": 1,
+     "seconds": 132
+    },
+    {
+     "generation": 2,
+     "windows": [
+      52,
+      25
+     ],
+     "today": 1,
+     "theta": {
+      "crisis": 1,
+      "r": 994,
+      "raw": 1006,
+      "penalised": false
+     },
+     "mean": 884.75,
+     "best": 1,
+     "differ": 1,
+     "seconds": 113
+    },
+    {
+     "generation": 3,
+     "windows": [
+      16,
+      21
+     ],
+     "today": 5001,
+     "theta": {
+      "crisis": 3,
+      "r": 999,
+      "raw": 3001,
+      "penalised": false
+     },
+     "mean": 8317.3125,
+     "best": 1004,
+     "differ": 1,
+     "seconds": 150.9
+    },
+    {
+     "generation": 4,
+     "windows": [
+      3,
+      35
+     ],
+     "today": 1001,
+     "theta": {
+      "crisis": 1,
+      "r": 999,
+      "raw": 1001,
+      "penalised": false
+     },
+     "mean": 1509.09375,
+     "best": 1001,
+     "differ": 1,
+     "seconds": 89.4
+    },
+    {
+     "generation": 5,
+     "windows": [
+      24,
+      50
+     ],
+     "today": 1,
+     "theta": {
+      "crisis": 0,
+      "r": 999,
+      "raw": 1,
+      "penalised": false
+     },
+     "mean": 189.625,
+     "best": 1,
+     "differ": 1,
+     "seconds": 82.2
+    },
+    {
+     "generation": 6,
+     "windows": [
+      21,
+      50
+     ],
+     "today": 5001,
+     "theta": {
+      "crisis": 3,
+      "r": 998,
+      "raw": 3002,
+      "penalised": false
+     },
+     "seconds": 14
+    }
+   ]
   }
- ]
+ ],
+ "spread": 3000,
+ "rows": [
+  {
+   "sigma": 64,
+   "alpha": 128,
+   "differ": 0.96875,
+   "leads": [
+    3000,
+    0,
+    2997,
+    0,
+    0
+   ],
+   "beats": 0,
+   "final": 1999,
+   "qualifies": false
+  },
+  {
+   "sigma": 64,
+   "alpha": 512,
+   "differ": 0.96875,
+   "leads": [
+    3000,
+    0,
+    2999,
+    0,
+    0
+   ],
+   "beats": 0,
+   "final": 1999,
+   "qualifies": false
+  },
+  {
+   "sigma": 256,
+   "alpha": 128,
+   "differ": 1,
+   "leads": [
+    3000,
+    -1,
+    4000,
+    0,
+    0
+   ],
+   "beats": 1,
+   "final": 1999,
+   "qualifies": false
+  },
+  {
+   "sigma": 256,
+   "alpha": 512,
+   "differ": 1,
+   "leads": [
+    3000,
+    0,
+    3998,
+    0,
+    0
+   ],
+   "beats": 1,
+   "final": 1979,
+   "qualifies": false
+  },
+  {
+   "sigma": 1024,
+   "alpha": 128,
+   "differ": 1,
+   "leads": [
+    3000,
+    0,
+    1986,
+    988,
+    0
+   ],
+   "beats": 0,
+   "final": 1000,
+   "qualifies": false
+  },
+  {
+   "sigma": 1024,
+   "alpha": 512,
+   "differ": 1,
+   "leads": [
+    3000,
+    0,
+    3997,
+    0,
+    0
+   ],
+   "beats": 1,
+   "final": 1999,
+   "qualifies": false
+  }
+ ],
+ "pick": null
 }
