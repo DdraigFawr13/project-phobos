@@ -3,7 +3,8 @@ import { checkBound } from "../num/quantise.ts";
 import type { Act, Layer } from "../num/layer.ts";
 
 export type LayerJson = { kind: "dense"; in: number; out: number; shift: number; w: number[]; b: number[]; act: Act };
-export type Meta = { trainer: string; seed: number };
+/** `vulcan`: the Vulcan commit a Vulcan line net was trained on (docs/specs/vulcan-bench.md "Net"). */
+export type Meta = { trainer: string; seed: number; vulcan?: string };
 export type WeightFile = { format: "phobos-weights"; version: 1; layers: LayerJson[]; meta: Meta };
 
 export const toWeightFile = (layers: Layer[], meta: Meta): WeightFile => ({
