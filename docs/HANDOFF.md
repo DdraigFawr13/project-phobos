@@ -4,7 +4,7 @@ Updated: 2026-11-18. A fresh session must be able to continue from this file alo
 
 ## Phase
 
-First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021). S1 merged (Vulcan PR #103); S2 bench runner built (branch `claude/vulcan-bench-s2`, draft PR). Next: S3, line net and training.
+First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021). S1 merged (Vulcan PR #103); S2 merged (PR #13). Now: S3 on branch `claude/vulcan-bench-s3` (code pushed, training running).
 
 Coordinator mode: Morgan, 2026-11-18, asked the coordinator to run S1 to S4 with recommended options approved and merge each slice when ready.
 
@@ -25,12 +25,13 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ Plan the Vulcan bench: round 1, review, final (Morgan approved 2026-11-18), D-019, D-020.
 - ✔ Vulcan bench spec approved with R1 to R10 (Morgan, 2026-11-18): D-021, PR #12.
 - ✔ S1 Vulcan line hook (Vulcan PR #103, merged ee016ed).
-- ▶ S2 bench runner and today's numbers page (draft PR).
-- ○ S3 net and training (plus R10 table), S4 blind pairs and verdict. Limit 8 sessions to the verdict (session 3 of 8: S2).
+- ✔ S2 bench runner and today's numbers page (PR #13).
+- ▶ S3 net and training (plus R10 table). ○ S4 blind pairs and verdict. Limit 8 sessions to the verdict (session 3 of 8: S2).
 - ○ Soon: in-game switch, ambitions test (Vulcan P6.4), work-order swap, Silvanus. Later: Structured Text exporter, Story Generator.
 
 ## Just done
 
+- 2026-11-18 S3 in progress: code committed (inputs, lines, table, train, pool, shadow, page; J3/J4 tests seen failing on planted bugs). Training runs `npm run train:vulcan -- --chance`, then `--sigma-check --model net|table`; window worlds cached in `.cache/vulcan/`, snapshots in `models/vulcan/*.snapshot.json` (resume by rerunning the same command). Measured: a 28-day window 8 to 10 s mid-year (spec estimate 4.56 s).
 - 2026-11-18 S2 built: `vulcan.pin` (ee016ed), `src/vulcan/` engine, measure, bench, clone, scales, page; `npm run bench:vulcan`, `npm run test:vulcan` (4 tests, J2 plus noise-nudge and clone checks; seen failing first). Anvil equals Vulcan balance at the pin (5, 11, 202, 166, 483, 30, 97, 110). 25 seed-years on 3 threads: 492 s; one anvil year alone 45 s. Noise band and R9 reading: D-022. Page: [today's numbers](https://claude.ai/artifact/R3sL3NbtmcQRNu1St5A17n). Cloud install: `docs/vulcan-setup.md`.
 - 2026-11-18 Spec approved by Morgan, all R-items yes (D-021); PR #12 merged.
 - 2026-11-18 Spec written and checked (paraphrase, critic, zero-decision; critic and zero-decision rerun twice). Measured: Vulcan seed-year 54.7 s (anvil, b08ffba); mid-year `structuredClone` continues identically. Vulcan installed here via a local story-generator archive (codeload 403).
