@@ -45,7 +45,7 @@ export const VULCAN_ES = {
 
 /** The sigma check's picks per model (D-023); 0 until the check has run. */
 export const VULCAN_PICK: Record<Kind, { sigma: number; alpha: number }> = {
-  net: { sigma: 0, alpha: 0 },
+  net: { sigma: 1024, alpha: 128 },
   table: { sigma: 0, alpha: 0 },
 };
 

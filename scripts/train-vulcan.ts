@@ -48,6 +48,7 @@ const flag = (name: string) => {
 const html = flag("--html");
 const model = (flag("--model") ?? "net") as Kind;
 const jobs = Number(flag("--jobs") ?? Math.max(1, availableParallelism() - 1));
+const gensArg = flag("--generations");
 const sigmaArg = flag("--sigma"),
   alphaArg = flag("--alpha");
 const stage = args.includes("--chance")
@@ -156,8 +157,10 @@ if (stage !== "html") {
           writeJson(`sigma-${model}.json`, { ...out, spread: chance.spread, rows, pick });
         }
       } else {
-        const sigma = Number(sigmaArg ?? VULCAN_PICK[model].sigma),
-          alpha = Number(alphaArg ?? VULCAN_PICK[model].alpha);
+        const checked = readJson(`sigma-${model}.json`)?.pick;
+        const sigma = Number(sigmaArg ?? (VULCAN_PICK[model].sigma || checked?.sigma)),
+          alpha = Number(alphaArg ?? (VULCAN_PICK[model].alpha || checked?.alpha));
+        const generations = Number(gensArg ?? VULCAN_ES.generations);
         if (!(sigma > 0 && alpha > 0)) throw new Error(`no sigma and alpha for ${model}: run --sigma-check (D-023)`);
         const snapName = `${model}.snapshot.json`;
         const prior: Snapshot | null = readJson(snapName);
@@ -170,6 +173,7 @@ if (stage !== "html") {
           kind: model,
           sigma,
           alpha,
+          generations,
           pool,
           today,
           resume,
@@ -187,6 +191,7 @@ if (stage !== "html") {
           model,
           sigma,
           alpha,
+          generations,
           workers: jobs,
           startSeconds: Math.round(workers.startSeconds * 10) / 10,
           postSeconds: Math.round(posts * 10) / 10,
