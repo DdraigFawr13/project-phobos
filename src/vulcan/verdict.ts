@@ -10,9 +10,24 @@ export const PASS_PICKS = 16;
 
 export type Picks = Map<string, "A" | "B">;
 
-/** Picks from the ArtifactData list output saved as is: an object holding a list of docs (or a bare list), each
- *  with an `id` and `data.v` of "A" or "B". Throws on any other value. */
+/** Picks from the ArtifactData list output saved as is: its text (one JSON doc per line between banner lines), or
+ *  JSON holding a list of docs (or a bare list), each with an `id` and `data.v` of "A" or "B". Throws on any other
+ *  value. */
 export function readPicks(file: unknown): Picks {
+  if (typeof file === "string") {
+    // As the tool prints it: banner lines around one JSON doc per line, or plain JSON.
+    try {
+      return readPicks(JSON.parse(file));
+    } catch (e) {
+      if (!(e instanceof SyntaxError)) throw e;
+    }
+    const docs = file
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l.startsWith("{") && l.endsWith("}"))
+      .map((l) => JSON.parse(l));
+    return readPicks({ docs });
+  }
   const f = file as Record<string, unknown>;
   const list = Array.isArray(file)
     ? file

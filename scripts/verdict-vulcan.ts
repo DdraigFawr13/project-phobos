@@ -24,7 +24,7 @@ if (ids !== key.map((k) => k.id).join(" ")) {
   process.stderr.write("verdict:vulcan: models/vulcan/pairs.json does not match the key's 36 pair ids\n");
   process.exit(1);
 }
-const picks = readPicks(read(resolve(path)));
+const picks = readPicks(readFileSync(resolve(path), "utf8"));
 const extra = [...picks.keys()].filter((id) => !key.some((k) => k.id === id));
 if (extra.length) process.stderr.write(`verdict:vulcan: ignoring picks for unknown ids ${extra.join(" ")}\n`);
 process.stdout.write(`vulcan ${floor.vulcan}\n${verdictText(verdictOf(picks, floor, key))}\n`);
