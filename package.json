@@ -18,7 +18,8 @@
     "train:lab": "node scripts/train-lab.ts",
     "format": "prettier --write .",
     "bench:vulcan": "node scripts/bench-vulcan.ts",
-    "test:vulcan": "node --test --test-concurrency=1 \"tests-vulcan/**/*.test.ts\""
+    "test:vulcan": "node --test --test-concurrency=1 \"tests-vulcan/**/*.test.ts\"",
+    "train:vulcan": "node scripts/train-vulcan.ts"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

@@ -10,3 +10,8 @@
 .env
 .env.*
 !.env.example
+# Vulcan bench: cached window worlds, and training snapshots (resume only)
+/.cache/
+/models/vulcan/*.snapshot.json
+/models/vulcan/*.tmp
+/models/vulcan/*.full.json

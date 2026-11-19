@@ -152,3 +152,11 @@ test("the committed models/lab/ weight files load, and spoiling them throws (S5,
     }
   }
 });
+
+test("meta keeps the Vulcan commit a line net was trained on (vulcan-bench S3)", () => {
+  const meta = { trainer: "es", seed: 17, vulcan: "ee016ed3db2dab5f87a4cedcdc825cc8e0d409df" };
+  const f = JSON.parse(JSON.stringify(toWeightFile(labShapedNet(), meta)));
+  assert.deepEqual(f.meta, meta);
+  assert.deepEqual(loadWeights(f).meta, meta);
+  assert.equal(loadWeights(good()).meta.vulcan, undefined); // optional: Lab files have none
+});

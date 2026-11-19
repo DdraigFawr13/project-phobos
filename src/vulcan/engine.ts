@@ -58,6 +58,7 @@ export interface Line {
 export interface Content {
   items: { id: string; good?: string }[];
   life: { scale: number; needs: { id: string; seek?: number; low?: number }[] };
+  calendar: { daysPerMonth: number; monthsPerYear: number; seasons: string[]; [key: string]: unknown };
   [key: string]: unknown;
 }
 export interface Sim {
@@ -84,8 +85,12 @@ export interface Engine {
   TICKS_PER_DAY: number;
   MAP_SEEDS: readonly string[];
   setLineHook(sim: Sim, hook: LineHook | undefined): void;
-  clockAt(tick: number, calendar: unknown): { season: string; [key: string]: unknown };
-  hoursOf(world: World, content: Content, person: number): { workFrom: number; workTo: number };
+  /** Vulcan `src/engine/core/clock.ts`: `season` is an index into `calendar.seasons`. */
+  clockAt(
+    tick: number,
+    calendar: Content["calendar"],
+  ): { year: number; month: number; day: number; hour: number; minute: number; season: number };
+  hoursOf(world: World, content: Content, person: number): { workFrom: number; workTo: number; sleepFrom: number };
   growSpot(world: World, content: Content): unknown;
 }
 
