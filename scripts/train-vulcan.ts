@@ -4,7 +4,9 @@
 //   --sigma-check   sigma 64, 256, 1024 × alpha 128, 512, 5 generations each (sigma-<model>.json); resumes per setting
 //   (no stage)      the full run, 50 × 32 antithetic: lines.json (net) or table.json, <model>-log.json; a snapshot
 //                   every 5 generations (<model>.snapshot.json, git-ignored), resumed when it matches the settings
-//   --shadow        a shadow year on each held-out seed with the trained model: moments (moments-<model>.json)
+//   --shadow        a shadow year on each held-out seed with the trained model: each seed's moment count and an
+//                   even sample of 60 moments (moments-<model>.json); every moment in moments-<model>.full.json
+//                   (git-ignored)
 //   --html <path>   the S3 page from those files (alone, or after a stage)
 // Window worlds and today's window results are cached in .cache/vulcan/ (git-ignored) per Vulcan commit.
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
@@ -34,9 +36,11 @@ import { toWeightFile } from "../src/model/weights.ts";
 import { toTableFile } from "../src/vulcan/table.ts";
 import { makeRng } from "../src/rng.ts";
 import { trainPage } from "../src/vulcan/train-page.ts";
+import { sampleMoments } from "../src/vulcan/shadow.ts";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const OUT = resolve(ROOT, "models/vulcan");
+const MOMENT_SAMPLE = 60; // moments kept per held-out seed in the committed moments file
 const args = process.argv.slice(2);
 const flag = (name: string) => {
   const i = args.indexOf(name);
@@ -91,11 +95,13 @@ if (stage !== "html") {
       const res = await workers.shadow([...HELD_OUT_SEEDS], model, theta);
       for (const r of res)
         log(`${r.seed}: ${r.moments.length} moments of ${r.candidates} candidates, ${r.seconds.toFixed(0)} s`);
+      const head = { vulcan: commit, model, seconds: Math.round((performance.now() - t0) / 1000) };
+      // The full log is git-ignored (about 6 MB a model); the committed file keeps each seed's count and a sample.
+      writeJson(`moments-${model}.full.json`, { ...head, seeds: res });
       writeJson(`moments-${model}.json`, {
-        vulcan: commit,
-        model,
-        seconds: Math.round((performance.now() - t0) / 1000),
-        seeds: res,
+        ...head,
+        sample: MOMENT_SAMPLE,
+        seeds: res.map((r) => sampleMoments(r, MOMENT_SAMPLE)),
       });
     } else {
       const { worlds, today } = await windows(workers, commit);

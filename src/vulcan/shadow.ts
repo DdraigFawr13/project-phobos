@@ -34,6 +34,19 @@ export interface ShadowResult {
   candidates: number;
   moments: Moment[];
   seconds: number;
+  /** All moments found; set when `moments` holds only a sample of them (sampleMoments). */
+  count?: number;
+}
+
+/** The moment count of a seed's shadow year, whether `moments` is the full list or a sample. */
+export const momentCount = (r: ShadowResult) => r.count ?? r.moments.length;
+
+/** Keeps `n` moments evenly spaced through the year (the first, then every count/n-th), with the full count. */
+export function sampleMoments(r: ShadowResult, n: number): ShadowResult {
+  const all = r.moments,
+    k = Math.min(n, all.length);
+  const moments = Array.from({ length: k }, (_, i) => all[Math.floor((i * all.length) / k)]);
+  return { ...r, moments, count: momentCount(r) };
 }
 
 const HOUR = 60;

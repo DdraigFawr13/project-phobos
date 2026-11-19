@@ -1,10 +1,10 @@
 # Handoff
 
-Updated: 2026-11-18. A fresh session must be able to continue from this file alone. Keep it to 60 lines; move finished entries to `docs/archive/handoff-YYYY-MM.md`.
+Updated: 2026-11-19. A fresh session must be able to continue from this file alone. Keep it to 60 lines; move finished entries to `docs/archive/handoff-YYYY-MM.md`.
 
 ## Phase
 
-First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021). S1 merged (Vulcan PR #103); S2 merged (PR #13). Now: S3 on branch `claude/vulcan-bench-s3`, rerunning the sigma check under D-023 (coordinator's call after the first stop).
+First usable version done (spec [`docs/specs/first-usable.md`](specs/first-usable.md), M1 to M3, verdict No, audit fixed). Now: the Vulcan bench, spec [`docs/specs/vulcan-bench.md`](specs/vulcan-bench.md) approved 2026-11-18 (D-019, D-020, D-021). S1 merged (Vulcan PR #103); S2 merged (PR #13). S3 built and trained on branch `claude/vulcan-bench-s3`, draft PR #14 (D-023 after the first stop). Next: S4.
 
 Coordinator mode: Morgan, 2026-11-18, asked the coordinator to run S1 to S4 with recommended options approved and merge each slice when ready.
 
@@ -26,18 +26,18 @@ Shown at the start of a session and when asking the owner to approve a PR or a m
 - ✔ Vulcan bench spec approved with R1 to R10 (Morgan, 2026-11-18): D-021, PR #12.
 - ✔ S1 Vulcan line hook (Vulcan PR #103, merged ee016ed).
 - ✔ S2 bench runner and today's numbers page (PR #13).
-- ▶ S3 net and training (plus R10 table): stopped at the sigma check. ○ S4 blind pairs and verdict. Limit 8 sessions to the verdict (session 4 of 8: S3).
+- ✔ S3 net and training plus R10 table (draft PR #14, awaiting review). ▶ S4 blind pairs and verdict. Limit 8 sessions to the verdict (4 of 8 used: S3 was session 4).
 - ○ Soon: in-game switch, ambitions test (Vulcan P6.4), work-order swap, Silvanus. Later: Structured Text exporter, Story Generator.
 
 ## Just done
 
-- 2026-11-18 S3 stopped at the sigma check. Built and tested: inputs, lines (hourly cache, warm freeze), R10 table, ES loop with tied ranks and R4 score, worker pool, shadow log with cause lines, S3 page module (J3, J4 and `tests/vulcan-lines.test.ts` seen failing on planted bugs). Measured (`models/vulcan/chance.json`, `sigma-net.json`): chance (a) spread 3000 (a one-day nudge changes a 2-window score by up to 3 crisis days, mostly downward); every net setting differs from today at gen 1 (97 to 100%); no setting beats chance in a majority of its 5 generations (best: 1 of 5 at sigma 256 and 1024). Cause: in 3 of the 5 shared draws today's score is ≤ 3001, so no member can lead by more than 3000. Table sigma check, full runs and shadow years not run. A month window takes 8 to 10 s mid-year (spec estimate 4.56 s); a generation 78 to 160 s on 4 workers.
+- 2026-11-19 S3 trained (D-023). Sigma picks: net 1024/128, table 64/128 (chance spread 32001). Full runs 45 × 32 on 4 workers. Final draw (lower is better): net 201001, table 115009, today 171001; the net ends 30 crisis hours worse (inside chance), the table 56 better. Shadow years on the 5 held-out seeds, moments net/table: anvil 1857/2666, smoke 1770/2303, tallow 1863/2250, wren 2052/2570, bryn 1927/2605 (quota 24 met many times over). Times: table run 7668 s; net run 2.3 h (99 min to generation 30, then 2208 s after a container restart and resume); shadow years 264 s (net), 739 s (table). Moment files keep each seed's count and 60 evenly spaced moments; full logs `moments-*.full.json` are git-ignored. Page: [training](https://claude.ai/artifact/CUWMz8pRtw6Xb8o3UmLfyw). First stop (person-days, 2 windows: no setting beat chance) is in `docs/archive/` and D-023.
 - 2026-11-18 S2 built: `vulcan.pin` (ee016ed), `src/vulcan/` engine, measure, bench, clone, scales, page; `npm run bench:vulcan`, `npm run test:vulcan` (4 tests, J2 plus noise-nudge and clone checks; seen failing first). Anvil equals Vulcan balance at the pin (5, 11, 202, 166, 483, 30, 97, 110). 25 seed-years on 3 threads: 492 s; one anvil year alone 45 s. Noise band and R9 reading: D-022. Page: [today's numbers](https://claude.ai/artifact/R3sL3NbtmcQRNu1St5A17n). Cloud install: `docs/vulcan-setup.md`.
 - 2026-11-18 Spec approved by Morgan, all R-items yes (D-021); PR #12 merged.
 
 ## Next
 
-1. Sigma check under D-023 done (D-023): net 1024/128, table 64/128; chance spread 32001 on 4-window sets, 24 of 60 windows eligible. Running detached (`nohup`, log in the session scratchpad): net full run 45 generations from 22:34 UTC (about 2.8 h, estimate), then table 45 generations, then `--shadow` for both. A crash resumes by rerunning the same command (snapshot every 5 generations). Then: moment count against the stop rule, `--html`, page, commit `models/vulcan/*.json`.
+1. Owner review of PR #14 (draft; never mark ready or merge without approval). Then S4: blind pairs from `models/vulcan/moments-net.json` (5, 5, 5, 5, 4) and the verdict. Note for S4: nearly every candidate becomes a moment (9469 of 9643 for the net), so the net's lines differ from today's almost all the time; the blind pairs should judge whether those moves look sensible.
 2. Don't tune the Lab net further against the held-out set: the verdict would stop meaning anything.
 
 Lab: [Phobos Lab](https://claude.ai/artifact/2eQjCCQENdA99wAmgwPsDb) (version 10, D-018). Pages: [round 1](https://claude.ai/artifact/Cf3i4h6nnKDjhqrQQkbusS), [review 1](https://claude.ai/artifact/SXWLYu44MHB6seWk7yWTjH), [final](https://claude.ai/artifact/EPc7sMpHjHwUNHP96HVwvJ), [spec approval](https://claude.ai/artifact/MHEfcPTujwT9AaCHoHZdLR).

@@ -4,7 +4,7 @@
 // wraps; look from docs/UI_STYLE.md (Control room tokens, Plex faces, one 400 px column), as src/vulcan/page.ts.
 import { HELD_OUT_SEEDS } from "./bench.ts";
 import type { LogEntry } from "./train.ts";
-import type { Moment, ShadowResult } from "./shadow.ts";
+import { momentCount, type Moment, type ShadowResult } from "./shadow.ts";
 
 /** Spec S4: moments per held-out seed, in HELD_OUT_SEEDS order; a short seed passes the rest of its quota on. */
 export const QUOTAS = [5, 5, 5, 5, 4] as const;
@@ -173,26 +173,29 @@ function momentsTable(mo: TrainPageData["moments"]): string {
   const net = mo.net?.seeds;
   if (!net) return `<p class="note off">The shadow years have not run.</p>`;
   const by = (r: ShadowResult[] | undefined, seed: string) => r?.find((x) => x.seed === seed);
-  const counts = HELD_OUT_SEEDS.map((s) => by(net, s)?.moments.length ?? 0);
+  const counts = HELD_OUT_SEEDS.map((s) => (by(net, s) ? momentCount(by(net, s)!) : 0));
   const q = quotaCheck(counts);
   const tableSeeds = mo.table?.seeds;
   return `<div class="scroll"><table><thead><tr><th>held-out seed</th><th>moments, net</th><th>quota</th><th>person-hours checked</th>${tableSeeds ? "<th>moments, table</th>" : ""}</tr></thead><tbody>${HELD_OUT_SEEDS.map(
     (s, i) => {
       const r = by(net, s);
-      return `<tr><td class="seed">${s}</td><td${counts[i] < q.carried[i] ? ' class="off"' : ""}>${counts[i]}</td><td>${q.carried[i]}</td><td>${r?.candidates ?? "–"}</td>${tableSeeds ? `<td>${by(tableSeeds, s)?.moments.length ?? "–"}</td>` : ""}</tr>`;
+      return `<tr><td class="seed">${s}</td><td${counts[i] < q.carried[i] ? ' class="off"' : ""}>${counts[i]}</td><td>${q.carried[i]}</td><td>${r?.candidates ?? "–"}</td>${tableSeeds ? `<td>${by(tableSeeds, s) ? momentCount(by(tableSeeds, s)!) : "–"}</td>` : ""}</tr>`;
     },
   ).join(
     "",
-  )}<tr><td class="seed">all</td><td${q.ok ? "" : ' class="off"'}>${q.total}</td><td>24</td><td>${net.reduce((a, r) => a + r.candidates, 0)}</td>${tableSeeds ? `<td>${tableSeeds.reduce((a, r) => a + r.moments.length, 0)}</td>` : ""}</tr></tbody></table></div>
+  )}<tr><td class="seed">all</td><td${q.ok ? "" : ' class="off"'}>${q.total}</td><td>24</td><td>${net.reduce((a, r) => a + r.candidates, 0)}</td>${tableSeeds ? `<td>${tableSeeds.reduce((a, r) => a + momentCount(r), 0)}</td>` : ""}</tr></tbody></table></div>
 <p class="note">${q.ok ? "Enough moments for S4's 24 blind pairs." : `<span class="off">Short of S4's quotas: stop and decide with Morgan.</span>`}</p>`;
 }
 
-/** Up to 3 examples: the first moment of the first 3 held-out seeds that have one, each a different person. */
+/** Up to 3 examples from the first 3 held-out seeds that have one: seed i's first daytime moment (06:00 to 22:00)
+ *  in season i (spring, summer, autumn), else its first daytime moment, else its first; so the cards differ. */
 export function examples(seeds: ShadowResult[]): Moment[] {
   const out: Moment[] = [];
+  const day = (x: Moment) => x.clock.hour >= 6 && x.clock.hour < 22;
   for (const s of HELD_OUT_SEEDS) {
     const r = seeds.find((x) => x.seed === s);
-    const m = r?.moments.find((x) => x.clock.hour >= 6 && x.clock.hour < 22) ?? r?.moments[0];
+    const season = ["spring", "summer", "autumn"][out.length];
+    const m = r?.moments.find((x) => day(x) && x.clock.season === season) ?? r?.moments.find(day) ?? r?.moments[0];
     if (m && out.length < 3) out.push(m);
   }
   return out;
@@ -215,7 +218,11 @@ export function trainPage(d: TrainPageData): string {
   const mins = (l: TrainLog | null) => (l ? `${Math.round(l.seconds / 60)} min` : "–");
   const ex = d.moments.net ? examples(d.moments.net.seeds) : [];
   const counts = d.moments.net
-    ? HELD_OUT_SEEDS.map((s) => d.moments.net!.seeds.find((x) => x.seed === s)?.moments.length ?? 0)
+    ? HELD_OUT_SEEDS.map((s) =>
+        momentCount(
+          d.moments.net!.seeds.find((x) => x.seed === s) ?? { seed: s, candidates: 0, moments: [], seconds: 0 },
+        ),
+      )
     : [];
   return `<title>Vulcan Line Net Training</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -233,7 +240,7 @@ export function trainPage(d: TrainPageData): string {
 </div>
 <p class="note">Final score: the trained rule on one more set of 4 month windows, the same set for both; today's rule on that set beside it. Lower is better: 1000 per crisis hour (a person under a warning line at an hour's end), plus up to 1000 when food or work fall behind today.</p>
 <h2>Score per generation</h2>
-<p class="note">Each generation is scored on a new pair of windows, so the chart shows the score minus today's score on the same windows. Below the line is better than today.</p>
+<p class="note">Each generation is scored on a new set of 4 month windows, so the chart shows the score minus today's score on the same windows. Below the line is better than today.</p>
 ${chart(d.logs)}
 <h2>Moments on the held-out maps</h2>
 <p class="note">A moment is a minute where the net's lines would have made a colonist do something else than today's rule does. S4 turns ${QUOTAS.join(", ")} of them per map into blind pairs.</p>

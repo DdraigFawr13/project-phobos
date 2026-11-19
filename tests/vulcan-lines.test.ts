@@ -288,3 +288,18 @@ test("quotaCheck: 5, 5, 5, 5, 4 and 24 in all; a short seed passes the rest of i
 test("eligibleWindows: only windows where today's rule has a crisis hour (D-023)", () => {
   assert.deepEqual(eligibleWindows([wr(0, 9, 9), wr(3, 9, 9), wr(0, 0, 0), wr(1, 0, 0)]), [1, 3]);
 });
+
+test("sampleMoments: n moments evenly spaced from the first, the full count kept; the page counts it", async () => {
+  const { sampleMoments, momentCount } = await import("../src/vulcan/shadow.ts");
+  const ms = Array.from({ length: 10 }, (_, i) => ({ tick: i }) as never);
+  const r = { seed: "anvil", candidates: 12, moments: ms, seconds: 1 };
+  const s = sampleMoments(r, 4);
+  assert.deepEqual(
+    s.moments.map((m: { tick: number }) => m.tick),
+    [0, 2, 5, 7],
+  );
+  assert.equal(momentCount(s), 10);
+  assert.equal(momentCount(r), 10);
+  assert.equal(momentCount(sampleMoments(s, 2)), 10, "resampling keeps the full count");
+  assert.equal(sampleMoments(r, 60).moments.length, 10);
+});

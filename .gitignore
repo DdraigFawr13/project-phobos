@@ -14,3 +14,4 @@
 /.cache/
 /models/vulcan/*.snapshot.json
 /models/vulcan/*.tmp
+/models/vulcan/*.full.json
