@@ -5,6 +5,7 @@ Code and assets this project uses or ports, with their licences (SAFE-05, AGENTS
 ## Ported code
 
 - None yet. The plant, PI, RNG and Lab are written for this project from `docs/specs/first-usable.md`.
+- `src/vulcan/pairs.ts` `lineText` fills Vulcan's ledger templates (Vulcan `src/content/data/events.json`, read at run time from Morgan's own Vulcan checkout, not stored here) the way Vulcan's `src/engine/log/render.ts` does: `{key}` from the line's data, `{actorN}`/`{subjectN}` as names. Written for this project from that format; no Vulcan code is copied.
 
 ## Assets loaded at run time
 

@@ -4,6 +4,8 @@
 // depend on the worker count (only the seconds do).
 import { Worker } from "node:worker_threads";
 import type { Engine } from "./engine.ts";
+import { makeHook } from "./lines.ts";
+import { policyOf, type Kind } from "./train.ts";
 import {
   FLOOR_KEYS,
   HIGHER_IS_BETTER,
@@ -21,10 +23,12 @@ export const HELD_OUT_SEEDS = ["anvil", "smoke", "tallow", "wren", "bryn"] as co
 /** The noise band's nudge: +1000 on one person's food line for game day 1. */
 export const NUDGE = { add: 1000, people: 3 } as const;
 
-/** A seed-year; with `nudge`, the food nudge goes to the person at that index (0-based) in id order. */
+/** A seed-year; with `nudge`, the food nudge goes to the person at that index (0-based) in id order; with `policy`,
+ *  a free year with that policy's lines (S4's floor). */
 export interface Job {
   seed: string;
   nudge?: number;
+  policy?: { kind: Kind; theta: number[] };
 }
 export interface JobResult extends YearResult {
   nudge?: number;
@@ -40,6 +44,8 @@ export function nthPerson(engine: Engine, seed: string, k: number): { id: number
 }
 
 export function runJob(engine: Engine, job: Job): JobResult {
+  if (job.policy)
+    return measureYear(engine, job.seed, makeHook(engine, new Map(), policyOf(job.policy.kind, job.policy.theta)));
   if (job.nudge === undefined) return measureYear(engine, job.seed);
   const p = nthPerson(engine, job.seed, job.nudge);
   const r = measureYear(engine, job.seed, foodNudge(engine, p.id, p.startTick, NUDGE.add));
