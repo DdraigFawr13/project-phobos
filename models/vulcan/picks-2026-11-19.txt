@@ -1,0 +1,9 @@
+8 documents from collection "picks":
+{"id":"p01","data":{"v":"A"},"version":1,"updatedAt":"2026-11-19T04:38:45.344532Z"}
+{"id":"p02","data":{"v":"A"},"version":1,"updatedAt":"2026-11-19T04:52:25.322646Z"}
+{"id":"p03","data":{"v":"A"},"version":1,"updatedAt":"2026-11-19T04:52:36.022273Z"}
+{"id":"p04","data":{"v":"A"},"version":1,"updatedAt":"2026-11-19T04:53:13.765386Z"}
+{"id":"p05","data":{"v":"B"},"version":1,"updatedAt":"2026-11-19T04:53:32.903195Z"}
+{"id":"p06","data":{"v":"B"},"version":1,"updatedAt":"2026-11-19T04:53:48.142643Z"}
+{"id":"p07","data":{"v":"A"},"version":1,"updatedAt":"2026-11-19T04:54:13.471214Z"}
+{"id":"p08","data":{"v":"B"},"version":1,"updatedAt":"2026-11-19T04:54:32.25131Z"}
