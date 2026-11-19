@@ -1,0 +1,270 @@
+{
+ "vulcan": "ee016ed3db2dab5f87a4cedcdc825cc8e0d409df",
+ "band": {
+  "food": {
+   "min": -358,
+   "max": 258
+  },
+  "alive": {
+   "min": -1,
+   "max": 0
+  },
+  "metal.smelted": {
+   "min": -1,
+   "max": 307
+  },
+  "smithy.built": {
+   "min": -1,
+   "max": 240
+  },
+  "smith.made": {
+   "min": -21,
+   "max": 227
+  }
+ },
+ "worse": {
+  "food": 358,
+  "alive": 1,
+  "metal.smelted": 307,
+  "smithy.built": 240,
+  "smith.made": 227
+ },
+ "seeds": [
+  {
+   "seed": "anvil",
+   "today": {
+    "food": 483,
+    "alive": 5,
+    "metal.smelted": 30,
+    "smithy.built": 97,
+    "smith.made": 110
+   },
+   "net": {
+    "food": 280,
+    "alive": 5,
+    "metal.smelted": 26,
+    "smithy.built": 97,
+    "smith.made": 115
+   },
+   "table": {
+    "food": 282,
+    "alive": 5,
+    "metal.smelted": 33,
+    "smithy.built": 90,
+    "smith.made": 95
+   },
+   "noise": [
+    {
+     "food": -14,
+     "alive": 0,
+     "metal.smelted": 1,
+     "smithy.built": 31,
+     "smith.made": 21
+    },
+    {
+     "food": -358,
+     "alive": 0,
+     "metal.smelted": 307,
+     "smithy.built": 240,
+     "smith.made": 227
+    },
+    {
+     "food": -204,
+     "alive": -1,
+     "metal.smelted": -1,
+     "smithy.built": 23,
+     "smith.made": 46
+    }
+   ]
+  },
+  {
+   "seed": "smoke",
+   "today": {
+    "food": 1535,
+    "alive": 5,
+    "metal.smelted": 12,
+    "smithy.built": 13,
+    "smith.made": 15
+   },
+   "net": {
+    "food": 1444,
+    "alive": 5,
+    "metal.smelted": 14,
+    "smithy.built": 15,
+    "smith.made": 19
+   },
+   "table": {
+    "food": 1524,
+    "alive": 5,
+    "metal.smelted": 13,
+    "smithy.built": 14,
+    "smith.made": 17
+   },
+   "noise": [
+    {
+     "food": 195,
+     "alive": -1,
+     "metal.smelted": 0,
+     "smithy.built": 0,
+     "smith.made": 0
+    },
+    {
+     "food": -34,
+     "alive": 0,
+     "metal.smelted": 1,
+     "smithy.built": 0,
+     "smith.made": 0
+    },
+    {
+     "food": -92,
+     "alive": 0,
+     "metal.smelted": 1,
+     "smithy.built": 0,
+     "smith.made": 6
+    }
+   ]
+  },
+  {
+   "seed": "tallow",
+   "today": {
+    "food": 1220,
+    "alive": 5,
+    "metal.smelted": 19,
+    "smithy.built": 24,
+    "smith.made": 56
+   },
+   "net": {
+    "food": 1076,
+    "alive": 5,
+    "metal.smelted": 26,
+    "smithy.built": 26,
+    "smith.made": 30
+   },
+   "table": {
+    "food": 1155,
+    "alive": 5,
+    "metal.smelted": 26,
+    "smithy.built": 26,
+    "smith.made": 30
+   },
+   "noise": [
+    {
+     "food": -53,
+     "alive": 0,
+     "metal.smelted": 8,
+     "smithy.built": 9,
+     "smith.made": 0
+    },
+    {
+     "food": 79,
+     "alive": 0,
+     "metal.smelted": 10,
+     "smithy.built": 7,
+     "smith.made": -21
+    },
+    {
+     "food": 103,
+     "alive": 0,
+     "metal.smelted": 4,
+     "smithy.built": 1,
+     "smith.made": -4
+    }
+   ]
+  },
+  {
+   "seed": "wren",
+   "today": {
+    "food": 788,
+    "alive": 5,
+    "metal.smelted": 14,
+    "smithy.built": 15,
+    "smith.made": 20
+   },
+   "net": {
+    "food": 894,
+    "alive": 5,
+    "metal.smelted": 14,
+    "smithy.built": 14,
+    "smith.made": 19
+   },
+   "table": {
+    "food": 927,
+    "alive": 5,
+    "metal.smelted": 15,
+    "smithy.built": 16,
+    "smith.made": 20
+   },
+   "noise": [
+    {
+     "food": 28,
+     "alive": 0,
+     "metal.smelted": -1,
+     "smithy.built": -1,
+     "smith.made": -2
+    },
+    {
+     "food": 189,
+     "alive": 0,
+     "metal.smelted": -1,
+     "smithy.built": -1,
+     "smith.made": -2
+    },
+    {
+     "food": 258,
+     "alive": 0,
+     "metal.smelted": 0,
+     "smithy.built": 0,
+     "smith.made": -1
+    }
+   ]
+  },
+  {
+   "seed": "bryn",
+   "today": {
+    "food": 1455,
+    "alive": 5,
+    "metal.smelted": 10,
+    "smithy.built": 11,
+    "smith.made": 17
+   },
+   "net": {
+    "food": 1574,
+    "alive": 5,
+    "metal.smelted": 11,
+    "smithy.built": 12,
+    "smith.made": 21
+   },
+   "table": {
+    "food": 1476,
+    "alive": 5,
+    "metal.smelted": 15,
+    "smithy.built": 17,
+    "smith.made": 24
+   },
+   "noise": [
+    {
+     "food": 75,
+     "alive": 0,
+     "metal.smelted": 4,
+     "smithy.built": 4,
+     "smith.made": 3
+    },
+    {
+     "food": -24,
+     "alive": 0,
+     "metal.smelted": 1,
+     "smithy.built": 1,
+     "smith.made": 2
+    },
+    {
+     "food": 104,
+     "alive": 0,
+     "metal.smelted": -1,
+     "smithy.built": 0,
+     "smith.made": 3
+    }
+   ]
+  }
+ ],
+ "seconds": 605
+}

@@ -1,0 +1,879 @@
+[
+ {
+  "id": "p01",
+  "situation": "Eadburh (devout, melancholic), winter day 264 17:00: food 52%, water 79%, rest 64%, warmth 100%, recreation 79%; store food 404, firewood 4",
+  "a": [
+   "17:00 eat",
+   "18:00 relax",
+   "19:00 relax",
+   "20:00 relax",
+   "21:00 relax",
+   "22:00 sleep",
+   "23:00 sleep"
+  ],
+  "b": [
+   "17:00 relax",
+   "18:00 relax",
+   "19:00 relax",
+   "20:00 relax",
+   "21:00 relax",
+   "22:00 sleep",
+   "23:00 sleep"
+  ]
+ },
+ {
+  "id": "p02",
+  "situation": "Cuthbert (melancholic, restless), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p03",
+  "situation": "Fergus (solitary, hot-tempered), summer day 85 00:00: food 52%, water 53%, rest 81%, warmth 100%, recreation 56%; store food 67, firewood 4",
+  "a": [
+   "00:00 sleep",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Fergus wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ],
+  "b": [
+   "00:00 eat",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Fergus wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ]
+ },
+ {
+  "id": "p04",
+  "situation": "Brendan (sociable, restless), autumn day 169 08:00: food 52%, water 61%, rest 91%, warmth 100%, recreation 83%; store food 918, firewood 3",
+  "a": [
+   "08:00 eat",
+   "· Brendan lit the fire on the green: a meal was to be cooked.",
+   "09:00 work",
+   "· Brendan lit the fire on the green: a meal was to be cooked.",
+   "· Brendan cooked 8 good pottage at the fire on the green.",
+   "10:00 idle",
+   "11:00 idle",
+   "12:00 idle",
+   "13:00 idle",
+   "14:00 idle"
+  ],
+  "b": [
+   "08:00 work",
+   "· Brendan lit the fire on the green: a meal was to be cooked.",
+   "09:00 work",
+   "· Brendan lit the fire on the green: a meal was to be cooked.",
+   "· Brendan cooked 8 good pottage at the fire on the green.",
+   "10:00 idle",
+   "11:00 idle",
+   "12:00 idle",
+   "13:00 idle",
+   "14:00 idle"
+  ]
+ },
+ {
+  "id": "p05",
+  "situation": "Eadric (steady, cheerful), autumn day 169 05:00: food 52%, water 43%, rest 100%, warmth 100%, recreation 88%; store food 786, firewood 4",
+  "a": [
+   "05:00 sleep",
+   "· Eadric took up carrying muck to the field at 76, 68: its poorest ground.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work"
+  ],
+  "b": [
+   "05:00 eat",
+   "· Eadric took up carrying muck to the field at 76, 68: its poorest ground.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work"
+  ]
+ },
+ {
+  "id": "p06",
+  "situation": "Grainne (restless, greedy), winter day 253 22:00: food 52%, water 97%, rest 46%, warmth 100%, recreation 98%; store food 576, firewood 4",
+  "a": [
+   "22:00 eat",
+   "23:00 eat",
+   "00:00 sleep",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep"
+  ],
+  "b": [
+   "22:00 sleep",
+   "23:00 sleep",
+   "00:00 sleep",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep"
+  ]
+ },
+ {
+  "id": "p07",
+  "situation": "Ciaran (restless, cheerful), winter day 253 13:00: food 52%, water 79%, rest 76%, warmth 100%, recreation 85%; store food 528, firewood 0",
+  "a": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 idle",
+   "· Ciaran took up tending: the fire in the Deirdre's home has 300 minutes of fuel left.",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "· Ciaran took up tending: the colony wants more firewood (16 of 20).",
+   "19:00 work"
+  ],
+  "b": [
+   "13:00 eat",
+   "14:00 eat",
+   "15:00 idle",
+   "· Ciaran took up tending: the fire on the green has 300 minutes of fuel left.",
+   "16:00 work",
+   "17:00 work",
+   "· Ciaran took up tending: the colony wants more firewood (16 of 20).",
+   "18:00 work",
+   "19:00 work"
+  ]
+ },
+ {
+  "id": "p08",
+  "situation": "Eithne (hardy, steady), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 idle",
+   "15:00 idle",
+   "16:00 idle",
+   "17:00 idle",
+   "· Eithne took up sowing barley at 76, 68.",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 idle",
+   "15:00 idle",
+   "16:00 idle",
+   "17:00 idle",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p09",
+  "situation": "Fergus (solitary, hot-tempered), summer day 85 00:00: food 52%, water 53%, rest 81%, warmth 100%, recreation 56%; store food 67, firewood 4",
+  "a": [
+   "00:00 eat",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Fergus wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ],
+  "b": [
+   "00:00 sleep",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Fergus wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ]
+ },
+ {
+  "id": "p10",
+  "situation": "Domnall (hot-tempered, greedy), autumn day 169 06:00: food 77%, water 53%, rest 97%, warmth 100%, recreation 30%; store food 743, firewood 4",
+  "a": [
+   "06:00 drink",
+   "07:00 drink",
+   "· Domnall took up quarrying: the colony wants stone (44 of 50).",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work",
+   "12:00 work"
+  ],
+  "b": [
+   "06:00 relax",
+   "07:00 relax",
+   "· Domnall took up quarrying: the colony wants stone (44 of 50).",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work",
+   "12:00 work"
+  ]
+ },
+ {
+  "id": "p11",
+  "situation": "Oswin (melancholic, greedy), autumn day 169 03:00: food 52%, water 53%, rest 100%, warmth 100%, recreation 91%; store food 837, firewood 4",
+  "a": [
+   "03:00 eat",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Oswin took up carrying muck to the field at 43, 82: its poorest ground.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "09:00 work"
+  ],
+  "b": [
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Oswin took up carrying muck to the field at 43, 82: its poorest ground.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "09:00 work"
+  ]
+ },
+ {
+  "id": "p12",
+  "situation": "Sigeburh (hardy, melancholic), summer day 85 04:00: food 52%, water 46%, rest 100%, warmth 100%, recreation 56%; store food 63, firewood 4",
+  "a": [
+   "04:00 eat",
+   "05:00 sleep",
+   "· Sigeburh took up foraging: the colony wants food (312 of 400).",
+   "· Sigeburh wants a home of their own, after a season under a shared roof.",
+   "06:00 work",
+   "07:00 work",
+   "· Sigeburh picked 6 berries.",
+   "08:00 work",
+   "09:00 work",
+   "· Sigeburh took up foraging: the colony wants food (323 of 400).",
+   "10:00 work"
+  ],
+  "b": [
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Sigeburh took up fishing at the stream: the colony wants food (313 of 400).",
+   "· Sigeburh wants a home of their own, after a season under a shared roof.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "· Sigeburh got better at fishing: now 8.",
+   "09:00 work",
+   "10:00 work"
+  ]
+ },
+ {
+  "id": "p13",
+  "situation": "Tadhg (melancholic, hardy), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "· Tadhg took up felling a tree on the cottage's site.",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p14",
+  "situation": "Caoimhe (steady, restless), autumn day 169 07:00: food 52%, water 97%, rest 94%, warmth 100%, recreation 85%; store food 910, firewood 4",
+  "a": [
+   "07:00 work",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work",
+   "12:00 work",
+   "13:00 work"
+  ],
+  "b": [
+   "07:00 eat",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work",
+   "12:00 work",
+   "13:00 work"
+  ]
+ },
+ {
+  "id": "p15",
+  "situation": "Deirdre (hardy, cheerful), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 work",
+   "14:00 work",
+   "· Deirdre took up felling: the colony wants wood (30 of 50).",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 drink"
+  ],
+  "b": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "· Deirdre took up felling: the colony wants wood (30 of 50).",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 drink"
+  ]
+ },
+ {
+  "id": "p16",
+  "situation": "Sadb (greedy, sociable), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "· Sadb felled an oak: 30 logs.",
+   "· Sadb took up felling a tree on the field's site.",
+   "16:00 work",
+   "17:00 work",
+   "· Sadb got better at woodcutting: now 3.",
+   "18:00 relax",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 work",
+   "· Sadb felled an oak: 30 logs.",
+   "16:00 work",
+   "· Sadb took up felling a tree on the field's site.",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p17",
+  "situation": "Eithne (hardy, steady), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 idle",
+   "15:00 idle",
+   "16:00 idle",
+   "17:00 idle",
+   "· Eithne took up sowing barley at 76, 68.",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 idle",
+   "15:00 idle",
+   "16:00 idle",
+   "17:00 idle",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p18",
+  "situation": "Edwin (restless, melancholic), summer day 85 10:00: food 52%, water 66%, rest 85%, warmth 100%, recreation 61%; store food 547, firewood 4",
+  "a": [
+   "10:00 eat",
+   "11:00 work",
+   "· Edwin's stone hoe is worn: a bronze hoe would need 1 bronze ingots, and the smith wants them.",
+   "12:00 work",
+   "13:00 work",
+   "· Edwin took up cooking at the fire on the green: 8 of the 10 meals wanted for tomorrow.",
+   "14:00 work",
+   "15:00 drink",
+   "16:00 drink"
+  ],
+  "b": [
+   "10:00 work",
+   "11:00 work",
+   "· Edwin's stone hoe is worn: a bronze hoe would need 1 bronze ingots, and the smith wants them.",
+   "12:00 work",
+   "13:00 work",
+   "· Edwin took up cooking at the fire on the green: 8 of the 10 meals wanted for tomorrow.",
+   "14:00 work",
+   "15:00 drink",
+   "16:00 drink"
+  ]
+ },
+ {
+  "id": "p19",
+  "situation": "Colm (cheerful, hot-tempered), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 eat",
+   "15:00 eat",
+   "16:00 eat",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 eat",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p20",
+  "situation": "Etain (steady, hardy), summer day 85 01:00: food 52%, water 64%, rest 97%, warmth 100%, recreation 94%; store food 67, firewood 4",
+  "a": [
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Etain wants a home of their own, after a season under a shared roof.",
+   "06:00 idle",
+   "07:00 idle"
+  ],
+  "b": [
+   "01:00 eat",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Etain wants a home of their own, after a season under a shared roof.",
+   "06:00 idle",
+   "07:00 idle"
+  ]
+ },
+ {
+  "id": "p21",
+  "situation": "Tadhg (melancholic, hardy), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "· Tadhg took up felling a tree on the cottage's site.",
+   "18:00 work",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p22",
+  "situation": "Eadgyth (melancholic, steady), autumn day 169 12:00: food 52%, water 91%, rest 79%, warmth 100%, recreation 51%; store food 741, firewood 4",
+  "a": [
+   "12:00 eat",
+   "13:00 work",
+   "14:00 work",
+   "· Eadgyth ground 2 grain into flour at the quern.",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work"
+  ],
+  "b": [
+   "12:00 work",
+   "13:00 work",
+   "14:00 eat",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "· Eadgyth ground 2 grain into flour at the quern.",
+   "18:00 work"
+  ]
+ },
+ {
+  "id": "p23",
+  "situation": "Deirdre (hardy, cheerful), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "· Deirdre took up felling: the colony wants wood (30 of 50).",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 drink"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "· Deirdre took up felling: the colony wants wood (30 of 50).",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 drink"
+  ]
+ },
+ {
+  "id": "p24",
+  "situation": "Wigstan (devout, steady), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 eat",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "· Wigstan took up felling: the colony wants wood (30 of 50).",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 drink"
+  ]
+ },
+ {
+  "id": "p25",
+  "situation": "Deirdre (cheerful, hot-tempered), winter day 253 02:00: food 52%, water 78%, rest 100%, warmth 100%, recreation 92%; store food 571, firewood 4",
+  "a": [
+   "02:00 eat",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "06:00 relax",
+   "07:00 relax",
+   "08:00 idle"
+  ],
+  "b": [
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "06:00 relax",
+   "07:00 relax",
+   "08:00 idle"
+  ]
+ },
+ {
+  "id": "p26",
+  "situation": "Aethelred (hardy, hot-tempered), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "· Aethelred felled an ash: 25 logs.",
+   "· Aethelred took up sowing barley at 76, 68.",
+   "18:00 work",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p27",
+  "situation": "Sadb (greedy, sociable), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 work",
+   "15:00 work",
+   "· Sadb felled an oak: 30 logs.",
+   "· Sadb took up felling a tree on the field's site.",
+   "16:00 work",
+   "17:00 work",
+   "· Sadb got better at woodcutting: now 3.",
+   "18:00 relax",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 work",
+   "· Sadb felled an oak: 30 logs.",
+   "16:00 work",
+   "· Sadb took up felling a tree on the field's site.",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p28",
+  "situation": "Sigeburh (hardy, melancholic), summer day 85 04:00: food 52%, water 46%, rest 100%, warmth 100%, recreation 56%; store food 63, firewood 4",
+  "a": [
+   "04:00 eat",
+   "05:00 sleep",
+   "· Sigeburh took up foraging: the colony wants food (313 of 400).",
+   "· Sigeburh wants a home of their own, after a season under a shared roof.",
+   "06:00 work",
+   "07:00 work",
+   "· Sigeburh picked 6 berries.",
+   "08:00 work",
+   "09:00 work",
+   "· Sigeburh took up foraging: the colony wants food (323 of 400).",
+   "10:00 work"
+  ],
+  "b": [
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Sigeburh took up fishing at the stream: the colony wants food (313 of 400).",
+   "· Sigeburh wants a home of their own, after a season under a shared roof.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "· Sigeburh got better at fishing: now 8.",
+   "09:00 work",
+   "10:00 work"
+  ]
+ },
+ {
+  "id": "p29",
+  "situation": "Sigeric (melancholic, steady), summer day 85 00:00: food 52%, water 71%, rest 81%, warmth 100%, recreation 86%; store food 60, firewood 4",
+  "a": [
+   "00:00 sleep",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Sigeric took up hunting wild sheep: the colony wants food (298 of 400).",
+   "· Sigeric took a stone spear: they had no spear for this work.",
+   "· Sigeric wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ],
+  "b": [
+   "00:00 eat",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Sigeric took up hunting wild sheep: the colony wants food (298 of 400).",
+   "· Sigeric took a stone spear: they had no spear for this work.",
+   "· Sigeric wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ]
+ },
+ {
+  "id": "p30",
+  "situation": "Aelfgifu (solitary, hot-tempered), winter day 255 03:00: food 52%, water 60%, rest 100%, warmth 100%, recreation 74%; store food 387, firewood 1",
+  "a": [
+   "03:00 eat",
+   "04:00 eat",
+   "05:00 sleep",
+   "06:00 sleep",
+   "· Aelfgifu took up cooking at the fire in the Edwin's home: 5 of the 10 meals wanted for tomorrow.",
+   "07:00 work",
+   "08:00 work",
+   "09:00 work"
+  ],
+  "b": [
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 eat",
+   "· Aelfgifu took up cooking at the fire in the Edwin's home: 5 of the 10 meals wanted for tomorrow.",
+   "06:00 work",
+   "07:00 work",
+   "08:00 work",
+   "09:00 work"
+  ]
+ },
+ {
+  "id": "p31",
+  "situation": "Domnall (hot-tempered, greedy), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 work",
+   "· Domnall took up felling: the colony wants wood (30 of 50).",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 work",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 eat",
+   "· Domnall took up felling: the colony wants wood (30 of 50).",
+   "14:00 work",
+   "15:00 work",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ },
+ {
+  "id": "p32",
+  "situation": "Caoimhe (steady, restless), autumn day 169 07:00: food 52%, water 97%, rest 94%, warmth 100%, recreation 85%; store food 910, firewood 4",
+  "a": [
+   "07:00 eat",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work",
+   "12:00 work",
+   "13:00 work"
+  ],
+  "b": [
+   "07:00 work",
+   "08:00 work",
+   "09:00 work",
+   "10:00 work",
+   "11:00 work",
+   "12:00 work",
+   "13:00 work"
+  ]
+ },
+ {
+  "id": "p33",
+  "situation": "Edwin (restless, melancholic), summer day 85 10:00: food 52%, water 66%, rest 85%, warmth 100%, recreation 61%; store food 547, firewood 4",
+  "a": [
+   "10:00 eat",
+   "11:00 work",
+   "· Edwin's stone hoe is worn: a bronze hoe would need 1 bronze ingots, and the smith wants them.",
+   "12:00 work",
+   "13:00 work",
+   "· Edwin took up cooking at the fire on the green: 8 of the 10 meals wanted for tomorrow.",
+   "14:00 work",
+   "15:00 drink",
+   "16:00 drink"
+  ],
+  "b": [
+   "10:00 work",
+   "11:00 work",
+   "· Edwin's stone hoe is worn: a bronze hoe would need 1 bronze ingots, and the smith wants them.",
+   "12:00 work",
+   "13:00 work",
+   "· Edwin took up cooking at the fire on the green: 8 of the 10 meals wanted for tomorrow.",
+   "14:00 work",
+   "15:00 drink",
+   "16:00 drink"
+  ]
+ },
+ {
+  "id": "p34",
+  "situation": "Sigeric (melancholic, steady), summer day 85 00:00: food 52%, water 71%, rest 81%, warmth 100%, recreation 86%; store food 60, firewood 4",
+  "a": [
+   "00:00 sleep",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Sigeric took up hunting wild sheep: the colony wants food (298 of 400).",
+   "· Sigeric took a stone spear: they had no spear for this work.",
+   "· Sigeric wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ],
+  "b": [
+   "00:00 eat",
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Sigeric took up hunting wild sheep: the colony wants food (298 of 400).",
+   "· Sigeric took a stone spear: they had no spear for this work.",
+   "· Sigeric wants a home of their own, after a season under a shared roof.",
+   "06:00 work"
+  ]
+ },
+ {
+  "id": "p35",
+  "situation": "Etain (steady, hardy), summer day 85 01:00: food 52%, water 64%, rest 97%, warmth 100%, recreation 94%; store food 67, firewood 4",
+  "a": [
+   "01:00 sleep",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Etain wants a home of their own, after a season under a shared roof.",
+   "06:00 idle",
+   "07:00 idle"
+  ],
+  "b": [
+   "01:00 eat",
+   "02:00 sleep",
+   "03:00 sleep",
+   "04:00 sleep",
+   "05:00 sleep",
+   "· Etain wants a home of their own, after a season under a shared roof.",
+   "06:00 idle",
+   "07:00 idle"
+  ]
+ },
+ {
+  "id": "p36",
+  "situation": "Colm (cheerful, hot-tempered), spring day 1 13:00: food 52%, water 69%, rest 69%, warmth 100%, recreation 69%; store food 128, firewood 0",
+  "a": [
+   "13:00 eat",
+   "14:00 eat",
+   "15:00 eat",
+   "16:00 eat",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ],
+  "b": [
+   "13:00 work",
+   "14:00 work",
+   "15:00 eat",
+   "16:00 work",
+   "17:00 work",
+   "18:00 relax",
+   "19:00 relax"
+  ]
+ }
+]

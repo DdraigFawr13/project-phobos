@@ -6,13 +6,15 @@ import { Worker, isMainThread, parentPort, workerData } from "node:worker_thread
 import type { World } from "./engine.ts";
 import type { EvaluateWindows, Kind, WindowResult } from "./train.ts";
 import type { ShadowResult } from "./shadow.ts";
+import type { FollowItem, Followed } from "./pairs.ts";
 
 type Msg =
   | { type: "year"; seed: string; months: number[] }
   | { type: "worlds"; worlds: World[] }
   | { type: "eval"; kind: Kind | "today"; theta: number[] | null; days: number; worlds?: World[] }
   | { type: "nudge"; k: number; days: number }
-  | { type: "shadow"; seed: string; kind: Kind; theta: number[] };
+  | { type: "shadow"; seed: string; kind: Kind; theta: number[] }
+  | { type: "follow"; seed: string; items: FollowItem[]; thetas: Record<Kind, number[]> };
 
 export interface VulcanPool {
   size: number;
@@ -26,6 +28,8 @@ export interface VulcanPool {
   /** The noise band's day-1 hook on `worlds`: for each k, +1000 on the food line of the k-th alive person by id. */
   nudged(worlds: World[], ks: number[], days: number): Promise<WindowResult[][]>;
   shadow(seeds: string[], kind: Kind, theta: number[]): Promise<ShadowResult[]>;
+  /** S4's pairs: per seed, branch today's rule and each item's policy at its moment and follow both (pairs.ts). */
+  follow(jobs: { seed: string; items: FollowItem[] }[], thetas: Record<Kind, number[]>): Promise<Followed[][]>;
   close(): Promise<void>;
 }
 
@@ -103,6 +107,7 @@ export async function openPool(n: number, dir: string): Promise<VulcanPool> {
       );
     },
     shadow: (seeds, kind, theta) => run<ShadowResult>(seeds.map((seed) => ({ type: "shadow", seed, kind, theta }))),
+    follow: (jobs, thetas) => run<Followed[]>(jobs.map(({ seed, items }) => ({ type: "follow", seed, items, thetas }))),
     async close() {
       await Promise.all(workers.map((w) => w.terminate()));
     },
@@ -114,6 +119,7 @@ if (!isMainThread) {
   const { runPolicyWindow, runWindow, yearClones, policyOf, zeroLineNet } = await import("./train.ts");
   const { shadowYear } = await import("./shadow.ts");
   const { foodNudge } = await import("./measure.ts");
+  const { followSeed } = await import("./pairs.ts");
   const { engine } = await loadVulcan(workerData.dir);
   const base = zeroLineNet();
   let worlds: World[] = [];
@@ -139,6 +145,10 @@ if (!isMainThread) {
       );
     if (m.type === "shadow")
       return parentPort!.postMessage(shadowYear(engine, m.seed, policyOf(m.kind, m.theta, base)));
+    if (m.type === "follow") {
+      const policies = { net: policyOf("net", m.thetas.net, base), table: policyOf("table", m.thetas.table, base) };
+      return parentPort!.postMessage(followSeed(engine, m.seed, policies, m.items));
+    }
   });
   parentPort!.postMessage("ready");
 }

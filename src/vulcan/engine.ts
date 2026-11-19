@@ -64,6 +64,8 @@ export interface Content {
 export interface Sim {
   content: Content;
   notable(line: Line): boolean;
+  /** Event templates by line type, from `content.events` (Vulcan `src/engine/sim/world.ts`). */
+  templates?: Map<string, string>;
   hooks: { line?: LineHook };
   [key: string]: unknown;
 }
